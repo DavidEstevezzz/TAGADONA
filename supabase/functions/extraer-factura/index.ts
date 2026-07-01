@@ -6,7 +6,7 @@
 // Despliegue e instrucciones: docs/supabase-edge-ocr.md
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-const MODEL = "gemini-2.0-flash"; // rápido, con visión y apto para el plan gratuito
+const MODEL = "gemini-2.5-flash-lite"; // vigente, ligero, con visión y apto para el plan gratuito
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
