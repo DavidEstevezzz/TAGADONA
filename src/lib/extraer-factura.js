@@ -227,10 +227,17 @@ export async function extraerConIA(file, onProgress = () => {}) {
   if (data && data.error) throw new Error(data.error);
 
   onProgress({ pct: 100, msg: 'Datos recibidos de la IA.' });
+  const lineas = Array.isArray(data?.lineas)
+    ? data.lineas.map((l) => ({
+        concepto: String(l?.concepto || '').trim(),
+        base: l?.base ?? l?.importe ?? null,
+      })).filter((l) => l.concepto || l.base != null)
+    : [];
   return {
     fecha: data?.fecha || '',
     proveedor_nombre: data?.proveedor_nombre || '',
     proveedor_nif: data?.proveedor_nif || '',
+    lineas,
     base: data?.base ?? null,
     iva_pct: data?.iva_pct ?? null,
     total: data?.total ?? null,
@@ -246,6 +253,7 @@ export function parsearCamposFactura(texto) {
     fecha: buscarFecha(t),
     proveedor_nombre: buscarProveedor(t),
     proveedor_nif: buscarNIF(t),
+    lineas: [],
     base,
     iva_pct: ivaPct,
     total,

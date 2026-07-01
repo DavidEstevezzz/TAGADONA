@@ -21,6 +21,7 @@ create table if not exists public.gastos (
   proveedor_nombre text,
   proveedor_nif  text,
   concepto       text,
+  lineas         jsonb not null default '[]'::jsonb,
   categoria      text,
   base           numeric(12,2) default 0,
   iva_pct        numeric(5,2)  default 0,
@@ -39,6 +40,14 @@ create policy "gastos_select" on public.gastos for select to authenticated using
 create policy "gastos_insert" on public.gastos for insert to authenticated with check (true);
 create policy "gastos_update" on public.gastos for update to authenticated using (true) with check (true);
 create policy "gastos_delete" on public.gastos for delete to authenticated using (true);
+```
+
+Si ya tenías la tabla `gastos` creada antes de añadir el desglose de conceptos,
+ejecuta también esta migración una sola vez:
+
+```sql
+alter table public.gastos
+  add column if not exists lineas jsonb not null default '[]'::jsonb;
 ```
 
 ---
@@ -85,7 +94,11 @@ puedes:
 - **⬆ Subir factura**: subir un PDF o una imagen. El programa intenta leer
   automáticamente fecha, proveedor, NIF/CIF, base, IVA y total, y prerrellena
   el formulario para que lo **revises** antes de guardar.
-- Ver el adjunto, editar, borrar y exportar los gastos filtrados a Excel.
+- Añadir varias líneas de concepto dentro de una misma factura de gasto
+  (por ejemplo ruedas, retrovisores y portamatrículas), con una base y total
+  acumulados para el gasto completo.
+- Ver el adjunto, editar, borrar, descargar el PDF del gasto y exportar los
+  gastos filtrados a Excel.
 
 ### Notas sobre la lectura automática
 - Funciona mejor con **PDFs digitales** (los que genera un ordenador).
