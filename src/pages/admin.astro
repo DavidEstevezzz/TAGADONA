@@ -405,6 +405,42 @@ import Base from '../layouts/Base.astro';
   .adm-tag.rebu{background:var(--orange-soft);color:var(--orange-bright)}
   .adm-tag.iva{background:rgba(255,255,255,.08);color:var(--text)}
 
+  /* Las filas de conceptos se crean con innerHTML, fuera del scope CSS de Astro. */
+  .adm-line-row{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 150px 36px;
+    gap:8px;
+    align-items:center;
+  }
+
+  .adm-line-row .adm-input{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:11px 13px;
+    color:var(--text);
+    font-size:14px;
+    font-family:inherit;
+    width:100%;
+    box-sizing:border-box;
+  }
+
+  .adm-line-row .adm-input:focus{
+    outline:none;
+    border-color:var(--orange);
+  }
+
+  .adm-line-row .adm-ico{
+    width:36px !important;
+    height:36px !important;
+    min-width:36px !important;
+    max-width:36px !important;
+  }
+
+  @media(max-width:600px){
+    .adm-line-row{grid-template-columns:minmax(0,1fr) 112px 36px}
+  }
+
   /* La tabla de proveedores tiene menos columnas: no necesita el ancho mínimo grande. */
   .adm-table.adm-table-prov{min-width:680px}
 
