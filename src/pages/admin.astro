@@ -438,27 +438,29 @@ import Base from '../layouts/Base.astro';
 
   /* Botones pequeños generados por JS en tablas y detalles. */
   .adm-mini{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(255,255,255,.04);
-    border:1px solid var(--line);
-    color:var(--text-dim);
-    font-family:inherit;
-    font-size:12px;
-    font-weight:600;
-    letter-spacing:.04em;
-    padding:7px 11px;
-    border-radius:4px;
-    cursor:pointer;
-    transition:all .2s var(--ease);
-    white-space:nowrap;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:rgba(255,255,255,.04) !important;
+    border:1px solid var(--line) !important;
+    color:var(--text-dim) !important;
+    font-family:inherit !important;
+    font-size:12px !important;
+    font-weight:600 !important;
+    letter-spacing:.04em !important;
+    line-height:1.2 !important;
+    padding:7px 11px !important;
+    border-radius:4px !important;
+    cursor:pointer !important;
+    transition:all .2s var(--ease) !important;
+    white-space:nowrap !important;
+    appearance:none !important;
   }
 
   .adm-mini:hover{
-    border-color:var(--orange);
-    color:var(--orange-bright);
-    background:rgba(217,122,40,.08);
+    border-color:var(--orange) !important;
+    color:var(--orange-bright) !important;
+    background:rgba(217,122,40,.08) !important;
     transform:translateY(-1px);
   }
 
@@ -508,7 +510,20 @@ import Base from '../layouts/Base.astro';
   .adm-rent-head h2{margin-bottom:4px}
   .adm-rent-sub{color:var(--text-dim);font-size:13px}
   .adm-rent-resumen{margin-bottom:20px}
-  .adm-table.adm-table-rent{min-width:760px}
+  .adm-rent-docs{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .adm-rent-doc-row{display:grid;grid-template-columns:120px 140px minmax(0,1fr) 130px 170px;gap:16px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line-soft)}
+  .adm-rent-doc-row:last-child{border-bottom:none}
+  .adm-rent-doc-head{background:rgba(255,255,255,.03);color:var(--text-faint);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+  .adm-rent-doc-cell{min-width:0;color:var(--text-dim);font-size:14px}
+  .adm-rent-doc-main{color:var(--text);font-weight:600;overflow-wrap:anywhere}
+  .adm-rent-doc-actions{display:flex;gap:6px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
+
+  @media(max-width:760px){
+    .adm-rent-head{flex-direction:column}
+    .adm-rent-doc-row{grid-template-columns:1fr;gap:8px}
+    .adm-rent-doc-head{display:none}
+    .adm-rent-doc-actions{justify-content:flex-start}
+  }
 
   /* La tabla de proveedores tiene menos columnas: no necesita el ancho mínimo grande. */
   .adm-table.adm-table-prov{min-width:680px}
@@ -1674,31 +1689,29 @@ headerRow.values = columnas.map(c => c.header);
           <div class="adm-stat"><div class="adm-stat-n">${eur(r.margen)}</div><div class="adm-stat-l">Margen</div></div>
           <div class="adm-stat"><div class="adm-stat-n">${r.gastos.length}</div><div class="adm-stat-l">Facturas gasto</div></div>
         </div>
-        <div class="adm-list">
-          <table class="adm-table adm-table-rent">
-            <thead><tr><th>Tipo</th><th>Fecha</th><th>Concepto</th><th>Total</th><th></th></tr></thead>
-            <tbody>
-              <tr>
-                <td><span class="adm-tag rebu">Venta</span></td>
-                <td>${fechaCorta(f.fecha)}</td>
-                <td>${esc(ventaLabel(f))}</td>
-                <td>${eur(r.totalVenta)}</td>
-                <td><div class="adm-row-btns">
-                  <button class="adm-mini" id="btnVentaPdf">PDF</button>
-                </div></td>
-              </tr>
-              ${r.gastos.map(g=>`<tr>
-                <td><span class="adm-tag iva">Gasto</span></td>
-                <td>${fechaCorta(g.fecha)}</td>
-                <td>${esc(g.proveedor_nombre||'Proveedor')} · ${esc(conceptoResumenG(g)||'Gasto')}</td>
-                <td>${eur(g.total)}</td>
-                <td><div class="adm-row-btns">
-                  ${g.archivo_path?`<button class="adm-mini" data-adjg="${g.id}">Adjunto</button>`:''}
-                  <button class="adm-mini" data-gastopdf="${g.id}">PDF</button>
-                </div></td>
-              </tr>`).join('')}
-            </tbody>
-          </table>
+        <div class="adm-rent-docs">
+          <div class="adm-rent-doc-row adm-rent-doc-head">
+            <div>Tipo</div><div>Fecha</div><div>Concepto</div><div>Total</div><div></div>
+          </div>
+          <div class="adm-rent-doc-row">
+            <div class="adm-rent-doc-cell"><span class="adm-tag rebu">Venta</span></div>
+            <div class="adm-rent-doc-cell">${fechaCorta(f.fecha)}</div>
+            <div class="adm-rent-doc-cell adm-rent-doc-main">${esc(ventaLabel(f))}</div>
+            <div class="adm-rent-doc-cell">${eur(r.totalVenta)}</div>
+            <div class="adm-rent-doc-actions">
+              <button type="button" class="adm-mini" id="btnVentaPdf">PDF</button>
+            </div>
+          </div>
+          ${r.gastos.map(g=>`<div class="adm-rent-doc-row">
+            <div class="adm-rent-doc-cell"><span class="adm-tag iva">Gasto</span></div>
+            <div class="adm-rent-doc-cell">${fechaCorta(g.fecha)}</div>
+            <div class="adm-rent-doc-cell adm-rent-doc-main">${esc(g.proveedor_nombre||'Proveedor')} · ${esc(conceptoResumenG(g)||'Gasto')}</div>
+            <div class="adm-rent-doc-cell">${eur(g.total)}</div>
+            <div class="adm-rent-doc-actions">
+              ${g.archivo_path?`<button type="button" class="adm-mini" data-adjg="${g.id}">Adjunto</button>`:''}
+              <button type="button" class="adm-mini" data-gastopdf="${g.id}">PDF</button>
+            </div>
+          </div>`).join('')}
         </div>`;
       $('btnPackMoto').onclick=()=>descargarPaqueteMoto(f.id);
       $('btnVentaPdf').onclick=()=>descargarPDF(f);
