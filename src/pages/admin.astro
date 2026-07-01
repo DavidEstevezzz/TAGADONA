@@ -486,7 +486,7 @@ import Base from '../layouts/Base.astro';
   <script>
     import { supabase } from '../lib/supabase.js';
     import { descargarPDF, verPDF, pdfBlob } from '../lib/factura-pdf.js';
-    import { cargarLibsOCR, extraerTextoFactura, parsearCamposFactura } from '../lib/extraer-factura.js';
+    import { cargarLibsOCR, extraerTextoFactura, parsearCamposFactura, extraerConIA } from '../lib/extraer-factura.js';
 
     const $ = (id)=>document.getElementById(id);
     let TODAS = [];   // todas las facturas cargadas
@@ -1198,14 +1198,26 @@ headerRow.values = columnas.map(c => c.header);
       $('gFileHint').textContent='Archivo seleccionado: '+file.name;
       const box=$('ocrBox'), fill=$('ocrBarFill'), msg=$('ocrMsg');
       box.hidden=false; fill.style.width='0%'; msg.textContent='Preparando lectura…';
+      const prog=(p)=>{ if(p && p.pct!=null) fill.style.width=p.pct+'%'; if(p && p.msg) msg.textContent=p.msg; };
+      const esImagen=(file.type||'').startsWith('image/');
       try{
-        await cargarLibsOCR();
-        const texto = await extraerTextoFactura(file,(p)=>{
-          if(p && p.pct!=null) fill.style.width=p.pct+'%';
-          if(p && p.msg) msg.textContent=p.msg;
-        });
+        let campos;
+        if(esImagen){
+          // Las imágenes se leen con IA (Gemini) por precisión; si la función
+          // no está desplegada o falla, se recurre al OCR local del navegador.
+          try{
+            campos = await extraerConIA(file, prog);
+          }catch(e){
+            prog({msg:'IA no disponible, usando lectura local…'});
+            await cargarLibsOCR();
+            campos = parsearCamposFactura(await extraerTextoFactura(file, prog));
+          }
+        } else {
+          // PDFs: extracción local (texto directo, u OCR si está escaneado).
+          await cargarLibsOCR();
+          campos = parsearCamposFactura(await extraerTextoFactura(file, prog));
+        }
         fill.style.width='100%';
-        const campos = parsearCamposFactura(texto);
         const n = aplicarCamposDetectados(campos);
         msg.textContent = n
           ? `✓ ${n} campo(s) detectado(s). Revísalos antes de guardar.`
