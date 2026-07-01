@@ -16,11 +16,12 @@ const corsHeaders = {
 };
 
 const PROMPT = `Eres un extractor de datos de facturas españolas. Analiza el documento (una factura RECIBIDA de un proveedor) y devuelve SOLO un JSON válido, sin texto adicional ni markdown, con exactamente esta forma:
-{"fecha":"","proveedor_nombre":"","proveedor_nif":"","base":null,"iva_pct":null,"total":null}
+{"fecha":"","proveedor_nombre":"","proveedor_nif":"","lineas":[],"base":null,"iva_pct":null,"total":null}
 Reglas:
 - fecha: fecha de emisión en formato ISO YYYY-MM-DD. Si no se ve, "".
 - proveedor_nombre: nombre o razón social de quien EMITE la factura (no el cliente/destinatario). Si no se ve, "".
 - proveedor_nif: NIF o CIF del emisor, en mayúsculas y sin espacios. Si no se ve, "".
+- lineas: conceptos facturados, cada uno como {"concepto":"", "base":null}. Usa la base/importe antes de IVA cuando sea visible. Si no se distinguen líneas, [].
 - base: base imponible como número con punto decimal. Si no se ve, null.
 - iva_pct: porcentaje de IVA como número entero (por ejemplo 21). Si no se ve, null.
 - total: importe total como número con punto decimal. Si no se ve, null.

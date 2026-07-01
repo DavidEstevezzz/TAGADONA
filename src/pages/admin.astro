@@ -165,10 +165,16 @@ import Base from '../layouts/Base.astro';
               <label>Categoría<select id="g_categoria" class="adm-input"></select></label>
               <label>Proveedor — Nombre<input type="text" id="g_proveedor_nombre" class="adm-input" /></label>
               <label>Proveedor — NIF/CIF<input type="text" id="g_proveedor_nif" class="adm-input" /></label>
-              <label class="adm-full">Concepto<input type="text" id="g_concepto" class="adm-input" /></label>
-              <label>Base imponible (€)<input type="number" step="0.01" id="g_base" class="adm-input" /></label>
+              <div class="adm-full adm-lines-box">
+                <div class="adm-lines-head">
+                  <span>Conceptos de la factura</span>
+                  <button type="button" id="btnAddLineaG" class="adm-mini">+ Línea</button>
+                </div>
+                <div class="adm-lines" id="g_lineas"></div>
+              </div>
+              <label>Base imponible total (€)<input type="number" step="0.01" id="g_base" class="adm-input" readonly /></label>
               <label>IVA (%)<input type="number" step="0.01" id="g_iva_pct" class="adm-input" value="21" /></label>
-              <label>Total (€)<input type="number" step="0.01" id="g_total" class="adm-input" /></label>
+              <label>Total factura (€)<input type="number" step="0.01" id="g_total" class="adm-input" readonly /></label>
               <label>Forma de pago<input type="text" id="g_forma_pago" class="adm-input" value="Transferencia bancaria" /></label>
               <label class="adm-full">Adjunto (PDF o imagen)
                 <input type="file" id="g_file" accept="application/pdf,image/*" class="adm-input adm-file" />
@@ -271,6 +277,11 @@ import Base from '../layouts/Base.astro';
     .adm-prov-row{display:flex;gap:var(--s-3);align-items:center}
     .adm-prov-row .adm-input{flex:1}
     .adm-prov-row .adm-mini{white-space:nowrap}
+    .adm-lines-box{display:flex;flex-direction:column;gap:10px}
+    .adm-lines-head{display:flex;align-items:center;justify-content:space-between;gap:var(--s-3)}
+    .adm-lines{display:flex;flex-direction:column;gap:8px}
+    .adm-line-row{display:grid;grid-template-columns:minmax(0,1fr) 150px 36px;gap:8px;align-items:center}
+    .adm-line-row .adm-ico{width:36px;height:36px;display:flex;align-items:center;justify-content:center}
     .adm-file{padding:8px 10px;cursor:pointer}
     .adm-ocr{background:var(--bg);border:1px solid var(--line);border-radius:8px;
       padding:var(--s-4);margin-bottom:var(--s-5)}
@@ -355,6 +366,7 @@ import Base from '../layouts/Base.astro';
     }
     @media(max-width:600px){
       .adm-grid{grid-template-columns:1fr}
+      .adm-line-row{grid-template-columns:minmax(0,1fr) 112px 36px}
       .adm-table th:nth-child(5),.adm-table td:nth-child(5){display:none}
     }
   </style>
@@ -485,7 +497,7 @@ import Base from '../layouts/Base.astro';
 </style>
   <script>
     import { supabase } from '../lib/supabase.js';
-    import { descargarPDF, verPDF, pdfBlob } from '../lib/factura-pdf.js';
+    import { descargarPDF, descargarGastoPDF, verPDF, pdfBlob } from '../lib/factura-pdf.js';
     import { cargarLibsOCR, extraerTextoFactura, parsearCamposFactura, extraerConIA } from '../lib/extraer-factura.js';
 
     const $ = (id)=>document.getElementById(id);
@@ -1105,7 +1117,7 @@ headerRow.values = columnas.map(c => c.header);
       VISTAG = GASTOS.filter(g=>{
         if(cat && g.categoria!==cat) return false;
         if(!enPeriodo(g,per)) return false;
-        if(q && !(`${g.proveedor_nombre||''} ${g.concepto||''}`.toLowerCase().includes(q))) return false;
+        if(q && !(`${g.proveedor_nombre||''} ${conceptoResumenG(g)}`.toLowerCase().includes(q))) return false;
         return true;
       });
       pintarResumenG(); pintarTablaG();
@@ -1131,12 +1143,13 @@ headerRow.values = columnas.map(c => c.header);
           ? `<button class="adm-ico" data-adj="${g.id}" title="Ver adjunto"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>`
           : '—';
         tr.innerHTML=`<td>${g.fecha?g.fecha.split('-').reverse().join('/'):''}</td>
-          <td>${g.proveedor_nombre||'—'}</td>
-          <td>${g.concepto||'—'}</td>
-          <td>${g.categoria?`<span class="adm-tag iva">${g.categoria}</span>`:''}</td>
+          <td>${esc(g.proveedor_nombre)||'—'}</td>
+          <td>${esc(conceptoResumenG(g))||'—'}</td>
+          <td>${g.categoria?`<span class="adm-tag iva">${esc(g.categoria)}</span>`:''}</td>
           <td>${eur(g.base)}</td><td>${eur(g.iva_importe)}</td><td>${eur(g.total)}</td>
           <td style="text-align:center">${adj}</td>
           <td><div class="adm-row-btns">
+            <button class="adm-ico" data-pdfg="${g.id}" title="Descargar PDF"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg></button>
             <button class="adm-ico" data-editg="${g.id}" title="Editar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
             <button class="adm-ico del" data-delg="${g.id}" title="Borrar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
           </div></td>`;
@@ -1145,11 +1158,46 @@ headerRow.values = columnas.map(c => c.header);
       $('tablaG').style.display='table';
       const find=(id)=>VISTAG.find(x=>x.id===id);
       tb.querySelectorAll('[data-adj]').forEach(b=>b.onclick=()=>verAdjunto(find(b.dataset.adj)));
+      tb.querySelectorAll('[data-pdfg]').forEach(b=>b.onclick=()=>descargarGastoPDF(find(b.dataset.pdfg)));
       tb.querySelectorAll('[data-editg]').forEach(b=>b.onclick=()=>abrirFormGasto(find(b.dataset.editg)));
       tb.querySelectorAll('[data-delg]').forEach(b=>b.onclick=()=>borrarGasto(find(b.dataset.delg)));
     }
 
     // ----- Formulario -----
+    function lineasGasto(g){
+      const raw = Array.isArray(g?.lineas) ? g.lineas : [];
+      const lineas = raw.map(l=>({
+        concepto:String(l?.concepto||'').trim(),
+        base:Number(l?.base ?? l?.importe ?? 0) || 0,
+      })).filter(l=>l.concepto || l.base);
+      if(lineas.length) return lineas;
+      if(g?.concepto || Number(g?.base||0)){
+        return [{ concepto:g?.concepto||'', base:Number(g?.base||0) || 0 }];
+      }
+      return [];
+    }
+    function conceptoResumenLineas(lineas){
+      const nombres = lineas.map(l=>l.concepto).filter(Boolean);
+      if(!nombres.length) return '';
+      return nombres.length <= 2 ? nombres.join(', ') : `${nombres.slice(0,2).join(', ')} +${nombres.length-2}`;
+    }
+    function conceptoResumenG(g){ return conceptoResumenLineas(lineasGasto(g)) || g?.concepto || ''; }
+    function renderLineasGasto(lineas=[{}]){
+      const rows = lineas.length ? lineas : [{}];
+      $('g_lineas').innerHTML = rows.map((l,i)=>`
+        <div class="adm-line-row" data-linea-g>
+          <input type="text" class="adm-input g-linea-concepto" placeholder="Concepto ${i+1}" value="${esc(l.concepto||'')}" />
+          <input type="number" step="0.01" class="adm-input g-linea-base" placeholder="Base €" value="${l.base ?? ''}" />
+          <button type="button" class="adm-ico del g-linea-del" title="Quitar línea"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
+        </div>`).join('');
+      recalcTotalG();
+    }
+    function leerLineasGasto(){
+      return [...document.querySelectorAll('[data-linea-g]')].map(row=>({
+        concepto:row.querySelector('.g-linea-concepto').value.trim(),
+        base:+(parseFloat(row.querySelector('.g-linea-base').value)||0).toFixed(2),
+      })).filter(l=>l.concepto || l.base);
+    }
     function abrirFormGasto(g){
       $('formViewG').style.display='block'; $('formErrorG').textContent='';
       $('ocrBox').hidden=true; $('ocrBarFill').style.width='0%'; gPendingFile=null;
@@ -1160,10 +1208,8 @@ headerRow.values = columnas.map(c => c.header);
       $('g_categoria').value = g?.categoria || CATEGORIAS[0];
       $('g_proveedor_nombre').value = g?.proveedor_nombre || '';
       $('g_proveedor_nif').value = g?.proveedor_nif || '';
-      $('g_concepto').value = g?.concepto || '';
-      $('g_base').value = g?.base ?? '';
       $('g_iva_pct').value = g?.iva_pct ?? 21;
-      $('g_total').value = g?.total ?? '';
+      renderLineasGasto(lineasGasto(g));
       $('g_forma_pago').value = g?.forma_pago ?? 'Transferencia bancaria';
       $('g_notas').value = g?.notas || '';
       $('g_file').value='';
@@ -1175,11 +1221,21 @@ headerRow.values = columnas.map(c => c.header);
     $('btnCancelarGasto').addEventListener('click',()=>{ $('formViewG').style.display='none'; });
 
     function recalcTotalG(){
-      const base=parseFloat($('g_base').value)||0, iva=parseFloat($('g_iva_pct').value)||0;
+      const base=leerLineasGasto().reduce((s,l)=>s+Number(l.base||0),0), iva=parseFloat($('g_iva_pct').value)||0;
+      $('g_base').value=base.toFixed(2);
       $('g_total').value=(base*(1+iva/100)).toFixed(2);
     }
-    $('g_base').addEventListener('input',recalcTotalG);
     $('g_iva_pct').addEventListener('input',recalcTotalG);
+    $('btnAddLineaG').addEventListener('click',()=>renderLineasGasto(leerLineasGasto().concat({concepto:'',base:''})));
+    $('g_lineas').addEventListener('input',recalcTotalG);
+    $('g_lineas').addEventListener('click',e=>{
+      const btn=e.target.closest('.g-linea-del');
+      if(!btn) return;
+      const rows=leerLineasGasto();
+      const idx=[...document.querySelectorAll('[data-linea-g]')].indexOf(btn.closest('[data-linea-g]'));
+      rows.splice(idx,1);
+      renderLineasGasto(rows.length ? rows : [{}]);
+    });
     $('g_proveedor_nombre').addEventListener('blur',e=>{ e.target.value=normIniciales(e.target.value); });
     $('g_proveedor_nif').addEventListener('blur',e=>{ e.target.value=normId(e.target.value); });
 
@@ -1257,12 +1313,19 @@ headerRow.values = columnas.map(c => c.header);
       if(c.proveedor_nombre){ $('g_proveedor_nombre').value=normIniciales(c.proveedor_nombre); n++; }
       if(c.proveedor_nif){ $('g_proveedor_nif').value=normId(c.proveedor_nif); n++; }
       if(c.iva_pct!=null){ $('g_iva_pct').value=c.iva_pct; n++; }
-      if(c.base!=null){ $('g_base').value=c.base; n++; }
-      if(c.total!=null){ $('g_total').value=c.total; n++; }
-      // Deriva lo que falte entre base y total usando el % de IVA.
       const iva=parseFloat($('g_iva_pct').value)||0;
-      if(c.base==null && c.total!=null){ $('g_base').value=(c.total/(1+iva/100)).toFixed(2); }
-      else if(c.total==null && c.base!=null){ recalcTotalG(); }
+      const detectadas = Array.isArray(c.lineas) ? c.lineas.map(l=>({
+        concepto:String(l?.concepto||'').trim(),
+        base:Number(l?.base ?? l?.importe ?? 0) || 0,
+      })).filter(l=>l.concepto || l.base) : [];
+      if(detectadas.length){
+        renderLineasGasto(detectadas); n += detectadas.length;
+      }else if(c.base!=null || c.total!=null){
+        const base = c.base!=null ? Number(c.base) : Number(c.total)/(1+iva/100);
+        renderLineasGasto([{concepto:'',base:+base.toFixed(2)}]); n++;
+      }else{
+        recalcTotalG();
+      }
       if(seleccionarProveedorDetectado(c)) n++;
       return n;
     }
@@ -1291,22 +1354,27 @@ headerRow.values = columnas.map(c => c.header);
     // ----- Guardar / borrar -----
     $('btnGuardarGasto').addEventListener('click', async ()=>{
       $('formErrorG').textContent='';
-      const base=parseFloat($('g_base').value)||0;
+      const lineas=leerLineasGasto();
+      const base=+lineas.reduce((s,l)=>s+Number(l.base||0),0).toFixed(2);
       const ivaPct=parseFloat($('g_iva_pct').value)||0;
-      const total=parseFloat($('g_total').value)|| +(base*(1+ivaPct/100)).toFixed(2);
+      const total=+(base*(1+ivaPct/100)).toFixed(2);
       const ivaImporte=Math.max(0,+(total-base).toFixed(2));
+      const concepto=conceptoResumenLineas(lineas);
       const g={
         fecha:$('g_fecha').value||null,
         categoria:$('g_categoria').value,
         proveedor_id:$('g_proveedor_id').value||null,
         proveedor_nombre:normIniciales($('g_proveedor_nombre').value),
         proveedor_nif:normId($('g_proveedor_nif').value),
-        concepto:$('g_concepto').value.trim(),
+        concepto,
+        lineas,
         base, iva_pct:ivaPct, iva_importe:ivaImporte, total,
         forma_pago:$('g_forma_pago').value.trim(),
         notas:$('g_notas').value.trim(),
       };
-      if(!g.proveedor_nombre && !g.concepto){ $('formErrorG').textContent='Indica al menos el proveedor o el concepto.'; return; }
+      if(!g.proveedor_nombre && !g.concepto){ $('formErrorG').textContent='Indica al menos el proveedor o un concepto.'; return; }
+      if(!lineas.length){ $('formErrorG').textContent='Añade al menos una línea de concepto con importe.'; return; }
+      if(lineas.some(l=>!l.concepto || Number(l.base||0)<=0)){ $('formErrorG').textContent='Cada línea debe tener concepto e importe mayor que cero.'; return; }
       const id=$('g_id').value;
       const btn=$('btnGuardarGasto'); const txt=btn.textContent; btn.disabled=true; btn.textContent='Guardando…';
       try{
@@ -1349,7 +1417,7 @@ headerRow.values = columnas.map(c => c.header);
         c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFD97A28'}}; });
       VISTAG.forEach(g=>ws.addRow({
         fecha:g.fecha?new Date(`${g.fecha}T00:00:00`):null,
-        prov:g.proveedor_nombre||'', nif:g.proveedor_nif||'', concepto:g.concepto||'',
+        prov:g.proveedor_nombre||'', nif:g.proveedor_nif||'', concepto:conceptoResumenG(g),
         cat:g.categoria||'', base:Number(g.base||0), ivap:Number(g.iva_pct||0)/100,
         ivae:Number(g.iva_importe||0), total:Number(g.total||0), fp:g.forma_pago||'',
       }));

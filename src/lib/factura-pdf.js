@@ -362,10 +362,228 @@ export async function construirFacturaPDF(f) {
   return doc;
 }
 
+function lineasGastoPDF(g) {
+  const raw = Array.isArray(g?.lineas) ? g.lineas : [];
+  const lineas = raw.map((l) => ({
+    concepto: safe(l?.concepto),
+    base: Number(l?.base ?? l?.importe ?? 0) || 0,
+  })).filter((l) => l.concepto || l.base);
+
+  if (lineas.length) return lineas;
+  return [{
+    concepto: safe(g?.concepto) || 'Gasto',
+    base: Number(g?.base || 0) || 0,
+  }];
+}
+
+export async function construirGastoPDF(g) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('p', 'mm', 'a4');
+
+  const W = 210;
+  const H = 297;
+  const margin = 16;
+  const contentW = W - margin * 2;
+  const logo = await getLogo();
+  const ref = safe(g.id).slice(0, 8).toUpperCase();
+
+  const base = Number(g.base || 0);
+  const ivaPct = Number(g.iva_pct || 0);
+  const ivaImporte = Number(g.iva_importe ?? +(base * ivaPct / 100).toFixed(2));
+  const total = Number(g.total ?? base + ivaImporte);
+  const lineas = lineasGastoPDF(g);
+
+  const headerH = 46;
+  doc.setFillColor(...COL.dark);
+  doc.rect(0, 0, W, headerH, 'F');
+  doc.setFillColor(...COL.orange);
+  doc.rect(0, headerH, W, 1.4, 'F');
+
+  if (logo) {
+    try {
+      doc.addImage(logo, 'PNG', margin, 8, 30, 30);
+    } catch (e) {}
+  }
+
+  doc.setTextColor(...COL.white);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(21);
+  doc.text('FACTURA DE GASTO', W - margin, 19, { align: 'right' });
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.setTextColor(...COL.orange2);
+  doc.text(ref ? 'Ref. ' + ref : 'Gasto', W - margin, 28, { align: 'right' });
+
+  doc.setFontSize(9);
+  doc.setTextColor(220, 215, 210);
+  doc.text('Fecha: ' + fechaEs(g.fecha), W - margin, 36, { align: 'right' });
+
+  const cardY = 58;
+  const gap = 10;
+  const cardW = (contentW - gap) / 2;
+  const cardTextW = cardW - 10;
+
+  const proveedorLines = splitRows(
+    doc,
+    [
+      safe(g.proveedor_nombre) || '—',
+      g.proveedor_nif ? 'NIF/CIF: ' + safe(g.proveedor_nif) : '',
+    ],
+    cardTextW
+  );
+
+  const receptorLines = splitRows(
+    doc,
+    [
+      CONTACTO.marca,
+      EMISOR.nombre,
+      EMISOR.dir,
+      EMISOR.loc,
+      'N.I.F: ' + EMISOR.nif,
+    ],
+    cardTextW
+  );
+
+  const cardH = Math.max(
+    40,
+    17 + Math.max(proveedorLines.length, receptorLines.length) * 5
+  );
+
+  drawInfoCard(doc, {
+    x: margin,
+    y: cardY,
+    w: cardW,
+    h: cardH,
+    title: 'DATOS DEL PROVEEDOR',
+    lines: proveedorLines,
+  });
+
+  drawInfoCard(doc, {
+    x: margin + cardW + gap,
+    y: cardY,
+    w: cardW,
+    h: cardH,
+    title: 'DATOS DEL RECEPTOR',
+    lines: receptorLines,
+  });
+
+  let y = cardY + cardH + 14;
+
+  doc.setFillColor(...COL.dark);
+  doc.roundedRect(margin, y, contentW, 10, 1.2, 1.2, 'F');
+  doc.setTextColor(...COL.white);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.text('CONCEPTO', margin + 5, y + 6.5);
+  doc.text('BASE', W - margin - 5, y + 6.5, { align: 'right' });
+  y += 10;
+
+  lineas.forEach((linea, index) => {
+    const concepto = safe(linea.concepto) || `Línea ${index + 1}`;
+    const lines = doc.splitTextToSize(concepto, 122);
+    const rowH = Math.max(12, 7 + lines.length * 4.5);
+
+    if (y + rowH > H - 55) {
+      doc.addPage();
+      y = margin;
+    }
+
+    doc.setFillColor(index % 2 ? 255 : 252, index % 2 ? 255 : 250, index % 2 ? 255 : 248);
+    doc.roundedRect(margin, y, contentW, rowH, 1.2, 1.2, 'F');
+    doc.setDrawColor(...COL.linea);
+    doc.roundedRect(margin, y, contentW, rowH, 1.2, 1.2, 'S');
+
+    doc.setTextColor(...COL.text);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.text(lines, margin + 5, y + 7);
+
+    doc.setFont('helvetica', 'bold');
+    doc.text(eur(linea.base), W - margin - 5, y + 7, { align: 'right' });
+    y += rowH + 2;
+  });
+
+  y += 8;
+  if (y > H - 80) {
+    doc.addPage();
+    y = margin;
+  }
+  const totalsW = 82;
+  const totalsX = W - margin - totalsW;
+  const valueX = W - margin - 5;
+  const labelX = totalsX + 6;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9.5);
+  doc.setTextColor(...COL.gris);
+  doc.text('Base imponible', labelX, y);
+  doc.text(eur(base), valueX, y, { align: 'right' });
+  doc.text(`IVA (${ivaPct}%)`, labelX, y + 6);
+  doc.text(eur(ivaImporte), valueX, y + 6, { align: 'right' });
+  y += 13;
+
+  doc.setFillColor(...COL.orange);
+  doc.roundedRect(totalsX, y - 5, totalsW, 14, 2, 2, 'F');
+  doc.setTextColor(...COL.white);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11.5);
+  doc.text('TOTAL', labelX, y + 3.5);
+  doc.text(eur(total), valueX, y + 3.5, { align: 'right' });
+  y += 24;
+
+  const notas = [];
+  if (g.categoria) notas.push('Categoría: ' + safe(g.categoria));
+  if (g.forma_pago) notas.push('Forma de pago: ' + safe(g.forma_pago));
+  if (g.archivo_nombre) notas.push('Adjunto original: ' + safe(g.archivo_nombre));
+  if (g.notas) notas.push('Notas: ' + safe(g.notas));
+
+  if (notas.length) {
+    doc.setDrawColor(...COL.linea);
+    doc.line(margin, y, W - margin, y);
+    y += 8;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...COL.gris);
+    notas.forEach((txt) => {
+      const lines = doc.splitTextToSize(txt, contentW);
+      doc.text(lines, margin, y);
+      y += lines.length * 5 + 1;
+    });
+  }
+
+  doc.setDrawColor(235, 230, 224);
+  doc.line(margin, H - 19, W - margin, H - 19);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7.5);
+  doc.setTextColor(170, 164, 158);
+  doc.text(
+    `${CONTACTO.marca} · ${EMISOR.nombre} · N.I.F ${EMISOR.nif}`,
+    W / 2,
+    H - 13,
+    { align: 'center' }
+  );
+  doc.text(
+    `${CONTACTO.ciudad} · ${CONTACTO.email} · ${CONTACTO.telefono}`,
+    W / 2,
+    H - 8,
+    { align: 'center' }
+  );
+
+  return doc;
+}
+
 export async function descargarPDF(f) {
   const doc = await construirFacturaPDF(f);
   const cliente = cleanFileName(f.cliente_nombre || 'factura');
   doc.save(`${safe(f.numero)}_${cliente}.pdf`);
+}
+
+export async function descargarGastoPDF(g) {
+  const doc = await construirGastoPDF(g);
+  const fecha = safe(g.fecha) || new Date().toISOString().slice(0, 10);
+  const proveedor = cleanFileName(g.proveedor_nombre || 'proveedor');
+  doc.save(`gasto_${fecha}_${proveedor}.pdf`);
 }
 
 export async function verPDF(f) {
