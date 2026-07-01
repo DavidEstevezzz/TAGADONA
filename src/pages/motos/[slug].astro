@@ -1,0 +1,287 @@
+---
+import Base from '../../layouts/Base.astro';
+import { motos, formatPrecio, formatKm } from '../../data/motos.js';
+
+export function getStaticPaths(){
+  return motos.map((moto)=>({ params:{slug:moto.slug}, props:{moto} }));
+}
+const { moto } = Astro.props;
+const WHATSAPP = "https://wa.me/34644904418";
+const TELEFONO = "tel:+34644904418";
+const msg = encodeURIComponent(`Hola, me interesa la ${moto.marca} ${moto.modelo} (${moto.anio}) que tenéis en el catálogo.`);
+const vendida = moto.estado === "Vendida";
+const msgParecida = encodeURIComponent(`Hola, vi que la ${moto.marca} ${moto.modelo} ya está vendida. ¿Podríais localizarme una parecida?`);
+
+const fichaBase = {
+  "Marca": moto.marca, "Modelo": moto.modelo, "Año": moto.anio,
+  "Kilómetros": formatKm(moto.km), "Cilindrada": moto.cilindrada, "Potencia": moto.potencia,
+};
+const ficha = { ...fichaBase, ...moto.especificaciones };
+---
+<Base title={`${moto.marca} ${moto.modelo} — Tagadona Racing`} desc={`${moto.marca} ${moto.modelo} ${moto.anio} · ${formatKm(moto.km)} · ${formatPrecio(moto.precio)}. Inspeccionada y con garantía.`}>
+
+  <div class="ficha-top wrap">
+    <nav class="crumb cond" aria-label="Ruta">
+      <a href="/">Inicio</a><span>/</span><a href="/catalogo">Catálogo</a><span>/</span>
+      <em>{moto.marca} {moto.modelo}</em>
+    </nav>
+  </div>
+
+  <section class="ficha wrap">
+    <!-- Galería -->
+    <div class="gal" id="gal" data-fotos={JSON.stringify(moto.fotos.map(f=>`/img/${f}`))}>
+      <button class="gal-main" id="galMain" type="button" aria-label="Ampliar imagen">
+        <span class={"gal-badge" + (moto.estado!=="Disponible" ? " alt" : "")}>{moto.estado}</span>
+        <img id="mainImg" src={`/img/${moto.fotos[0]}`} alt={`${moto.marca} ${moto.modelo}`} />
+        <span class="gal-zoom" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/>
+            <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </span>
+      </button>
+      {moto.fotos.length>1 && (
+        <div class="gal-thumbs">
+          {moto.fotos.map((f,i)=>(
+            <button class={"gal-thumb"+(i===0?" sel":"")} data-i={i} data-full={`/img/${f}`} aria-label={`Foto ${i+1}`}>
+              <img src={`/img/${f}`} alt="" loading="lazy" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- Panel -->
+    <div class="panel">
+      <p class="eyebrow no-rule panel-cat">{moto.categoria}</p>
+      <h1 class="panel-title head">{moto.marca} <span>{moto.modelo}</span></h1>
+      <p class="panel-meta cond">{moto.anio} · {formatKm(moto.km)}</p>
+
+      <div class="panel-price">
+        <span class="price-val cond">{formatPrecio(moto.precio)}</span>
+        <span class="price-note">IVA incluido · Financiación disponible</span>
+      </div>
+
+      <div class="panel-quick">
+        <div><span class="q-lbl cond">Cilindrada</span><span class="q-val cond">{moto.cilindrada}</span></div>
+        <div><span class="q-lbl cond">Potencia</span><span class="q-val cond">{moto.potencia}</span></div>
+        <div><span class="q-lbl cond">Combustible</span><span class="q-val cond">{moto.combustible}</span></div>
+        <div><span class="q-lbl cond">Carnet</span><span class="q-val cond">{moto.carnet}</span></div>
+      </div>
+
+      {vendida ? (
+  <div class="panel-cta">
+    <a class="btn btn-primary" href={`${WHATSAPP}?text=${msgParecida}`}>Quiero una parecida <span class="arr">→</span></a>
+    <a class="btn btn-ghost" href={TELEFONO}>Llamar</a>
+  </div>
+  <p class="panel-trust cond"><span class="dot vendida-dot"></span> Esta moto ya está vendida · Te localizamos una igual o mejor</p>
+) : (
+  <div class="panel-cta">
+    <a class="btn btn-primary" href={`${WHATSAPP}?text=${msg}`}>Me interesa esta moto <span class="arr">→</span></a>
+    <a class="btn btn-ghost" href={TELEFONO}>Llamar</a>
+  </div>
+  <p class="panel-trust cond"><span class="dot"></span> Inspeccionada punto por punto · Garantía incluida</p>
+)}
+    </div>
+  </section>
+
+  <section class="ficha-detalle wrap">
+    <div class="detalle-tec reveal">
+      <h2 class="detalle-h head">Ficha técnica</h2>
+      <dl class="spec-list">
+        {Object.entries(ficha).map(([k,v])=>(
+          <div class="spec-row"><dt class="cond">{k}</dt><dd class="cond">{v}</dd></div>
+        ))}
+      </dl>
+    </div>
+    <div class="detalle-desc reveal d1">
+      <h2 class="detalle-h head">Descripción</h2>
+      {moto.descripcion.map((p)=><p>{p}</p>)}
+    </div>
+  </section>
+
+  <section class="ficha-contacto">
+    <div class="wrap ficha-contacto-inner reveal">
+      <div>
+        <h3 class="display">¿Te encaja esta moto?</h3>
+        <p>Escríbenos o pásate a verla. Te resolvemos cualquier duda sin compromiso.</p>
+      </div>
+      <a class="btn btn-primary" href={`${WHATSAPP}?text=${msg}`}>Contactar ahora <span class="arr">→</span></a>
+    </div>
+  </section>
+
+  <style>
+    .ficha-top{padding-top:calc(74px + var(--s-6))}
+    .crumb{display:flex;align-items:center;gap:var(--s-3);font-size:12px;
+      letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+    .crumb a{color:var(--text-dim);transition:color .3s}
+    .crumb a:hover{color:var(--orange-bright)}
+    .crumb em{font-style:normal;color:var(--orange-bright)}
+    .crumb span{opacity:.4}
+
+    .ficha{display:grid;grid-template-columns:1.12fr .88fr;gap:clamp(32px,5vw,64px);
+      padding-top:var(--s-6);align-items:start}
+    .gal-main{position:relative;aspect-ratio:4/3;border-radius:6px;overflow:hidden;
+      background:var(--bg-3);border:1px solid var(--line);width:100%;padding:0;
+      cursor:zoom-in;display:block}
+    .gal-main img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+    .gal-main:hover img{transform:scale(1.04)}
+    .gal-zoom{position:absolute;right:var(--s-4);bottom:var(--s-4);width:40px;height:40px;
+      border-radius:50%;background:rgba(20,17,16,.7);backdrop-filter:blur(6px);
+      display:flex;align-items:center;justify-content:center;color:var(--text);
+      opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s}
+    .gal-main:hover .gal-zoom{opacity:1;transform:none}
+    .gal-zoom svg{width:18px;height:18px}
+    .gal-badge{position:absolute;top:var(--s-4);left:var(--s-4);background:var(--orange);
+      color:#150f0b;font-family:'Oswald',sans-serif;font-weight:600;font-size:11px;
+      letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;border-radius:2px;z-index:2}
+    .gal-badge.alt{background:#3a3330;color:var(--text)}
+    .gal-thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-3);margin-top:var(--s-3)}
+    .gal-thumb{aspect-ratio:1;border-radius:4px;overflow:hidden;cursor:pointer;padding:0;
+      border:2px solid transparent;background:none;opacity:.5;
+      transition:opacity .3s,border-color .3s}
+    .gal-thumb img{width:100%;height:100%;object-fit:cover}
+    .gal-thumb:hover,.gal-thumb.sel{opacity:1;border-color:var(--orange)}
+
+    .panel-cat{margin-bottom:var(--s-3)}
+    .panel-title{font-size:clamp(30px,3.6vw,46px);font-weight:700;line-height:1.02;
+      color:var(--text);letter-spacing:-.01em}
+    .panel-title span{font-weight:400;color:var(--text-dim)}
+    .panel-meta{font-size:var(--fs-lead);color:var(--text-dim);letter-spacing:.04em;
+      margin:var(--s-2) 0 var(--s-5)}
+    .panel-price{padding:var(--s-5) 0;border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:var(--s-1)}
+    .price-val{font-size:clamp(34px,4vw,44px);font-weight:700;color:var(--text);line-height:1}
+    .price-note{font-size:13px;color:var(--text-faint);letter-spacing:.02em}
+    .panel-quick{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);
+      border:1px solid var(--line);border-radius:5px;overflow:hidden;margin:var(--s-6) 0}
+    .panel-quick > div{background:var(--bg-card);padding:var(--s-4) var(--s-5);
+      display:flex;flex-direction:column;gap:3px}
+    .q-lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint)}
+    .q-val{font-size:18px;font-weight:600;color:var(--text)}
+    .panel-cta{display:flex;gap:var(--s-3);flex-wrap:wrap}
+    .panel-cta .btn-primary{flex:1;justify-content:center}
+    .panel-trust{margin-top:var(--s-4);font-size:13px;color:var(--text-dim);
+      display:flex;align-items:center;gap:var(--s-2);letter-spacing:.02em}
+    .panel-trust .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);flex:none}
+    .panel-trust .vendida-dot{background:#C0392B}
+
+    .ficha-detalle{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,72px);
+      padding-top:var(--s-9);padding-bottom:var(--s-9);align-items:start}
+    .detalle-h{font-size:var(--fs-h3);font-weight:700;text-transform:uppercase;
+      letter-spacing:.02em;color:var(--text);margin-bottom:var(--s-5);
+      padding-bottom:var(--s-4);border-bottom:1px solid var(--line)}
+    .spec-list{display:flex;flex-direction:column}
+    .spec-row{display:flex;justify-content:space-between;align-items:center;
+      padding:var(--s-3) 0;border-bottom:1px solid var(--line-soft)}
+    .spec-row dt{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+    .spec-row dd{font-size:15px;font-weight:600;color:var(--text)}
+    .detalle-desc p{color:var(--text-dim);line-height:1.85;margin-bottom:var(--s-4)}
+
+    .ficha-contacto{background:var(--bg-2);border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line)}
+    .ficha-contacto-inner{display:flex;align-items:center;justify-content:space-between;
+      gap:var(--s-6);padding:var(--s-8) 0;flex-wrap:wrap}
+    .ficha-contacto h3{font-size:clamp(28px,3.5vw,40px);color:var(--orange-bright);line-height:1}
+    .ficha-contacto p{color:var(--text-dim);margin-top:var(--s-2);max-width:420px}
+
+    @media(max-width:860px){
+      .ficha{grid-template-columns:1fr;gap:var(--s-6)}
+      .ficha-detalle{grid-template-columns:1fr;gap:var(--s-7)}
+    }
+
+    /* ===== LIGHTBOX ===== */
+    .lb{position:fixed;inset:0;z-index:200;background:rgba(12,10,9,.94);
+      backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;
+      padding:clamp(16px,4vw,56px);animation:lbIn .3s var(--ease)}
+    .lb[hidden]{display:none}
+    @keyframes lbIn{from{opacity:0}to{opacity:1}}
+    .lb-stage{display:flex;flex-direction:column;align-items:center;gap:var(--s-4);
+      max-width:100%;max-height:100%}
+    .lb-stage img{max-width:min(1100px,92vw);max-height:82vh;width:auto;height:auto;
+      object-fit:contain;border-radius:4px;box-shadow:0 30px 80px rgba(0,0,0,.6);
+      animation:lbImgIn .35s var(--ease)}
+    @keyframes lbImgIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+    .lb-count{font-size:13px;letter-spacing:.18em;color:var(--text-dim)}
+    .lb-close{position:absolute;top:clamp(12px,2vw,24px);right:clamp(12px,2vw,24px);
+      width:48px;height:48px;border:none;background:rgba(255,255,255,.06);color:var(--text);
+      font-size:28px;line-height:1;border-radius:50%;cursor:pointer;transition:background .3s}
+    .lb-close:hover{background:var(--orange);color:#150f0b}
+    .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;
+      border:1px solid var(--line);background:rgba(20,17,16,.6);color:var(--text);
+      font-size:30px;line-height:1;border-radius:50%;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;transition:.3s;z-index:2}
+    .lb-nav:hover{background:var(--orange);color:#150f0b;border-color:var(--orange)}
+    .lb-prev{left:clamp(12px,2.5vw,32px)}
+    .lb-next{right:clamp(12px,2.5vw,32px)}
+    @media(max-width:560px){
+      .lb-nav{width:44px;height:44px;font-size:24px}
+      .lb-prev{left:8px}.lb-next{right:8px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .lb,.lb-stage img{animation:none}
+      .gal-main:hover img{transform:none}
+    }
+  </style>
+
+  <!-- ════════ LIGHTBOX ════════ -->
+  <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Galería de imágenes" hidden>
+    <button class="lb-close" id="lbClose" aria-label="Cerrar">&times;</button>
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Anterior">&#8249;</button>
+    <figure class="lb-stage">
+      <img id="lbImg" src="" alt="" />
+      <figcaption class="lb-count cond"><span id="lbCur">1</span> / <span id="lbTot">1</span></figcaption>
+    </figure>
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Siguiente">&#8250;</button>
+  </div>
+
+  <script>
+    const fotos = JSON.parse(document.getElementById('gal').dataset.fotos || '[]');
+    const mainImg = document.getElementById('mainImg');
+    const thumbs = [...document.querySelectorAll('.gal-thumb')];
+    let cur = 0;
+
+    // Sincroniza la foto principal y la miniatura activa
+    const setMain = (i) => {
+      cur = (i + fotos.length) % fotos.length;
+      mainImg.src = fotos[cur];
+      thumbs.forEach((t,k)=>t.classList.toggle('sel', k===cur));
+    };
+    thumbs.forEach((t)=>t.addEventListener('click',()=>setMain(+t.dataset.i)));
+
+    // Lightbox
+    const lb = document.getElementById('lb');
+    const lbImg = document.getElementById('lbImg');
+    const lbCur = document.getElementById('lbCur');
+    const lbTot = document.getElementById('lbTot');
+    lbTot.textContent = fotos.length;
+
+    const showLb = (i) => {
+      cur = (i + fotos.length) % fotos.length;
+      lbImg.src = fotos[cur];
+      lbCur.textContent = cur + 1;
+      setMain(cur);
+    };
+    const openLb = () => { lb.hidden = false; document.body.style.overflow='hidden'; showLb(cur); };
+    const closeLb = () => { lb.hidden = true; document.body.style.overflow=''; };
+
+    document.getElementById('galMain').addEventListener('click', openLb);
+    document.getElementById('lbClose').addEventListener('click', closeLb);
+    document.getElementById('lbNext').addEventListener('click', ()=>showLb(cur+1));
+    document.getElementById('lbPrev').addEventListener('click', ()=>showLb(cur-1));
+    lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLb(); });
+    document.addEventListener('keydown', (e)=>{
+      if(lb.hidden) return;
+      if(e.key==='Escape') closeLb();
+      if(e.key==='ArrowRight') showLb(cur+1);
+      if(e.key==='ArrowLeft') showLb(cur-1);
+    });
+
+    // Oculta flechas si solo hay una foto
+    if(fotos.length<2){
+      document.getElementById('lbPrev').style.display='none';
+      document.getElementById('lbNext').style.display='none';
+    }
+  </script>
+
+</Base>

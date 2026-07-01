@@ -1,0 +1,84 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const entradas = (await getCollection('blog')).sort(
+  (a,b)=> b.data.fecha.getTime() - a.data.fecha.getTime()
+);
+const fmtFecha = (d)=> d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+---
+<Base title="Blog — Tagadona Racing">
+
+  <section class="bl-hero">
+    <div class="bl-hero-glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <p class="eyebrow center reveal in">Consejos y novedades</p>
+      <h1 class="bl-h1 display reveal in">El blog</h1>
+      <p class="bl-lead reveal in">Guías de compra, mantenimiento y todo lo que pasa en el taller. Sin postureo, lo que de verdad importa al comprar o vender una moto.</p>
+    </div>
+  </section>
+
+  <section class="wrap bl-grid-sec">
+    {entradas.length===0 ? (
+      <p class="bl-empty cond">Pronto publicaremos las primeras entradas.</p>
+    ) : (
+      <div class="bl-grid">
+        {entradas.map((e, i)=>(
+          <a class="post reveal" style={`transition-delay:${(i%3)*80}ms`} href={`/blog/${e.slug}`}>
+            <div class="post-img">
+              <img src={`/img/blog/${e.data.imagen}`} alt={e.data.titulo} loading="lazy" />
+              <span class="post-cat cond">{e.data.categoria}</span>
+            </div>
+            <div class="post-body">
+              <time class="post-fecha cond">{fmtFecha(e.data.fecha)}</time>
+              <h2 class="post-titulo head">{e.data.titulo}</h2>
+              <p class="post-resumen">{e.data.resumen}</p>
+              <span class="post-link cond">Leer más <span class="arr">→</span></span>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
+
+  <style>
+    .bl-hero{position:relative;padding:calc(74px + var(--s-9)) 0 var(--s-7);text-align:center;overflow:hidden}
+    .bl-hero-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);
+      width:min(900px,90%);height:420px;pointer-events:none;
+      background:radial-gradient(60% 70% at 50% 0%,rgba(217,122,40,.20),transparent 70%)}
+    .bl-hero .wrap{position:relative;z-index:1}
+    .bl-hero .eyebrow{margin-bottom:var(--s-5)}
+    .bl-h1{font-size:clamp(56px,10vw,120px);line-height:.9;color:var(--orange-bright);margin-bottom:var(--s-4)}
+    .bl-lead{color:var(--text-dim);font-size:var(--fs-lead);max-width:560px;margin:0 auto;line-height:1.6}
+
+    .bl-grid-sec{padding:var(--s-8) 0 var(--s-9)}
+    .bl-empty{text-align:center;color:var(--text-dim);padding:var(--s-8) 0}
+    .bl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-6)}
+    .post{display:flex;flex-direction:column;background:rgba(255,255,255,.02);
+      border:1px solid var(--line);border-radius:8px;overflow:hidden;
+      transition:transform .5s var(--ease),border-color .4s,box-shadow .5s}
+    .post:hover{transform:translateY(-8px);border-color:var(--orange);
+      box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+    .post-img{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--bg-3)}
+    .post-img img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+    .post:hover .post-img img{transform:scale(1.06)}
+    .post-cat{position:absolute;top:var(--s-4);left:var(--s-4);background:var(--orange);
+      color:#150f0b;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+      padding:5px 12px;border-radius:2px}
+    .post-body{padding:var(--s-5) var(--s-5) var(--s-6);display:flex;flex-direction:column;flex:1}
+    .post-fecha{font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--text-faint);margin-bottom:var(--s-3)}
+    .post-titulo{font-size:var(--fs-h3);font-weight:600;color:var(--text);line-height:1.25;
+      margin-bottom:var(--s-3)}
+    .post-resumen{color:var(--text-dim);font-size:var(--fs-small);line-height:1.65;
+      margin-bottom:var(--s-5)}
+    .post-link{margin-top:auto;font-size:12px;font-weight:600;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--orange-bright);display:inline-flex;align-items:center;
+      gap:var(--s-2);transition:gap .3s var(--ease)}
+    .post:hover .post-link{gap:var(--s-4)}
+
+    @media(max-width:860px){ .bl-grid{grid-template-columns:1fr 1fr;gap:var(--s-4)} }
+    @media(max-width:560px){ .bl-grid{grid-template-columns:1fr} }
+  </style>
+
+</Base>

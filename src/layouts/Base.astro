@@ -1,0 +1,296 @@
+---
+import '../styles/global.css';
+const { title = "Tagadona Racing", desc = "Compraventa de motos en Granada y Andalucía. Inspección, garantía y trato directo." } = Astro.props;
+const path = Astro.url.pathname;
+const isActive = (p) => p === "/" ? path === "/" : path.startsWith(p);
+const INSTAGRAM = "https://www.instagram.com/tagadonaracing/";
+const TIKTOK = "https://www.tiktok.com/@tagadona.racing";
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={desc} />
+  <title>{title}</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/favicon-180.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Germania+One&family=Poppins:wght@400;500;600;700;800&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="nav" id="nav">
+    <div class="nav-inner wrap">
+      <a href="/" class="brand-logo" id="navLogo" aria-label="Tagadona Racing — Inicio">
+        <img src="/img/logo.png" alt="Tagadona Racing" />
+      </a>
+      <nav class="nav-links">
+        <a href="/" class={isActive("/") ? "on" : ""}>Inicio</a>
+        <a href="/catalogo" class={isActive("/catalogo") || isActive("/motos") ? "on" : ""}>Catálogo</a>
+        <a href="/blog" class={isActive("/blog") ? "on" : ""}>Blog</a>
+      </nav>
+      <a href="/contacto" class="nav-cta">Contactar</a>
+      <div class="nav-social" aria-label="Redes sociales">
+        <a href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+        <a href={TIKTOK} target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16.5 3c.3 2.1 1.5 3.4 3.5 3.6v2.4c-1.2.1-2.4-.3-3.5-1v5.7c0 3.4-2.5 5.3-5.2 5.3-2.5 0-4.6-1.8-4.6-4.4 0-2.7 2.1-4.5 4.7-4.4.3 0 .5 0 .8.1v2.5c-.2-.1-.5-.1-.8-.1-1.2 0-2.2.9-2.2 2 0 1.2.9 2 2.1 2 1.3 0 2.2-.9 2.2-2.6V3h2.7z"/>
+          </svg>
+        </a>
+        <a href="/admin" class="nav-admin" aria-label="Administración" title="Acceso equipo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <rect x="5" y="11" width="14" height="10" rx="2"/>
+          <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+        </svg>
+      </a>
+      </div>
+      <button class="nav-burger" id="burger" aria-label="Menú"><span></span><span></span></button>
+
+      
+
+    </div>
+  </header>
+
+<!-- ▼▼▼ NUEVO: overlay del menú móvil ▼▼▼ -->
+      <div class="mnav" id="mnav" aria-hidden="true">
+        <nav class="mnav-links">
+          <a href="/">Inicio</a>
+          <a href="/catalogo">Catálogo</a>
+          <a href="/blog">Blog</a>
+          <a href="/contacto">Contacto</a>
+        </nav>
+        <div class="mnav-social">
+          <a href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+            </svg>
+          </a>
+          <a href={TIKTOK} target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16.5 3c.3 2.1 1.5 3.4 3.5 3.6v2.4c-1.2.1-2.4-.3-3.5-1v5.7c0 3.4-2.5 5.3-5.2 5.3-2.5 0-4.6-1.8-4.6-4.4 0-2.7 2.1-4.5 4.7-4.4.3 0 .5 0 .8.1v2.5c-.2-.1-.5-.1-.8-.1-1.2 0-2.2.9-2.2 2 0 1.2.9 2 2.1 2 1.3 0 2.2-.9 2.2-2.6V3h2.7z"/>
+            </svg>
+          </a>
+
+          <a href="/admin" class="mnav-admin" aria-label="Administración" title="Acceso equipo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="5" y="11" width="14" height="10" rx="2"/>
+              <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <!-- ▲▲▲ FIN overlay ▲▲▲ -->
+
+  <main><slot /></main>
+
+  <a class="wa-float" href="https://wa.me/34644904418" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2"/></svg>
+  </a>
+
+  <footer class="ft">
+    <div class="wrap ft-grid">
+      <div class="ft-brand">
+        <a href="/" class="ft-logo" aria-label="Tagadona Racing">
+          <img src="/img/logo.png" alt="Tagadona Racing" />
+        </a>
+        <p>Compraventa de motos en Granada y Andalucía. Más de una década ofreciendo confianza, garantía y trato personal a cada cliente.</p>
+      </div>
+      <div class="ft-col">
+        <h4 class="cond">Navegación</h4>
+        <a href="/">Inicio</a>
+        <a href="/catalogo">Catálogo</a>
+        <a href="/blog">Blog</a>
+        <a href="/contacto">Contacto</a>
+      </div>
+      <div class="ft-col">
+        <h4 class="cond">Contacto</h4>
+        <a href="tel:+34644904418">+34 644 904 418</a>
+        <a href="mailto:info@tagadonaracing.com">info@tagadonaracing.com</a>
+        <span>Granada, Andalucía</span>
+      </div>
+    </div>
+    <div class="wrap ft-bottom">
+      <span>© 2026 Tagadona Racing. Todos los derechos reservados.</span>
+      <div class="ft-social" aria-label="Redes sociales">
+        <a href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+        <a href={TIKTOK} target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16.5 3c.3 2.1 1.5 3.4 3.5 3.6v2.4c-1.2.1-2.4-.3-3.5-1v5.7c0 3.4-2.5 5.3-5.2 5.3-2.5 0-4.6-1.8-4.6-4.4 0-2.7 2.1-4.5 4.7-4.4.3 0 .5 0 .8.1v2.5c-.2-.1-.5-.1-.8-.1-1.2 0-2.2.9-2.2 2 0 1.2.9 2 2.1 2 1.3 0 2.2-.9 2.2-2.6V3h2.7z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <style>
+    .nav{position:fixed;top:0;left:0;right:0;z-index:100;
+      transition:background .4s var(--ease),border-color .4s,backdrop-filter .4s;
+      border-bottom:1px solid transparent}
+    .nav.scrolled{background:rgba(20,17,16,.86);backdrop-filter:blur(14px);
+      border-bottom-color:var(--line)}
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;
+      height:74px;gap:var(--s-6)}
+    .brand-logo{display:inline-flex;align-items:center;line-height:0;
+      transition:transform .3s var(--ease),opacity .45s var(--ease),
+        visibility .45s var(--ease);}
+    .brand-logo img{height:52px;width:auto;display:block}
+    .brand-logo:hover{transform:scale(1.04)}
+    /* En la home con hero-logo, el del nav arranca oculto y aparece tras el hero.
+       La clase 'logo-hidden' la pone/quita el JD según el scroll. */
+    .brand-logo.logo-hidden{opacity:0;visibility:hidden;transform:translateY(-8px) scale(.96)}
+    .nav-links{display:flex;gap:var(--s-7);margin-left:auto}
+    .nav-links a{font-size:var(--fs-small);font-weight:500;letter-spacing:.04em;
+      text-transform:uppercase;color:var(--text-dim);position:relative;padding:4px 0;
+      transition:color .3s}
+    .nav-links a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:2px;
+      background:var(--orange);transition:width .3s var(--ease)}
+    .nav-links a:hover,.nav-links a.on{color:var(--text)}
+    .nav-links a:hover::after,.nav-links a.on::after{width:100%}
+    .nav-cta{font-size:var(--fs-small);font-weight:600;letter-spacing:.06em;
+      text-transform:uppercase;color:var(--orange-bright);
+      border:1px solid var(--line);padding:9px 20px;border-radius:2px;
+      transition:border-color .3s,background .3s}
+    .nav-cta:hover{border-color:var(--orange);background:var(--orange-soft)}
+    .nav-burger{display:none;flex-direction:column;gap:5px;background:none;border:none;
+      cursor:pointer;padding:8px}
+    .nav-burger span{width:22px;height:2px;background:var(--text);transition:.3s}
+
+    .ft{border-top:none;padding-top:calc(var(--s-9) + var(--s-7));
+  background:transparent;position:relative;z-index:3}
+    .ft-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:var(--s-8);
+      padding-bottom:var(--s-8)}
+    .ft-logo{display:inline-block;line-height:0;margin-bottom:var(--s-4)}
+    .ft-logo img{height:90px;width:auto;display:block}
+    .ft-brand p{color:var(--text-dim);font-size:var(--fs-small);max-width:340px;line-height:1.7}
+    .ft-col h4{font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+      color:var(--text-faint);margin-bottom:var(--s-4);font-weight:500}
+    .ft-col a,.ft-col span{display:block;color:var(--text-dim);font-size:var(--fs-small);
+      margin-bottom:var(--s-3);transition:color .3s}
+    .ft-col a:hover{color:var(--orange-bright)}
+    .ft-bottom{display:flex;align-items:center;justify-content:space-between;
+      padding:var(--s-5) clamp(20px,5vw,48px);border-top:1px solid var(--line);
+      margin-top:0;font-size:13px;color:var(--text-faint)}
+    .ft-social{display:flex;gap:var(--s-4)}
+    .ft-social a{color:var(--text-dim);border:1px solid var(--line);
+      width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
+      justify-content:center;transition:border-color .3s,color .3s,transform .3s}
+    .ft-social a:hover{border-color:var(--orange);color:var(--orange-bright);transform:translateY(-2px)}
+    .ft-social svg{width:18px;height:18px}
+    /* Redes en el header */
+    .nav-social{display:flex;gap:var(--s-2);align-items:center;margin-left:var(--s-2)}
+    .nav-social a{color:var(--text-dim);width:36px;height:36px;border-radius:50%;
+      border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+      transition:border-color .3s,color .3s}
+    .nav-social a:hover{border-color:var(--orange);color:var(--orange-bright)}
+    .nav-social svg{width:16px;height:16px}
+    .nav-admin{color:var(--text-faint);width:36px;height:36px;border-radius:50%;
+      border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+      transition:border-color .3s,color .3s;opacity:.55}
+    .nav-admin:hover{border-color:var(--orange);color:var(--orange-bright);opacity:1}
+    .nav-admin svg{width:15px;height:15px}
+
+    @media(max-width:860px){
+      .nav-links,.nav-cta,.nav-social{display:none}
+      .nav-burger{display:flex}
+      .ft-grid{grid-template-columns:1fr;gap:var(--s-6)}
+      .ft-bottom{flex-direction:column;gap:var(--s-4)}
+    }
+
+    /* ===== MENÚ MÓVIL OVERLAY ===== */
+    .mnav{position:fixed;inset:0;z-index:80;background:var(--bg);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:var(--s-8);opacity:0;visibility:hidden;transform:translateY(-12px);
+      transition:opacity .4s var(--ease),transform .4s var(--ease),visibility .4s}
+    .mnav.open{opacity:1;visibility:visible;transform:none}
+    .mnav-logo{height:84px;width:auto;margin-bottom:var(--s-2);
+      opacity:0;transform:translateY(10px);transition:opacity .5s var(--ease) .04s,transform .5s var(--ease) .04s}
+    .mnav.open .mnav-logo{opacity:1;transform:none}
+    .mnav-links{display:flex;flex-direction:column;align-items:center;gap:var(--s-6)}
+    .mnav-links a{font-family:'Poppins',sans-serif;font-size:clamp(28px,8vw,40px);
+      font-weight:600;color:var(--text);letter-spacing:-.01em;position:relative;
+      opacity:0;transform:translateY(10px);transition:color .3s}
+    .mnav-links a:hover{color:var(--orange-bright)}
+    .mnav.open .mnav-links a{opacity:1;transform:none;
+      transition:opacity .5s var(--ease),transform .5s var(--ease)}
+    .mnav.open .mnav-links a:nth-child(1){transition-delay:.08s}
+    .mnav.open .mnav-links a:nth-child(2){transition-delay:.14s}
+    .mnav.open .mnav-links a:nth-child(3){transition-delay:.20s}
+    .mnav.open .mnav-links a:nth-child(4){transition-delay:.26s}
+    .mnav-social{display:flex;gap:var(--s-4);margin-top:var(--s-4)}
+    .mnav-social a{color:var(--text-dim);width:46px;height:46px;border-radius:50%;
+      border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+      transition:border-color .3s,color .3s}
+    .mnav-social a:hover{border-color:var(--orange);color:var(--orange-bright)}
+    .mnav-social svg{width:20px;height:20px}
+    /* La hamburguesa se vuelve X cuando el menú está abierto */
+    .nav-burger.open span:nth-child(1){transform:translateY(3.5px) rotate(45deg)}
+    .nav-burger.open span:nth-child(2){transform:translateY(-3.5px) rotate(-45deg)}
+    /* El nav (logo + botón) queda por encima del overlay para poder cerrar 
+    .nav{z-index:110}
+    /* Bloquear scroll del fondo cuando el menú está abierto */
+    body.mnav-lock{overflow:hidden}
+    .mnav-admin{opacity:.5}
+.mnav-admin:hover{opacity:1}
+  </style>
+
+  <script>
+    // Nav con fondo al hacer scroll
+    const nav = document.getElementById('nav');
+    const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 24);
+    onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+    // Menú móvil
+    const burger = document.getElementById('burger');
+    const mnav = document.getElementById('mnav');
+    const toggleMenu = (forceClose) => {
+      const willOpen = forceClose ? false : !mnav.classList.contains('open');
+      mnav.classList.toggle('open', willOpen);
+      burger.classList.toggle('open', willOpen);
+      document.body.classList.toggle('mnav-lock', willOpen);
+      mnav.setAttribute('aria-hidden', String(!willOpen));
+    };
+    burger?.addEventListener('click', () => toggleMenu());
+    // Al pulsar un enlace, cerrar el menú
+    mnav?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMenu(true)));
+    // Cerrar con tecla Escape
+    document.addEventListener('keydown', (e) => { if(e.key === 'Escape') toggleMenu(true); });
+
+    // Revelado al scroll (IntersectionObserver)
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }});
+    }, {threshold:.14, rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // ===== SWAP DE LOGO HERO <-> NAV (solo en la home) =====
+    // Si existe el logo del hero, el del nav arranca oculto y aparece
+    // cuando el del hero deja de verse. En otras páginas no hay heroLogo,
+    // así que el del nav queda siempre visible.
+    const navLogo = document.getElementById('navLogo');
+    const heroLogo = document.getElementById('heroLogo');
+    if(navLogo && heroLogo){
+      navLogo.classList.add('logo-hidden'); // oculto al cargar la home
+      const swapIo = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          // Cuando el logo del hero está visible -> nav oculto; cuando sale -> nav visible
+          navLogo.classList.toggle('logo-hidden', e.isIntersecting);
+          heroLogo.classList.toggle('hero-logo-faded', !e.isIntersecting);
+        });
+      }, {threshold:0, rootMargin:'-40px 0px 0px 0px'});
+      swapIo.observe(heroLogo);
+    }
+  </script>
+</body>
+</html>

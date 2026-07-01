@@ -1,0 +1,808 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Administración — Tagadona Racing">
+  <section class="adm">
+    <!-- LOGIN -->
+    <div class="adm-login" id="loginView" style="display:none">
+      <div class="adm-card">
+        <h1 class="head">Acceso equipo</h1>
+        <p class="adm-sub">Introduce tus credenciales</p>
+        <input type="email" id="email" placeholder="Email" class="adm-input" />
+        <input type="password" id="pass" placeholder="Contraseña" class="adm-input" />
+        <button id="btnLogin" class="btn btn-primary adm-btn">Entrar</button>
+        <p class="adm-error" id="loginError"></p>
+      </div>
+    </div>
+
+    <!-- PANEL -->
+    <div class="adm-panel" id="panelView" style="display:none">
+      <div class="wrap">
+        <div class="adm-top">
+          <div>
+            <p class="eyebrow">Facturación</p>
+            <h1 class="head">Panel de facturas</h1>
+          </div>
+          <button id="btnLogout" class="btn btn-ghost">Cerrar sesión</button>
+        </div>
+
+        <!-- RESUMEN -->
+        <div class="adm-resumen" id="resumen"></div>
+
+        <!-- ACCIONES + FILTROS -->
+        <div class="adm-bar">
+          <button id="btnNueva" class="btn btn-primary">+ Nueva factura</button>
+          <input type="text" id="buscar" class="adm-input adm-search" placeholder="Buscar cliente o nº…" />
+          <select id="filtroTipo" class="adm-input adm-mini-sel">
+            <option value="">Todos los tipos</option>
+            <option value="REBU">REBU</option>
+            <option value="IVA">IVA</option>
+          </select>
+          <select id="filtroPeriodo" class="adm-input adm-mini-sel">
+            <option value="">Todo el tiempo</option>
+            <option value="mes">Este mes</option>
+            <option value="trim">Este trimestre</option>
+            <option value="anio">Este año</option>
+          </select>
+        </div>
+
+        <!-- EXPORTACIÓN POR LOTES -->
+        <div class="adm-export">
+          <span class="adm-export-lbl">Exportar lo filtrado:</span>
+          <button id="btnExcel" class="adm-mini">Excel (.xlsx)</button>
+          <button id="btnZip" class="adm-mini">ZIP de PDFs</button>
+        </div>
+
+        <!-- FORMULARIO -->
+        <div class="adm-form" id="formView" style="display:none">
+          <h2 class="head" id="formTitle">Nueva factura</h2>
+          <div class="adm-form-cols">
+            <div class="adm-form-fields">
+              <input type="hidden" id="f_id" />
+              <div class="adm-grid">
+                <label>Tipo
+                  <select id="f_tipo" class="adm-input">
+                    <option value="REBU">REBU (particular)</option>
+                    <option value="IVA">Con IVA 21% (empresa)</option>
+                  </select>
+                </label>
+                <label>Fecha<input type="date" id="f_fecha" class="adm-input" /></label>
+                <label>Cliente — Nombre<input type="text" id="f_cliente_nombre" class="adm-input" /></label>
+                <label>Cliente — NIF/NIE<input type="text" id="f_cliente_nif" class="adm-input" /></label>
+                <label class="adm-full">Cliente — Dirección<input type="text" id="f_cliente_direccion" class="adm-input" /></label>
+                <label>Moto — Marca<input type="text" id="f_moto_marca" class="adm-input" /></label>
+                <label>Moto — Modelo<input type="text" id="f_moto_modelo" class="adm-input" /></label>
+                <label>Moto — Matrícula<input type="text" id="f_moto_matricula" class="adm-input" /></label>
+                <label>Moto — Bastidor<input type="text" id="f_moto_bastidor" class="adm-input" /></label>
+                <label>Importe (€)<input type="number" step="0.01" id="f_importe" class="adm-input" /></label>
+                <label>Cambio de nombre<input type="text" id="f_cambio_nombre" class="adm-input" value="INCLUIDO" /></label>
+                <label class="adm-full">Garantía<input type="text" id="f_garantia" class="adm-input" value="12 meses de motor (sin incluir piezas de desgaste)" /></label>
+                <label>Forma de pago<input type="text" id="f_forma_pago" class="adm-input" value="Transferencia bancaria" /></label>
+              </div>
+              <div class="adm-form-btns">
+                <button id="btnGuardar" class="btn btn-primary">Guardar</button>
+                <button id="btnCancelar" class="btn btn-ghost">Cancelar</button>
+              </div>
+              <p class="adm-error" id="formError"></p>
+            </div>
+            <!-- VISTA PREVIA EN VIVO -->
+            <div class="adm-preview">
+              <span class="adm-preview-lbl">Vista previa</span>
+              <div class="prev-doc" id="prevDoc"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LISTADO -->
+        <div class="adm-list">
+          <p class="adm-loading" id="listLoading">Cargando…</p>
+          <table class="adm-table" id="tabla" style="display:none">
+            <thead><tr><th>Nº</th><th>Fecha</th><th>Tipo</th><th>Cliente</th><th>Moto</th><th>Total</th><th></th></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+          <p class="adm-empty" id="listEmpty" style="display:none">No hay facturas que coincidan.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .adm{min-height:100vh;padding-top:calc(74px + var(--s-7));padding-bottom:var(--s-9)}
+    .adm-login{display:flex;align-items:center;justify-content:center;min-height:70vh}
+    .adm-card{background:var(--bg-2);border:1px solid var(--line);border-radius:10px;
+      padding:var(--s-8);width:min(400px,90vw);display:flex;flex-direction:column;gap:var(--s-4)}
+    .adm-card h1{font-size:26px;color:var(--text)}
+    .adm-sub{color:var(--text-dim);font-size:var(--fs-small);margin-bottom:var(--s-3)}
+    .adm-input{background:var(--bg);border:1px solid var(--line);border-radius:6px;
+      padding:11px 13px;color:var(--text);font-size:14px;font-family:inherit;width:100%}
+    .adm-input:focus{outline:none;border-color:var(--orange)}
+    .adm-btn{cursor:pointer}.btn{cursor:pointer;border:none;font-family:inherit}
+    .adm-error{color:#e0563b;font-size:14px;min-height:20px}
+
+    .adm-top{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s-4);
+      margin-bottom:var(--s-6);flex-wrap:wrap}
+    .adm-top h1{font-size:30px;color:var(--text)}
+
+    .adm-resumen{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-4);margin-bottom:var(--s-6)}
+    .adm-stat{background:var(--bg-2);border:1px solid var(--line);border-radius:8px;padding:var(--s-5)}
+    .adm-stat-n{font-size:24px;font-weight:700;color:var(--orange-bright);font-family:'Oswald',sans-serif}
+    .adm-stat-l{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:4px}
+
+    .adm-bar{display:flex;gap:var(--s-3);flex-wrap:wrap;align-items:center;margin-bottom:var(--s-4)}
+    .adm-search{max-width:240px}.adm-mini-sel{max-width:170px;cursor:pointer}
+    .adm-export{display:flex;gap:var(--s-3);align-items:center;margin-bottom:var(--s-6);flex-wrap:wrap}
+    .adm-export-lbl{font-size:13px;color:var(--text-faint)}
+
+    .adm-form{background:var(--bg-2);border:1px solid var(--line);border-radius:10px;
+      padding:var(--s-6);margin-bottom:var(--s-7)}
+    .adm-form h2{font-size:22px;color:var(--text);margin-bottom:var(--s-5)}
+    .adm-form-cols{display:grid;grid-template-columns:1.3fr 1fr;gap:var(--s-6)}
+    .adm-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4)}
+    .adm-grid label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text-dim)}
+    .adm-full{grid-column:1/-1}
+    .adm-form-btns{display:flex;gap:var(--s-4);margin-top:var(--s-5)}
+
+    .adm-preview{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:var(--s-5)}
+    .adm-preview-lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+    .prev-doc{margin-top:var(--s-4);background:#fff;color:#222;border-radius:4px;padding:18px;
+      font-size:11px;line-height:1.5;min-height:300px}
+    .prev-head{display:flex;justify-content:space-between;align-items:flex-start;
+      border-bottom:2px solid var(--orange);padding-bottom:8px;margin-bottom:10px}
+    .prev-fact{font-size:16px;font-weight:700;color:#1A150D}
+    .prev-num{color:var(--orange);font-weight:600}
+    .prev-sec{margin:8px 0}.prev-sec b{color:#1A150D}
+    .prev-total{background:var(--orange);color:#fff;padding:6px 10px;border-radius:3px;
+      display:flex;justify-content:space-between;font-weight:700;margin-top:8px}
+    .prev-legal{font-size:9px;color:#666;margin-top:10px;border-top:1px solid #ddd;padding-top:6px}
+
+    .adm-table{width:100%;border-collapse:collapse}
+    .adm-table th{text-align:left;font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--text-faint);padding:12px;border-bottom:1px solid var(--line)}
+    .adm-table td{padding:12px;border-bottom:1px solid var(--line-soft);color:var(--text-dim);font-size:14px}
+    .adm-table tr:hover td{background:rgba(255,255,255,.02)}
+    .adm-tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:3px}
+    .adm-tag.rebu{background:var(--orange-soft);color:var(--orange-bright)}
+    .adm-tag.iva{background:rgba(255,255,255,.08);color:var(--text)}
+
+    .adm-mini {
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  padding: 7px 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all .2s var(--ease);
+}
+
+.adm-mini:hover {
+  border-color: var(--orange);
+  color: var(--orange-bright);
+  background: rgba(217,122,40,.08);
+  transform: translateY(-1px);
+}
+
+.adm-export {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: var(--s-6);
+  flex-wrap: wrap;
+}
+
+.adm-export-lbl {
+  font-size: 13px;
+  color: var(--text-faint);
+  margin-right: 2px;
+}
+
+
+    @media(max-width:860px){
+      .adm-resumen{grid-template-columns:1fr 1fr}
+      .adm-form-cols{grid-template-columns:1fr}
+      .adm-preview{display:none}
+    }
+    @media(max-width:600px){
+      .adm-grid{grid-template-columns:1fr}
+      .adm-table th:nth-child(5),.adm-table td:nth-child(5){display:none}
+    }
+  </style>
+
+  <style is:global>
+  .adm-list {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .adm-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .adm-table th,
+  .adm-table td {
+    padding: 12px;
+    vertical-align: middle;
+  }
+
+  .adm-table th:last-child,
+  .adm-table td:last-child {
+    width: 220px !important;
+    min-width: 220px !important;
+    text-align: right;
+  }
+
+  .adm-row-btns {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 6px;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: nowrap !important;
+    white-space: nowrap;
+  }
+
+  .adm-ico {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    flex: 0 0 32px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 !important;
+    margin: 0;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-faint);
+    cursor: pointer;
+    line-height: 0;
+    box-sizing: border-box;
+    appearance: none;
+  }
+
+  .adm-ico svg {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    max-width: 16px !important;
+    display: block !important;
+    flex: 0 0 16px !important;
+    overflow: visible;
+  }
+
+  .adm-ico:hover {
+    border-color: var(--line);
+    background: rgba(255,255,255,.03);
+    color: var(--orange-bright);
+    transform: translateY(-1px);
+  }
+
+  .adm-ico.del:hover {
+    color: #e0563b;
+    border-color: rgba(224,86,59,.4);
+    background: rgba(224,86,59,.08);
+  }
+
+  .adm-table td:nth-child(5) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>
+  <script>
+    import { supabase } from '../lib/supabase.js';
+    import { descargarPDF, verPDF, pdfBlob } from '../lib/factura-pdf.js';
+
+    const $ = (id)=>document.getElementById(id);
+    let TODAS = [];   // todas las facturas cargadas
+    let VISTA = [];   // las filtradas que se ven
+
+    // Cargar librerías externas (jsPDF, SheetJS, JSZip) una sola vez
+    function cargarScript(src){ return new Promise((res,rej)=>{
+      const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s);
+    });}
+    async function cargarLibs(){
+  if(!window.jspdf) {
+    await cargarScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+  }
+
+  if(!window.JSZip) {
+    await cargarScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+  }
+
+  if(!window.ExcelJS) {
+    await cargarScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js');
+  }
+}
+
+    // ===== Sesión =====
+    async function checkSession(){
+      const { data } = await supabase.auth.getSession();
+      data.session ? mostrarPanel() : mostrarLogin();
+    }
+    function mostrarLogin(){ $('loginView').style.display='flex'; $('panelView').style.display='none'; }
+    async function mostrarPanel(){ $('loginView').style.display='none'; $('panelView').style.display='block';
+      await cargarLibs(); cargarFacturas(); }
+
+    $('btnLogin').addEventListener('click', async ()=>{
+      $('loginError').textContent='';
+      const { error } = await supabase.auth.signInWithPassword({ email:$('email').value.trim(), password:$('pass').value });
+      error ? $('loginError').textContent='Email o contraseña incorrectos.' : mostrarPanel();
+    });
+    $('btnLogout').addEventListener('click', async ()=>{ await supabase.auth.signOut(); mostrarLogin(); });
+
+    // ===== Formulario =====
+    $('btnNueva').addEventListener('click', ()=>abrirForm());
+    $('btnCancelar').addEventListener('click', ()=>{ $('formView').style.display='none'; });
+
+    const campos=['tipo','fecha','cliente_nombre','cliente_nif','cliente_direccion','moto_marca','moto_modelo','moto_matricula','moto_bastidor','importe','cambio_nombre','garantia','forma_pago'];
+    function abrirForm(f){
+      $('formView').style.display='block'; $('formError').textContent='';
+      $('formTitle').textContent = f && f.id ? 'Editar factura' : (f ? 'Duplicar factura' : 'Nueva factura');
+      $('f_id').value = (f && f.id) ? f.id : '';
+      $('f_tipo').value=f?.tipo||'REBU';
+      $('f_fecha').value=f?.fecha||new Date().toISOString().slice(0,10);
+      $('f_cliente_nombre').value=f?.cliente_nombre||'';
+      $('f_cliente_nif').value=f?.cliente_nif||'';
+      $('f_cliente_direccion').value=f?.cliente_direccion||'';
+      $('f_moto_marca').value=f?.moto_marca||'';
+      $('f_moto_modelo').value=f?.moto_modelo||'';
+      $('f_moto_matricula').value=f?.moto_matricula||'';
+      $('f_moto_bastidor').value=f?.moto_bastidor||'';
+      $('f_importe').value=f?.importe||'';
+      $('f_cambio_nombre').value=f?.cambio_nombre??'INCLUIDO';
+      $('f_garantia').value=f?.garantia??'12 meses de motor (sin incluir piezas de desgaste)';
+      $('f_forma_pago').value=f?.forma_pago??'Transferencia bancaria';
+      actualizarPreview();
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    // Vista previa en vivo
+    function leerForm(){
+      const tipo=$('f_tipo').value; const importe=parseFloat($('f_importe').value)||0;
+      return { tipo, fecha:$('f_fecha').value, cliente_nombre:$('f_cliente_nombre').value,
+        cliente_nif:$('f_cliente_nif').value, cliente_direccion:$('f_cliente_direccion').value,
+        moto_marca:$('f_moto_marca').value, moto_modelo:$('f_moto_modelo').value,
+        moto_matricula:$('f_moto_matricula').value, moto_bastidor:$('f_moto_bastidor').value,
+        importe, iva_porcentaje: tipo==='IVA'?21:0,
+        total: tipo==='IVA'? +(importe*1.21).toFixed(2):importe,
+        cambio_nombre:$('f_cambio_nombre').value, garantia:$('f_garantia').value,
+        forma_pago:$('f_forma_pago').value };
+    }
+    const eur=(n)=>Number(n||0).toLocaleString('es-ES',{minimumFractionDigits:2})+' €';
+    function actualizarPreview(){
+      const f=leerForm();
+      $('prevDoc').innerHTML=`
+        <div class="prev-head"><div><div class="prev-fact">FACTURA</div>
+          <span class="prev-num">${$('f_id').value?'(editando)':'nº automático'}</span></div>
+          <div style="text-align:right">${f.fecha.split('-').reverse().join('/')}</div></div>
+        <div class="prev-sec"><b>MARIO LÓPEZ JIMÉNEZ</b><br>C/ Pago Cerro de la Cruz, 112<br>Cogollos de la Vega – Granada<br>N.I.F: 76667180S</div>
+        <div class="prev-sec"><b>Cliente:</b> ${f.cliente_nombre||'—'}<br>${f.cliente_nif||''} ${f.cliente_direccion?'· '+f.cliente_direccion:''}</div>
+        <div class="prev-sec"><b>Vehículo:</b> ${f.moto_marca} ${f.moto_modelo}<br>
+          ${f.moto_matricula?'Matrícula: '+f.moto_matricula+'<br>':''}${f.moto_bastidor?'Bastidor: '+f.moto_bastidor+'<br>':''}
+          Cambio de nombre: ${f.cambio_nombre||'—'}</div>
+        ${f.tipo==='IVA'?`<div class="prev-sec">Base: ${eur(f.importe)} · IVA 21%: ${eur(f.importe*0.21)}</div>`:''}
+        <div class="prev-total"><span>TOTAL</span><span>${eur(f.total)}</span></div>
+        <div class="prev-legal">${f.tipo==='REBU'?'Vehículo sujeto a REBU (Art. 137 y 138 Ley 37/1992).<br>':''}
+          Garantía: ${f.garantia||'—'}<br>Forma de pago: ${f.forma_pago||'—'}</div>`;
+    }
+    campos.forEach(c=>{ const el=$('f_'+c); if(el) el.addEventListener('input',actualizarPreview); });
+
+    // Nº correlativo
+    async function siguienteNumero(tipo){
+      const p=(tipo==='REBU'?'RB':'FA')+new Date().getFullYear();
+      const { data } = await supabase.from('facturas').select('numero').like('numero',`${p}%`).order('numero',{ascending:false}).limit(1);
+      let n=1; if(data&&data.length) n=parseInt(data[0].numero.replace(p,''),10)+1;
+      return `${p}${String(n).padStart(3,'0')}`;
+    }
+
+    // Guardar
+    $('btnGuardar').addEventListener('click', async ()=>{
+      $('formError').textContent='';
+      const f=leerForm(); const id=$('f_id').value;
+      if(!f.cliente_nombre.trim()){ $('formError').textContent='El nombre del cliente es obligatorio.'; return; }
+      let error;
+      if(id){ ({error}=await supabase.from('facturas').update(f).eq('id',id)); }
+      else { f.numero=await siguienteNumero(f.tipo); ({error}=await supabase.from('facturas').insert(f)); }
+      if(error){ $('formError').textContent='Error: '+error.message; return; }
+      $('formView').style.display='none'; cargarFacturas();
+    });
+
+    // ===== Cargar y filtrar =====
+    async function cargarFacturas(){
+      $('listLoading').style.display='block'; $('tabla').style.display='none'; $('listEmpty').style.display='none';
+      const { data } = await supabase.from('facturas').select('*').order('creada_en',{ascending:false});
+      TODAS = data||[]; $('listLoading').style.display='none';
+      aplicarFiltros();
+    }
+    function enPeriodo(f, modo){
+      if(!modo) return true;
+      const d=new Date(f.fecha), now=new Date();
+      if(modo==='anio') return d.getFullYear()===now.getFullYear();
+      if(modo==='mes') return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
+      if(modo==='trim') return d.getFullYear()===now.getFullYear() && Math.floor(d.getMonth()/3)===Math.floor(now.getMonth()/3);
+      return true;
+    }
+    function aplicarFiltros(){
+      const q=$('buscar').value.toLowerCase().trim();
+      const tipo=$('filtroTipo').value, per=$('filtroPeriodo').value;
+      VISTA = TODAS.filter(f=>{
+        if(tipo && f.tipo!==tipo) return false;
+        if(!enPeriodo(f,per)) return false;
+        if(q && !(`${f.numero} ${f.cliente_nombre}`.toLowerCase().includes(q))) return false;
+        return true;
+      });
+      pintarResumen(); pintarTabla();
+    }
+    ['buscar','filtroTipo','filtroPeriodo'].forEach(id=>$(id).addEventListener('input',aplicarFiltros));
+
+    function pintarResumen(){
+      const total=VISTA.reduce((s,f)=>s+Number(f.total),0);
+      const rebu=VISTA.filter(f=>f.tipo==='REBU').length, iva=VISTA.filter(f=>f.tipo==='IVA').length;
+      $('resumen').innerHTML=`
+        <div class="adm-stat"><div class="adm-stat-n">${VISTA.length}</div><div class="adm-stat-l">Facturas</div></div>
+        <div class="adm-stat"><div class="adm-stat-n">${eur(total)}</div><div class="adm-stat-l">Total facturado</div></div>
+        <div class="adm-stat"><div class="adm-stat-n">${rebu}</div><div class="adm-stat-l">REBU</div></div>
+        <div class="adm-stat"><div class="adm-stat-n">${iva}</div><div class="adm-stat-l">Con IVA</div></div>`;
+    }
+    function pintarTabla(){
+      if(!VISTA.length){ $('tabla').style.display='none'; $('listEmpty').style.display='block'; return; }
+      $('listEmpty').style.display='none'; const tb=$('tbody'); tb.innerHTML='';
+      VISTA.forEach(f=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${f.numero}</td><td>${f.fecha.split('-').reverse().join('/')}</td>
+          <td><span class="adm-tag ${f.tipo.toLowerCase()}">${f.tipo}</span></td>
+          <td>${f.cliente_nombre}</td><td>${(f.moto_marca||'')+' '+(f.moto_modelo||'')}</td>
+          <td>${eur(f.total)}</td>
+          <td><div class="adm-row-btns">
+            <button class="adm-ico" data-ver="${f.id}" title="Ver">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+            <button class="adm-ico" data-pdf="${f.id}" title="Descargar PDF">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+            <button class="adm-ico" data-dup="${f.id}" title="Duplicar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+            <button class="adm-ico" data-edit="${f.id}" title="Editar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="adm-ico del" data-del="${f.id}" title="Borrar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+            </div></td>`;
+        tb.appendChild(tr);
+      });
+      $('tabla').style.display='table';
+      const find=(id)=>VISTA.find(x=>x.id===id);
+      tb.querySelectorAll('[data-ver]').forEach(b=>b.onclick=()=>verPDF(find(b.dataset.ver)));
+      tb.querySelectorAll('[data-pdf]').forEach(b=>b.onclick=()=>descargarPDF(find(b.dataset.pdf)));
+      tb.querySelectorAll('[data-dup]').forEach(b=>b.onclick=()=>{const c={...find(b.dataset.dup)};delete c.id;delete c.numero;abrirForm(c);});
+      tb.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>abrirForm(find(b.dataset.edit)));
+      tb.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>borrar(b.dataset.del));
+    }
+    async function borrar(id){ if(!confirm('¿Borrar esta factura?'))return; await supabase.from('facturas').delete().eq('id',id); cargarFacturas(); }
+
+    // ===== Exportar Excel profesional =====
+$('btnExcel').addEventListener('click', async () => {
+  if (!VISTA.length) {
+    alert('No hay facturas que exportar.');
+    return;
+  }
+
+  if (!window.ExcelJS) {
+    alert('No se ha podido cargar la librería de Excel. Recarga la página e inténtalo de nuevo.');
+    return;
+  }
+
+  const workbook = new ExcelJS.Workbook();
+  workbook.creator = 'Tagadona Racing';
+  workbook.created = new Date();
+
+  const ws = workbook.addWorksheet('Facturas', {
+    views: [
+      {
+        state: 'frozen',
+        ySplit: 7
+      }
+    ]
+  });
+
+  const columnas = [
+    { header: 'Nº', key: 'numero', width: 15 },
+    { header: 'Fecha', key: 'fecha', width: 14 },
+    { header: 'Tipo', key: 'tipo', width: 12 },
+    { header: 'Cliente', key: 'cliente', width: 24 },
+    { header: 'NIF/NIE', key: 'nif', width: 16 },
+    { header: 'Dirección', key: 'direccion', width: 34 },
+    { header: 'Marca', key: 'marca', width: 16 },
+    { header: 'Modelo', key: 'modelo', width: 20 },
+    { header: 'Matrícula', key: 'matricula', width: 16 },
+    { header: 'Bastidor', key: 'bastidor', width: 24 },
+    { header: 'Cambio nombre', key: 'cambio_nombre', width: 20 },
+    { header: 'Garantía', key: 'garantia', width: 38 },
+    { header: 'Forma de pago', key: 'forma_pago', width: 24 },
+    { header: 'Base imponible', key: 'base', width: 16 },
+    { header: 'IVA %', key: 'iva_pct', width: 10 },
+    { header: 'IVA €', key: 'iva_importe', width: 14 },
+    { header: 'Total', key: 'total', width: 16 }
+  ];
+
+  ws.columns = columnas.map(c => ({
+    key: c.key,
+    width: c.width
+  }));
+
+  const totalFacturado = VISTA.reduce((s, f) => s + Number(f.total || 0), 0);
+  const totalBase = VISTA.reduce((s, f) => s + Number(f.importe || 0), 0);
+  const totalIva = VISTA.reduce((s, f) => {
+    const base = Number(f.importe || 0);
+    return s + (f.tipo === 'IVA' ? base * 0.21 : 0);
+  }, 0);
+
+  const countRebu = VISTA.filter(f => f.tipo === 'REBU').length;
+  const countIva = VISTA.filter(f => f.tipo === 'IVA').length;
+
+  // ===== Cabecera superior =====
+  ws.mergeCells('A1:Q1');
+  ws.getCell('A1').value = 'TAGADONA RACING — EXPORTACIÓN DE FACTURAS';
+  ws.getCell('A1').font = {
+    name: 'Arial',
+    bold: true,
+    size: 16,
+    color: { argb: 'FFFFFFFF' }
+  };
+  ws.getCell('A1').alignment = {
+    vertical: 'middle',
+    horizontal: 'center'
+  };
+  ws.getCell('A1').fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'FF141110' }
+  };
+  ws.getRow(1).height = 30;
+
+  ws.mergeCells('A2:Q2');
+  ws.getCell('A2').value = `Generado el ${new Date().toLocaleDateString('es-ES')} · ${VISTA.length} factura(s) exportada(s)`;
+  ws.getCell('A2').font = {
+    name: 'Arial',
+    size: 11,
+    color: { argb: 'FF6E655F' }
+  };
+  ws.getCell('A2').alignment = {
+    vertical: 'middle',
+    horizontal: 'center'
+  };
+  ws.getRow(2).height = 22;
+
+  // ===== Resumen =====
+  const resumen = [
+    ['Facturas', VISTA.length],
+    ['Total facturado', totalFacturado],
+    ['REBU', countRebu],
+    ['Con IVA', countIva],
+    ['Base imponible', totalBase],
+    ['IVA repercutido', totalIva]
+  ];
+
+  let col = 1;
+  resumen.forEach(([label, value]) => {
+    const labelCell = ws.getCell(4, col);
+    const valueCell = ws.getCell(5, col);
+
+    labelCell.value = label;
+    labelCell.font = {
+      name: 'Arial',
+      size: 10,
+      bold: true,
+      color: { argb: 'FF6E655F' }
+    };
+    labelCell.alignment = {
+      horizontal: 'center'
+    };
+
+    valueCell.value = value;
+    valueCell.font = {
+      name: 'Arial',
+      size: 13,
+      bold: true,
+      color: { argb: 'FF141110' }
+    };
+    valueCell.alignment = {
+      horizontal: 'center'
+    };
+    valueCell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFF3E6D8' }
+    };
+    valueCell.border = {
+      top: { style: 'thin', color: { argb: 'FFD97A28' } },
+      left: { style: 'thin', color: { argb: 'FFD97A28' } },
+      bottom: { style: 'thin', color: { argb: 'FFD97A28' } },
+      right: { style: 'thin', color: { argb: 'FFD97A28' } }
+    };
+
+    if (['Total facturado', 'Base imponible', 'IVA repercutido'].includes(label)) {
+      valueCell.numFmt = '#,##0.00 "€"';
+    }
+
+    col += 3;
+  });
+
+  // ===== Cabecera de tabla =====
+  const headerRowNumber = 7;
+  const headerRow = ws.getRow(headerRowNumber);
+headerRow.values = columnas.map(c => c.header);
+  headerRow.height = 24;
+
+  headerRow.eachCell(cell => {
+    cell.font = {
+      name: 'Arial',
+      bold: true,
+      size: 10,
+      color: { argb: 'FFFFFFFF' }
+    };
+    cell.alignment = {
+      vertical: 'middle',
+      horizontal: 'center'
+    };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFD97A28' }
+    };
+    cell.border = {
+      top: { style: 'thin', color: { argb: 'FFB76322' } },
+      left: { style: 'thin', color: { argb: 'FFB76322' } },
+      bottom: { style: 'thin', color: { argb: 'FFB76322' } },
+      right: { style: 'thin', color: { argb: 'FFB76322' } }
+    };
+  });
+
+  // ===== Datos =====
+  VISTA.forEach(f => {
+    const base = Number(f.importe || 0);
+    const ivaPct = f.tipo === 'IVA' ? 0.21 : 0;
+    const ivaImporte = +(base * ivaPct).toFixed(2);
+    const total = Number(f.total ?? (base + ivaImporte));
+
+    const fechaExcel = f.fecha ? new Date(`${f.fecha}T00:00:00`) : null;
+
+    ws.addRow({
+      numero: f.numero || '',
+      fecha: fechaExcel,
+      tipo: f.tipo || '',
+      cliente: f.cliente_nombre || '',
+      nif: f.cliente_nif || '',
+      direccion: f.cliente_direccion || '',
+      marca: f.moto_marca || '',
+      modelo: f.moto_modelo || '',
+      matricula: f.moto_matricula || '',
+      bastidor: f.moto_bastidor || '',
+      cambio_nombre: f.cambio_nombre || '',
+      garantia: f.garantia || '',
+      forma_pago: f.forma_pago || '',
+      base,
+      iva_pct: ivaPct,
+      iva_importe: ivaImporte,
+      total
+    });
+  });
+
+  // ===== Estilo de filas =====
+  for (let i = headerRowNumber + 1; i <= ws.rowCount; i++) {
+    const row = ws.getRow(i);
+    row.height = 22;
+
+    row.eachCell((cell, colNumber) => {
+      cell.font = {
+        name: 'Arial',
+        size: 10,
+        color: { argb: 'FF1A150D' }
+      };
+
+      cell.alignment = {
+        vertical: 'middle',
+        horizontal: colNumber >= 14 ? 'right' : 'left',
+        wrapText: true
+      };
+
+      cell.border = {
+        top: { style: 'thin', color: { argb: 'FFE8E1DC' } },
+        left: { style: 'thin', color: { argb: 'FFE8E1DC' } },
+        bottom: { style: 'thin', color: { argb: 'FFE8E1DC' } },
+        right: { style: 'thin', color: { argb: 'FFE8E1DC' } }
+      };
+
+      if (i % 2 === 0) {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFFBF7F3' }
+        };
+      }
+    });
+  }
+
+  // ===== Formatos numéricos =====
+  ws.getColumn('fecha').numFmt = 'dd/mm/yyyy';
+  ws.getColumn('base').numFmt = '#,##0.00 "€"';
+  ws.getColumn('iva_pct').numFmt = '0%';
+  ws.getColumn('iva_importe').numFmt = '#,##0.00 "€"';
+  ws.getColumn('total').numFmt = '#,##0.00 "€"';
+
+  // ===== Filtro automático =====
+  ws.autoFilter = {
+  from: {
+    row: headerRowNumber,
+    column: 1
+  },
+  to: {
+    row: headerRowNumber,
+    column: columnas.length
+  }
+};
+
+  // ===== Alineaciones especiales =====
+  ['numero', 'fecha', 'tipo', 'matricula'].forEach(key => {
+    ws.getColumn(key).alignment = {
+      vertical: 'middle',
+      horizontal: 'center'
+    };
+  });
+
+  ws.getColumn('garantia').alignment = {
+    vertical: 'middle',
+    horizontal: 'left',
+    wrapText: true
+  };
+
+  ws.getColumn('direccion').alignment = {
+    vertical: 'middle',
+    horizontal: 'left',
+    wrapText: true
+  };
+
+  // ===== Descargar archivo =====
+  const buffer = await workbook.xlsx.writeBuffer();
+
+  const blob = new Blob([buffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+
+  const fechaArchivo = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `facturas_tagadona_${fechaArchivo}.xlsx`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+});
+
+    // ===== Exportar ZIP de PDFs =====
+    $('btnZip').addEventListener('click', async ()=>{
+      if(!VISTA.length){ alert('No hay facturas que exportar.'); return; }
+      const zip=new JSZip();
+      for(const f of VISTA){ const blob=await pdfBlob(f); zip.file(`${f.numero}.pdf`,blob); }
+      const contenido=await zip.generateAsync({type:'blob'});
+      const url=URL.createObjectURL(contenido); const a=document.createElement('a');
+      a.href=url; a.download='facturas_tagadona.zip'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    checkSession();
+  </script>
+</Base>

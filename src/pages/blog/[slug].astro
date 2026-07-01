@@ -1,0 +1,121 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths(){
+  const entradas = await getCollection('blog');
+  return entradas.map((e)=>({ params:{slug:e.slug}, props:{entrada:e} }));
+}
+const { entrada } = Astro.props;
+const { Content } = await entrada.render();
+const { titulo, fecha, imagen, categoria, resumen } = entrada.data;
+const fmtFecha = (d)=> d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+
+// Entradas relacionadas (otras 2, más recientes)
+const otras = (await getCollection('blog'))
+  .filter(e=>e.slug!==entrada.slug)
+  .sort((a,b)=>b.data.fecha.getTime()-a.data.fecha.getTime())
+  .slice(0,2);
+---
+<Base title={`${titulo} — Tagadona Racing`} desc={resumen}>
+
+  <article class="art">
+    <header class="art-head wrap-narrow">
+      <nav class="crumb cond"><a href="/">Inicio</a><span>/</span><a href="/blog">Blog</a><span>/</span><em>{categoria}</em></nav>
+      <span class="art-cat cond">{categoria}</span>
+      <h1 class="art-titulo display">{titulo}</h1>
+      <time class="art-fecha cond">{fmtFecha(fecha)}</time>
+    </header>
+
+    <div class="art-img wrap">
+      <img src={`/img/blog/${imagen}`} alt={titulo} />
+    </div>
+
+    <div class="art-body wrap-narrow">
+      <Content />
+    </div>
+
+    <footer class="art-foot wrap-narrow">
+      <a href="/blog" class="link-arrow cond">← Volver al blog</a>
+    </footer>
+  </article>
+
+  {otras.length>0 && (
+    <section class="art-mas div-soft">
+      <div class="wrap">
+        <h2 class="sec-title art-mas-tit">Sigue leyendo</h2>
+        <div class="art-mas-grid">
+          {otras.map((e)=>(
+            <a class="post-mini" href={`/blog/${e.slug}`}>
+              <div class="post-mini-img"><img src={`/img/blog/${e.data.imagen}`} alt={e.data.titulo} loading="lazy" /></div>
+              <div>
+                <span class="post-mini-cat cond">{e.data.categoria}</span>
+                <h3 class="head">{e.data.titulo}</h3>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <style>
+    .art-head{padding-top:calc(74px + var(--s-7));text-align:center}
+    .crumb{display:flex;align-items:center;justify-content:center;gap:var(--s-3);
+      font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);
+      margin-bottom:var(--s-6)}
+    .crumb a{color:var(--text-dim)}.crumb a:hover{color:var(--orange-bright)}
+    .crumb em{font-style:normal;color:var(--orange-bright)}.crumb span{opacity:.4}
+    .art-cat{display:inline-block;background:var(--orange);color:#150f0b;font-size:11px;
+      font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;
+      border-radius:2px;margin-bottom:var(--s-5)}
+    .art-titulo{font-size:clamp(34px,5vw,60px);line-height:1.05;color:var(--text);
+      max-width:880px;margin:0 auto var(--s-4)}
+    .art-fecha{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint)}
+
+    .art-img{margin:var(--s-8) auto}
+    .art-img img{width:100%;max-height:520px;object-fit:cover;border-radius:10px;
+      border:1px solid var(--line)}
+
+    /* Tipografía del cuerpo del artículo (lo que sale del Markdown) */
+    .art-body{font-size:var(--fs-lead);line-height:1.85;color:var(--text-dim);
+      padding-bottom:var(--s-8)}
+    .art-body :global(h2){font-family:'Poppins',sans-serif;font-weight:700;
+      font-size:clamp(24px,3vw,32px);color:var(--text);line-height:1.2;
+      margin:var(--s-8) 0 var(--s-4)}
+    .art-body :global(h3){font-family:'Poppins',sans-serif;font-weight:600;
+      font-size:var(--fs-h3);color:var(--text);margin:var(--s-6) 0 var(--s-3)}
+    .art-body :global(p){margin-bottom:var(--s-5)}
+    .art-body :global(strong){color:var(--text);font-weight:600}
+    .art-body :global(a){color:var(--orange-bright);text-decoration:underline;
+      text-underline-offset:3px}
+    .art-body :global(ul),.art-body :global(ol){margin:0 0 var(--s-5) var(--s-5);
+      display:flex;flex-direction:column;gap:var(--s-2)}
+    .art-body :global(li){padding-left:var(--s-2)}
+    .art-body :global(blockquote){border-left:3px solid var(--orange);
+      padding-left:var(--s-5);margin:var(--s-6) 0;color:var(--text);font-style:italic}
+    .art-body :global(img){width:100%;border-radius:8px;margin:var(--s-6) 0}
+
+    .art-foot{padding-bottom:var(--s-9)}
+    .link-arrow{display:inline-flex;align-items:center;gap:var(--s-2);font-size:var(--fs-small);
+      font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--orange-bright);
+      transition:gap .3s var(--ease)}
+    .link-arrow:hover{gap:var(--s-4)}
+
+    .art-mas{padding:var(--s-9) 0}
+    .art-mas-tit{text-align:center;margin-bottom:var(--s-7)}
+    .art-mas-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-5);max-width:880px;margin:0 auto}
+    .post-mini{display:flex;gap:var(--s-4);align-items:center;background:rgba(255,255,255,.02);
+      border:1px solid var(--line);border-radius:8px;padding:var(--s-3);
+      transition:transform .4s var(--ease),border-color .4s}
+    .post-mini:hover{transform:translateY(-4px);border-color:var(--orange)}
+    .post-mini-img{flex:none;width:96px;height:96px;border-radius:6px;overflow:hidden}
+    .post-mini-img img{width:100%;height:100%;object-fit:cover}
+    .post-mini-cat{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+      color:var(--orange-bright);display:block;margin-bottom:var(--s-2)}
+    .post-mini h3{font-size:15px;font-weight:600;color:var(--text);line-height:1.3}
+
+    @media(max-width:720px){ .art-mas-grid{grid-template-columns:1fr} }
+  </style>
+
+</Base>

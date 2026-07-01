@@ -1,0 +1,461 @@
+---
+import Base from '../layouts/Base.astro';
+import { resenas } from '../data/resenas.js';
+import { motos, formatPrecio, formatKm } from '../data/motos.js';
+
+const citas = [
+  { texto: "El servicio al cliente no debería ser un departamento, debería ser toda la empresa.", autor: "Tony Hsieh" },
+  { texto: "Hagas lo que hagas, hazlo tan bien que quieran volver y traer a sus amigos.", autor: "Walt Disney" },
+  { texto: "Solo hay un jefe: el cliente. Y puede despedir a todos, simplemente gastando su dinero en otra parte.", autor: "Sam Walton" },
+];
+
+const marcas = ["yamaha","honda","kawasaki","suzuki","ktm","bmw","ducati","triumph","aprilia","husqvarna"];
+
+// Últimas incorporaciones: destacadas primero, máx 3
+const destacadas = [...motos].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).slice(0,3);
+---
+<Base title="Tagadona Racing — Compraventa de motos en Granada">
+
+  <!-- ════════ HERO ════════ -->
+  <section class="hero">
+    <div class="hero-media">
+      <img src="/img/hero-taller.jpg" alt="Taller Tagadona Racing" />
+      <div class="hero-grad"></div>
+    </div>
+    <div class="hero-inner wrap">
+      <img src="/img/logo.png" alt="Tagadona Racing" id="heroLogo" class="hero-logo reveal" />
+      <p class="eyebrow center hero-eb reveal d1">Confianza · Calidad · Asesoramiento</p>
+      <h1 class="hero-title display reveal d1">Tagadona Racing</h1>
+      <p class="hero-sub reveal d2">Motos verificadas, listas para rodar.<br/>Más de diez años en Granada y Andalucía.</p>
+      <div class="hero-actions reveal d3">
+        <a href="/catalogo" class="btn btn-primary">Ver catálogo <span class="arr">→</span></a>
+        <a href="/contacto" class="btn btn-ghost">Vender mi moto</a>
+      </div>
+    </div>
+    <a href="#marcas" class="hero-scroll" aria-label="Bajar"><span class="hero-scroll-line"></span></a>
+  </section>
+
+  <!-- ════════ FRANJA DE MARCAS (marquee) ════════ -->
+  <section class="marcas" id="marcas" aria-label="Marcas con las que trabajamos">
+    <p class="marcas-label cond">Trabajamos con todas las marcas</p>
+    <div class="marquee" role="presentation">
+      <div class="marquee-track">
+        {[...marcas, ...marcas].map((m)=>(
+          <span class="marca"><img src={`/img/marcas/${m}.png`} alt={m} loading="lazy" /></span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ VALORES ════════ -->
+  <section class="valores tex-lines">
+    <div class="wrap valores-grid">
+      <div class="valor reveal">
+        <span class="valor-num cond">01</span>
+        <h3 class="head">Garantía real</h3>
+        <p>Revisamos cada vehículo punto por punto. Solo vendemos lo que cumple con nuestro estándar de calidad.</p>
+      </div>
+      <div class="valor reveal d1">
+        <span class="valor-num cond">02</span>
+        <h3 class="head">Inspección propia</h3>
+        <p>Cada moto pasa por nuestro taller antes de publicarse. Sin sorpresas: lo que ves es lo que te llevas.</p>
+      </div>
+      <div class="valor reveal d2">
+        <span class="valor-num cond">03</span>
+        <h3 class="head">Trato directo</h3>
+        <p>Sin intermediarios. Hablamos claro y te asesoramos en lo que necesites, sin compromiso.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ ÚLTIMAS INCORPORACIONES ════════ -->
+  <section class="ultimas tex-lines">
+    <div class="wrap">
+      <div class="ultimas-head reveal">
+        <div>
+          <p class="eyebrow">Recién llegadas</p>
+          <h2 class="sec-title">Últimas incorporaciones</h2>
+        </div>
+        <a href="/catalogo" class="link-arrow cond">Ver todo el catálogo <span class="arr">→</span></a>
+      </div>
+      <div class="ultimas-grid">
+        {destacadas.map((m, idx)=>(
+          <a class="umoto reveal" style={`transition-delay:${idx*80}ms`} href={`/motos/${m.slug}`}>
+            <div class="umoto-img">
+              <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo}`} loading="lazy" />
+              {m.estado!=="Disponible" && <span class="umoto-badge">{m.estado}</span>}
+            </div>
+            <div class="umoto-info">
+              <span class="umoto-cat cond">{m.categoria}</span>
+              <h3 class="head">{m.marca} <span>{m.modelo}</span></h3>
+              <div class="umoto-bot">
+                <span class="umoto-meta cond">{m.anio} · {formatKm(m.km)}</span>
+                <span class="umoto-price cond">{formatPrecio(m.precio)}</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ QUIÉNES SOMOS (sin foto de taller) ════════ -->
+  <section class="quienes tex-glow">
+    <div class="wrap quienes-grid">
+      <div class="quienes-mark reveal">
+        <span class="quienes-seal cond" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3">
+            <path d="M24 4l5 3 6-1 2 6 5 4-2 6 2 6-5 4-2 6-6-1-5 3-5-3-6 1-2-6-5-4 2-6-2-6 5-4 2-6 6 1z"/>
+            <path d="M17 24l5 5 9-10" stroke="var(--orange-bright)" stroke-width="1.8"/>
+          </svg>
+          Sello de calidad
+        </span>
+        <span class="quienes-num display">+10</span>
+        <span class="quienes-num-lbl cond">años en el sector</span>
+        <div class="quienes-divider"></div>
+        <div class="quienes-mini">
+          <div><span class="mini-n cond">100%</span><span class="mini-l cond">motos inspeccionadas</span></div>
+          <div><span class="mini-n cond">Granada</span><span class="mini-l cond">y toda Andalucía</span></div>
+        </div>
+      </div>
+      <div class="quienes-body reveal d1">
+        <p class="eyebrow">Quiénes somos</p>
+        <h2 class="sec-title">Una compraventa<br/><em>hecha de oficio</em></h2>
+        <p>Trabajamos en Granada y zonas cercanas de Andalucía, siempre con un enfoque personal y transparente. Aquí no hay letra pequeña ni prisas: cada cliente se lleva exactamente lo que espera.</p>
+        <p>Revisamos cada vehículo que entra y solo vendemos lo que nosotros mismos compraríamos. Si buscas comprar con tranquilidad o vender sin complicaciones, estás en el sitio adecuado. Nuestro sello de calidad te lo garantiza.</p>
+        <a href="/catalogo" class="link-arrow cond">Ver nuestras motos <span class="arr">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ SERVICIOS (3 tarjetas) ════════ -->
+  <section class="servicios panel-soft div-soft">
+    <div class="wrap">
+      <div class="servicios-head reveal">
+        <p class="eyebrow">Lo que hacemos</p>
+        <h2 class="sec-title">Servicios</h2>
+      </div>
+      <div class="servicios-grid">
+        <article class="serv-card reveal">
+          <div class="serv-img"><img src="/img/servicio-llaves.jpg" alt="Compra de vehículos" loading="lazy" /></div>
+          <div class="serv-body">
+            <h3 class="head">Compra de vehículos</h3>
+            <p>Compramos valorando cada detalle. Te asesoramos, resolvemos tus dudas y te damos un precio justo cuando estés listo.</p>
+          </div>
+        </article>
+        <article class="serv-card reveal d1">
+          <div class="serv-img"><img src="/img/servicio-taller.jpg" alt="Venta con garantía" loading="lazy" /></div>
+          <div class="serv-body">
+            <h3 class="head">Venta con garantía</h3>
+            <p>Cada moto pasa nuestra revisión antes de la venta. Garantía incluida y asesoramiento personalizado de principio a fin.</p>
+          </div>
+        </article>
+        <article class="serv-card reveal d2">
+  <div class="serv-img"><img src="/img/servicio-transferencia.png" alt="Gestión de transferencia" loading="lazy" /></div>
+  <div class="serv-body">
+    <h3 class="head">Gestión de transferencia</h3>
+    <p>Nos ocupamos de todo el papeleo. Tú te llevas la moto a tu nombre, sin colas ni trámites de los que preocuparte.</p>
+  </div>
+</article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ RESEÑAS (carrusel) ════════ -->
+<section class="resenas">
+  <div class="wrap resenas-head reveal">
+    <p class="eyebrow">Clientes</p>
+    <h2 class="sec-title">Lo que dicen de nosotros</h2>
+  </div>
+  <div class="resenas-marquee">
+    <div class="resenas-track">
+      {[...resenas, ...resenas].map((r)=>(
+        <figure class="resena">
+          <svg class="resena-gicon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#4285F4" d="M23 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.2a5.3 5.3 0 01-2.3 3.5v2.9h3.7C21.8 18.9 23 15.9 23 12.3z"/>
+            <path fill="#34A853" d="M12 24c3.1 0 5.7-1 7.6-2.8l-3.7-2.9c-1 .7-2.3 1.1-3.9 1.1-3 0-5.5-2-6.4-4.7H1.8v3C3.7 21.4 7.5 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.6 14.7a7.2 7.2 0 010-4.6V7.1H1.8a12 12 0 000 10.8z"/>
+            <path fill="#EA4335" d="M12 4.8c1.7 0 3.2.6 4.4 1.7l3.3-3.3C17.7 1.2 15.1 0 12 0 7.5 0 3.7 2.6 1.8 6.3l3.8 3C6.5 6.7 9 4.8 12 4.8z"/>
+          </svg>
+          <div class="resena-stars" aria-label={`${r.estrellas} de 5 estrellas`}>{"★".repeat(r.estrellas)}</div>
+          <blockquote>{r.texto}</blockquote>
+          <div class="resena-foot">
+            <span class="resena-name head">{r.nombre}</span>
+            <span class="resena-src">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#4285F4" d="M23 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.2a5.3 5.3 0 01-2.3 3.5v2.9h3.7C21.8 18.9 23 15.9 23 12.3z"/>
+                <path fill="#34A853" d="M12 24c3.1 0 5.7-1 7.6-2.8l-3.7-2.9c-1 .7-2.3 1.1-3.9 1.1-3 0-5.5-2-6.4-4.7H1.8v3C3.7 21.4 7.5 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.6 14.7a7.2 7.2 0 010-4.6V7.1H1.8a12 12 0 000 10.8z"/>
+                <path fill="#EA4335" d="M12 4.8c1.7 0 3.2.6 4.4 1.7l3.3-3.3C17.7 1.2 15.1 0 12 0 7.5 0 3.7 2.6 1.8 6.3l3.8 3C6.5 6.7 9 4.8 12 4.8z"/>
+              </svg>
+              Opinión de Google
+            </span>
+          </div>
+        </figure>
+      ))}
+    </div>
+  </div>
+  <div class="wrap resenas-cta reveal">
+    <a class="btn-resena" href="https://maps.app.goo.gl/cUE6pDvNbKgW5f9Q9" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
+      Déjanos tu opinión en Google
+    </a>
+  </div>
+</section>
+
+ <!-- ════════ CTA FINAL (con foto del teléfono de fondo) ════════ -->
+<section class="cta-final">
+  <div class="cta-media">
+    <img src="/img/cta-telefono.jpg" alt="" aria-hidden="true" />
+    <div class="cta-grad"></div>
+  </div>
+  <div class="wrap cta-inner reveal">
+    <p class="eyebrow center">¿Compras o vendes?</p>
+    <h2 class="cta-title display">Llámanos para<br/>comprar o vender</h2>
+    <p class="cta-sub">Cuéntanos qué buscas y lo localizamos por ti. Sin compromiso.</p>
+    <div class="cta-actions">
+      <a href="/contacto" class="btn btn-primary">Contacto <span class="arr">→</span></a>
+      <a href="tel:+34644904418" class="btn btn-ghost">+34 644 904 418</a>
+    </div>
+  </div>
+</section>
+
+  <style>
+    /* ===== HERO ===== */
+    .hero{position:relative;min-height:clamp(700px, 92vh, 900px);display:flex;align-items:center;
+      justify-content:center;text-align:center;overflow:hidden}
+    .hero-media{position:absolute;inset:0;z-index:0}
+    .hero-media img{width:100%;height:100%;object-fit:cover;
+      filter:grayscale(100%) contrast(1.08) brightness(.82);
+      animation:heroZoom 18s var(--ease) forwards}
+    @keyframes heroZoom{from{transform:scale(1.08)}to{transform:scale(1)}}
+    .hero-grad{position:absolute;inset:0;
+      background:radial-gradient(ellipse at center,rgba(20,17,16,.35),rgba(20,17,16,.78) 70%),
+        linear-gradient(180deg,rgba(20,17,16,.5) 0%,transparent 28%,rgba(20,17,16,.55) 78%,var(--bg) 100%)}
+    .hero-inner{position:relative;z-index:2;padding-top:74px}
+    .hero-logo{width:clamp(150px,20vw,240px);height:auto;margin:0 auto var(--s-5);
+      filter:drop-shadow(0 10px 30px rgba(0,0,0,.55));
+      transition:opacity .45s var(--ease),transform .45s var(--ease)}
+    .hero-logo.hero-logo-faded{opacity:0;transform:translateY(-10px) scale(.97)}
+    .hero-eb{color:var(--text);margin-bottom:var(--s-5);opacity:.92}
+    .hero-eb::before{background:var(--orange-bright)}
+    .hero-title{font-size:var(--fs-display);line-height:.9;color:var(--orange-bright);
+      letter-spacing:.005em;text-shadow:0 6px 40px rgba(0,0,0,.45);margin-bottom:var(--s-5)}
+    .hero-sub{font-size:var(--fs-lead);color:var(--text);font-weight:400;
+      max-width:540px;margin:0 auto var(--s-7);line-height:1.55;opacity:.92}
+.hero-actions{display:flex;gap:var(--s-4);justify-content:center;flex-wrap:wrap;
+  margin-bottom:var(--s-7)}
+      .hero-scroll{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
+  z-index:2;width:1px;height:40px;overflow:hidden}
+    .hero-scroll-line{position:absolute;inset:0;background:var(--orange-bright);
+      transform-origin:top;animation:scrollPulse 2.2s var(--ease) infinite}
+    @keyframes scrollPulse{0%{transform:scaleY(0);transform-origin:top}
+      40%{transform:scaleY(1);transform-origin:top}60%{transform:scaleY(1);transform-origin:bottom}
+      100%{transform:scaleY(0);transform-origin:bottom}}
+
+    /* ===== MARCAS (marquee) ===== */
+    .marcas{padding:var(--s-7) 0;border-bottom:1px solid var(--line-soft);
+      background:var(--bg-2);overflow:hidden}
+    .marcas-label{text-align:center;font-size:12px;font-weight:500;letter-spacing:.2em;
+      text-transform:uppercase;color:var(--text-faint);margin-bottom:var(--s-6)}
+    .marquee{position:relative;width:100%;overflow:hidden;
+      -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+      mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+    .marquee-track{display:flex;align-items:center;gap:clamp(64px,8vw,120px);width:max-content;
+      animation:marquee 48s linear infinite}
+    .marquee:hover .marquee-track{animation-play-state:paused}
+    .marca{flex:none;display:flex;align-items:center;justify-content:center}
+    .marca img{height:38px;width:auto;object-fit:contain;
+      filter:grayscale(100%) brightness(1.6) opacity(.5);transition:filter .4s}
+    .marca:hover img{filter:grayscale(100%) brightness(2) opacity(.95)}
+
+    /* ===== VALORES ===== */
+    .valores{padding:var(--s-9) 0;border-bottom:1px solid var(--line-soft)}
+    .valores-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-7)}
+    .valor{position:relative;padding-top:var(--s-6)}
+    .valor::before{content:"";position:absolute;top:0;left:0;width:40px;height:2px;background:var(--orange)}
+    .valor-num{display:block;font-size:14px;font-weight:600;letter-spacing:.2em;
+      color:var(--text-faint);margin-bottom:var(--s-4)}
+    .valor h3{font-size:var(--fs-h3);font-weight:600;color:var(--text);
+      margin-bottom:var(--s-3);letter-spacing:-.01em}
+    .valor p{color:var(--text-dim);font-size:var(--fs-small);line-height:1.75}
+
+    /* ===== ÚLTIMAS INCORPORACIONES ===== */
+    .ultimas{padding:var(--s-9) 0;border-bottom:1px solid var(--line-soft)}
+    .ultimas-head{display:flex;align-items:flex-end;justify-content:space-between;
+      gap:var(--s-5);margin-bottom:var(--s-7);flex-wrap:wrap}
+    .ultimas-head .eyebrow{margin-bottom:var(--s-3)}
+    .ultimas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-5)}
+    .umoto{display:flex;flex-direction:column;background:var(--bg-card);
+      border:1px solid var(--line);border-radius:6px;overflow:hidden;
+      transition:transform .5s var(--ease),border-color .4s,box-shadow .5s}
+    .umoto:hover{transform:translateY(-8px);border-color:var(--orange);
+      box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+    .umoto-img{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--bg-3)}
+    .umoto-img img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+    .umoto:hover .umoto-img img{transform:scale(1.07)}
+    .umoto-badge{position:absolute;top:var(--s-3);left:var(--s-3);background:#3a3330;
+      color:var(--text);font-family:'Oswald',sans-serif;font-weight:600;font-size:10px;
+      letter-spacing:.12em;text-transform:uppercase;padding:5px 11px;border-radius:2px}
+    .umoto-info{padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-2)}
+    .umoto-cat{font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+      color:var(--orange-bright)}
+    .umoto-info h3{font-size:var(--fs-h3);font-weight:600;color:var(--text);line-height:1.1}
+    .umoto-info h3 span{font-weight:400;color:var(--text-dim)}
+    .umoto-bot{display:flex;align-items:baseline;justify-content:space-between;
+      margin-top:var(--s-2);padding-top:var(--s-3);border-top:1px solid var(--line-soft)}
+    .umoto-meta{font-size:13px;color:var(--text-dim);letter-spacing:.03em}
+    .umoto-price{font-size:20px;font-weight:700;color:var(--orange-bright)}
+
+    /* ===== QUIÉNES SOMOS ===== */
+    .quienes{padding:var(--s-10) 0}
+    .quienes-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(40px,6vw,88px);
+      align-items:center}
+    .quienes-mark{background:var(--bg-2);border:1px solid var(--line);border-radius:6px;
+      padding:clamp(32px,4vw,52px);text-align:left}
+    .quienes-num{display:block;font-size:clamp(72px,9vw,112px);line-height:.85;
+      color:var(--orange-bright)}
+    .quienes-seal{display:inline-flex;align-items:center;gap:var(--s-2);
+      font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+      color:var(--text-dim);margin-bottom:var(--s-5)}
+    .quienes-seal svg{width:30px;height:30px;color:var(--orange);flex:none}
+    .quienes-num-lbl{display:block;font-size:13px;font-weight:600;letter-spacing:.18em;
+      text-transform:uppercase;color:var(--text-dim);margin-top:var(--s-3)}
+    .quienes-divider{height:1px;background:var(--line);margin:var(--s-6) 0}
+    .quienes-mini{display:flex;flex-direction:column;gap:var(--s-4)}
+    .mini-n{display:block;font-size:24px;font-weight:600;color:var(--text);line-height:1}
+    .mini-l{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--text-faint);margin-top:2px}
+    .quienes-body .eyebrow{margin-bottom:var(--s-4)}
+    .quienes-body h2{margin-bottom:var(--s-5)}
+    .quienes-body h2 em{font-style:normal;color:var(--orange-bright)}
+    .quienes-body p{color:var(--text-dim);margin-bottom:var(--s-4);line-height:1.8}
+    .link-arrow{display:inline-flex;align-items:center;gap:var(--s-2);
+      font-size:var(--fs-small);font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--orange-bright);margin-top:var(--s-3);transition:gap .3s var(--ease)}
+    .link-arrow:hover{gap:var(--s-4)}
+
+    /* ===== SERVICIOS ===== */
+    .servicios{padding:var(--s-9) 0;
+      border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+    .servicios-head{margin-bottom:var(--s-8)}
+    .servicios-head .eyebrow{margin-bottom:var(--s-4)}
+    .servicios-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-5)}
+    .serv-card{background:var(--bg-card);border:1px solid var(--line);border-radius:5px;
+      overflow:hidden;transition:transform .5s var(--ease),border-color .4s;display:flex;flex-direction:column}
+    .serv-card:hover{transform:translateY(-6px);border-color:var(--orange)}
+    .serv-img{overflow:hidden;aspect-ratio:16/10}
+    .serv-img img{width:100%;height:100%;object-fit:cover;
+      filter:grayscale(100%);transition:transform .7s var(--ease),filter .5s}
+    .serv-card:hover .serv-img img{transform:scale(1.06);filter:grayscale(35%)}
+    .serv-icon{aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,var(--bg-3),var(--bg-2));color:var(--text-dim)}
+    .serv-icon svg{width:62px;height:62px}
+    .serv-body{padding:var(--s-6)}
+    .serv-body h3{font-size:var(--fs-h3);font-weight:600;color:var(--text);
+      margin-bottom:var(--s-3);text-transform:uppercase;letter-spacing:.01em}
+    .serv-body p{color:var(--text-dim);font-size:var(--fs-small);line-height:1.7}
+
+    /* ===== RESEÑAS (carrusel) ===== */
+    .resenas{padding:var(--s-9) 0;overflow:hidden}
+    .resenas-head{text-align:center;margin-bottom:var(--s-8)}
+    .resenas-head .eyebrow{margin-bottom:var(--s-4);justify-content:center}
+    .resenas-head .eyebrow::before{display:none}
+    .resenas-marquee{position:relative;width:100%;overflow:hidden;
+      -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+      mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+    .resenas-track{display:flex;gap:var(--s-5);width:max-content;
+      animation:resenasMarquee 60s linear infinite}
+    .resenas-marquee:hover .resenas-track{animation-play-state:paused}
+    @keyframes resenasMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    .resena{flex:none;width:clamp(280px,80vw,340px);background:rgba(255,255,255,.02);
+      border:1px solid var(--line);border-radius:8px;padding:var(--s-6);
+      display:flex;flex-direction:column;gap:var(--s-4);position:relative}
+    .resena-gicon{position:absolute;top:var(--s-5);right:var(--s-5);width:20px;height:20px;opacity:.9}
+    .resena-stars{color:var(--orange-bright);font-size:15px;letter-spacing:2px}
+    .resena blockquote{color:var(--text);font-size:var(--fs-small);line-height:1.7;flex:1}
+    .resena-foot{padding-top:var(--s-4);border-top:1px solid var(--line);
+      display:flex;flex-direction:column;gap:3px}
+    .resena-name{font-size:14px;font-weight:600;color:var(--text)}
+    .resena-src{display:flex;align-items:center;gap:6px;font-size:11px;
+      color:var(--text-faint);letter-spacing:.04em}
+    .resena-src svg{width:13px;height:13px}
+    .resenas-cta{text-align:center;margin-top:var(--s-8)}
+    .btn-resena{display:inline-flex;align-items:center;gap:10px;background:var(--orange);
+      color:#150f0b;font-weight:600;font-size:var(--fs-small);letter-spacing:.02em;
+      padding:14px 28px;border-radius:3px;transition:transform .3s var(--ease)}
+    .btn-resena:hover{transform:translateY(-2px)}
+    .btn-resena svg{width:18px;height:18px}
+    @media(prefers-reduced-motion:reduce){.resenas-track{animation:none}}
+
+    /* ===== CITAS ===== */
+    .quotes{padding:var(--s-10) 0;position:relative}
+    .quotes-inner{position:relative;text-align:center}
+    .quotes-mark{position:absolute;top:-48px;left:50%;transform:translateX(-50%);
+      font-size:160px;line-height:1;color:var(--orange);opacity:.16;pointer-events:none}
+    .quotes-track{position:relative;min-height:200px;display:grid}
+    .quote{grid-area:1/1;opacity:0;transform:translateY(16px);pointer-events:none;
+      transition:opacity .6s var(--ease),transform .6s var(--ease);
+      display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .quote.active{opacity:1;transform:none;pointer-events:auto}
+    .quote blockquote{font-size:clamp(20px,2.4vw,30px);font-weight:600;line-height:1.4;
+      color:var(--text);max-width:760px;letter-spacing:-.01em}
+    .quote figcaption{margin-top:var(--s-5);font-size:13px;font-weight:600;
+      letter-spacing:.22em;text-transform:uppercase;color:var(--orange-bright)}
+    .quotes-dots{display:flex;gap:var(--s-3);justify-content:center;margin-top:var(--s-7)}
+    .qdot{width:30px;height:3px;border:none;background:var(--line);cursor:pointer;
+      border-radius:2px;transition:background .4s,width .4s var(--ease);padding:0}
+    .qdot.on{background:var(--orange-bright);width:48px}
+
+    .cta-final{position:relative;overflow:hidden;text-align:center;
+  min-height:600px;display:flex;align-items:flex-start;justify-content:center;
+  padding:var(--s-9) 0 0;
+  margin-bottom:calc(var(--s-9) * -1);
+  margin-top:calc(var(--s-7) * -1)}
+.cta-media{position:absolute;inset:0;z-index:0}
+.cta-media img{width:100%;height:100%;object-fit:cover;object-position:center 65%;
+  filter:grayscale(100%) brightness(.52) contrast(1.05)}
+.cta-grad{position:absolute;inset:0;
+  background:linear-gradient(180deg,
+    #17120E 0%,
+    #17120E 8%,
+    rgba(23,18,14,.45) 30%,
+    rgba(23,18,14,.55) 62%,
+    #1A150D 92%,
+    #1A150D 100%)}
+.cta-inner{position:relative;z-index:2}
+.cta-inner .eyebrow{margin-bottom:var(--s-4)}
+.cta-title{font-size:clamp(40px,6.5vw,76px);line-height:.95;color:var(--orange-bright);
+  text-shadow:0 5px 30px rgba(0,0,0,.6);margin-bottom:var(--s-4)}
+.cta-sub{color:var(--text);font-size:var(--fs-lead);max-width:480px;margin:0 auto var(--s-6)}
+.cta-actions{display:flex;gap:var(--s-4);justify-content:center;flex-wrap:wrap}
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:860px){
+      .valores-grid{grid-template-columns:1fr;gap:var(--s-6)}
+      .ultimas-grid{grid-template-columns:1fr 1fr;gap:var(--s-4)}
+      .quienes-grid{grid-template-columns:1fr;gap:var(--s-7)}
+      .servicios-grid{grid-template-columns:1fr;gap:var(--s-5)}
+      .resenas-grid{grid-template-columns:1fr;gap:var(--s-4)}
+      .quotes-mark{font-size:110px;top:-30px}
+    }
+    @media(max-width:560px){ .ultimas-grid{grid-template-columns:1fr} }
+  </style>
+
+  <script>
+    const track = document.getElementById('qTrack');
+    if(track){
+      const quotes = [...track.querySelectorAll('.quote')];
+      const dots = [...document.querySelectorAll('.qdot')];
+      let i = 0, timer;
+      const go = (n) => { i=(n+quotes.length)%quotes.length;
+        quotes.forEach((q,k)=>q.classList.toggle('active',k===i));
+        dots.forEach((d,k)=>d.classList.toggle('on',k===i)); };
+      const start = () => timer=setInterval(()=>go(i+1),5500);
+      const stop = () => clearInterval(timer);
+      dots.forEach(d=>d.addEventListener('click',()=>{stop();go(+d.dataset.i);start();}));
+      if(!matchMedia('(prefers-reduced-motion:reduce)').matches) start();
+    }
+  </script>
+
+</Base>

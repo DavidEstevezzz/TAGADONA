@@ -1,0 +1,278 @@
+---
+import Base from '../layouts/Base.astro';
+import { motos, formatPrecio, formatKm } from '../data/motos.js';
+const activas = motos.filter(m=>m.estado!=="Vendida").sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0));
+const vendidas = motos.filter(m=>m.estado==="Vendida");
+const total = motos.filter(m=>m.estado==="Disponible").length;
+const tipos = [...new Set(activas.map(m=>m.categoria.split(" · ")[0].trim()))];
+const carnets = [...new Set(activas.map(m=>m.carnet.replace(/\s*\(.*\)/,"").trim()))];
+const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservada" : "";
+---
+<Base title="Catálogo — Tagadona Racing">
+
+  <!-- Banner -->
+  <section class="cat-hero">
+    <div class="cat-hero-glow" aria-hidden="true"></div>
+    <div class="wrap cat-hero-inner">
+      <p class="eyebrow center reveal in">Confianza · Calidad · Asesoramiento</p>
+      <h1 class="cat-h1 display reveal in">Nuestras motos</h1>
+      <p class="cat-lead reveal in">Cada moto pasa una inspección completa antes de publicarse. Compra con garantía y sin sorpresas.</p>
+      <div class="cat-stats reveal in">
+        <div class="cat-stat"><span class="cat-stat-n cond">{total}</span><span class="cat-stat-l cond">disponibles</span></div>
+        <span class="cat-stat-div"></span>
+        <div class="cat-stat"><span class="cat-stat-n cond">100%</span><span class="cat-stat-l cond">inspeccionadas</span></div>
+        <span class="cat-stat-div"></span>
+        <div class="cat-stat"><span class="cat-stat-n cond">Garantía</span><span class="cat-stat-l cond">incluida</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filtros -->
+  <div class="filtros" id="filtros">
+    <div class="wrap filtros-inner">
+      <div class="fil-group">
+        <span class="fil-lbl cond">Tipo</span>
+        <button class="chip on" data-fil="tipo" data-val="">Todas</button>
+        {tipos.map(t=><button class="chip" data-fil="tipo" data-val={t}>{t}</button>)}
+      </div>
+      <div class="fil-group">
+        <span class="fil-lbl cond">Carnet</span>
+        <button class="chip on" data-fil="carnet" data-val="">Todos</button>
+        {carnets.map(c=><button class="chip" data-fil="carnet" data-val={c}>{c}</button>)}
+      </div>
+      <div class="fil-group fil-precio">
+        <span class="fil-lbl cond">Precio máx.</span>
+        <input type="range" id="precioMax" min="1000" max="10000" step="500" value="10000" />
+        <span class="fil-precio-val cond" id="precioVal">Sin límite</span>
+      </div>
+      <span class="fil-count cond" id="filCount">{total} motos</span>
+    </div>
+  </div>
+
+  <section class="cat-grid-sec">
+    <div class="wrap cat-grid" id="catGrid">
+      {activas.map((m, idx) => (
+        <a class="moto-card reveal"
+           data-tipo={m.categoria.split(" · ")[0].trim()}
+           data-carnet={m.carnet.replace(/\s*\(.*\)/,"").trim()}
+           data-precio={m.precio}
+           style={`transition-delay:${(idx%3)*80}ms`} href={`/motos/${m.slug}`}>
+          <div class="moto-img">
+            <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo}`} loading="lazy" />
+            {m.estado!=="Disponible" && <span class={"moto-estado " + slugEstado(m.estado)}>{m.estado}</span>}
+            <span class="moto-carnet cond">Carnet {m.carnet.replace(/\s*\(.*\)/,"").trim()}</span>
+            <span class="moto-cat cond">{m.categoria}</span>
+          </div>
+          <div class="moto-info">
+            <div class="moto-top">
+              <h3 class="head">{m.marca} <span>{m.modelo}</span></h3>
+              <span class="moto-price cond">{formatPrecio(m.precio)}</span>
+            </div>
+            <div class="moto-meta cond">
+              <span>{m.anio}</span><i></i><span>{formatKm(m.km)}</span><i></i><span>{m.cilindrada}</span>
+            </div>
+            <span class="moto-link cond">Ver ficha <span class="arr">→</span></span>
+          </div>
+        </a>
+      ))}
+    </div>
+    <p class="cat-empty cond" id="catEmpty" hidden>No hay motos que coincidan con el filtro. <button id="filReset">Quitar filtros</button></p>
+  </section>
+
+  {vendidas.length>0 && (
+    <section class="vendidas-sec div-soft">
+      <div class="wrap">
+        <div class="vendidas-head reveal">
+          <p class="eyebrow">Prueba de que funciona</p>
+          <h2 class="sec-title">Vendidas recientemente</h2>
+          <p class="vendidas-lead">Motos que ya encontraron dueño. La rotación es constante: si te interesa algo parecido, dínoslo y te lo localizamos.</p>
+        </div>
+        <div class="cat-grid vendidas-grid">
+          {vendidas.map((m, idx) => (
+            <a class="moto-card es-vendida reveal" style={`transition-delay:${(idx%3)*80}ms`} href={`/motos/${m.slug}`}>
+              <div class="moto-img">
+                <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo}`} loading="lazy" />
+                <span class="moto-estado vendida">Vendida</span>
+                <span class="moto-carnet cond">Carnet {m.carnet.replace(/\s*\(.*\)/,"").trim()}</span>
+                <span class="moto-cat cond">{m.categoria}</span>
+              </div>
+              <div class="moto-info">
+                <div class="moto-top">
+                  <h3 class="head">{m.marca} <span>{m.modelo}</span></h3>
+                  <span class="moto-price cond">{formatPrecio(m.precio)}</span>
+                </div>
+                <div class="moto-meta cond">
+                  <span>{m.anio}</span><i></i><span>{formatKm(m.km)}</span><i></i><span>{m.cilindrada}</span>
+                </div>
+                <span class="moto-link cond">Quiero una parecida <span class="arr">→</span></span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="cat-cta div-soft panel-soft">
+    <div class="wrap-narrow reveal">
+      <h2 class="sec-title">¿No ves la que buscas?</h2>
+      <p>Dinos qué moto quieres y la localizamos por ti. Trabajamos también por encargo.</p>
+      <a href="/contacto" class="btn btn-primary">Cuéntanos qué buscas <span class="arr">→</span></a>
+    </div>
+  </section>
+
+  <style>
+    /* Banner */
+    .cat-hero{position:relative;padding:calc(74px + var(--s-9)) 0 var(--s-7);text-align:center;
+      overflow:hidden}
+    .cat-hero-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);
+      width:min(900px,90%);height:420px;pointer-events:none;
+      background:radial-gradient(60% 70% at 50% 0%,rgba(217,122,40,.22),transparent 70%)}
+    .cat-hero-inner{position:relative;z-index:1}
+    .cat-hero .eyebrow{margin-bottom:var(--s-5)}
+    .cat-h1{font-size:clamp(48px,8vw,96px);line-height:.92;color:var(--orange-bright);margin-bottom:var(--s-4)}
+    .cat-lead{color:var(--text-dim);font-size:var(--fs-lead);max-width:520px;margin:0 auto var(--s-6);line-height:1.6}
+    .cat-stats{display:inline-flex;align-items:center;gap:clamp(20px,4vw,40px);
+      border:1px solid var(--line);border-radius:100px;padding:var(--s-4) clamp(24px,4vw,40px);
+      background:rgba(255,255,255,.02)}
+    .cat-stat{display:flex;flex-direction:column;gap:2px;line-height:1}
+    .cat-stat-n{font-size:24px;font-weight:700;color:var(--orange-bright)}
+    .cat-stat-l{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint)}
+    .cat-stat-div{width:1px;height:28px;background:var(--line)}
+
+    /* Filtros */
+    .filtros{position:sticky;top:74px;z-index:40;padding:var(--s-4) 0;
+      backdrop-filter:blur(12px);background:rgba(20,17,16,.7)}
+    .filtros-inner{display:flex;align-items:center;gap:clamp(16px,3vw,36px);flex-wrap:wrap}
+    .fil-group{display:flex;align-items:center;gap:var(--s-3)}
+    .fil-lbl{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint)}
+    .chip{font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;letter-spacing:.03em;
+      color:var(--text-dim);background:transparent;border:1px solid var(--line);
+      padding:6px 14px;border-radius:100px;cursor:pointer;transition:.25s;white-space:nowrap}
+    .chip:hover{border-color:var(--orange);color:var(--text)}
+    .chip.on{background:var(--orange);color:#150f0b;border-color:var(--orange)}
+    .fil-precio{flex:1;min-width:200px}
+    #precioMax{flex:1;accent-color:var(--orange);max-width:200px}
+    .fil-precio-val{font-size:13px;color:var(--orange-bright);font-weight:600;min-width:90px}
+    .fil-count{margin-left:auto;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint)}
+
+    .cat-grid-sec{padding:var(--s-8) 0 var(--s-9)}
+    .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-6)}
+    .moto-card{display:flex;flex-direction:column;background:rgba(255,255,255,.02);
+      border:1px solid var(--line);border-radius:6px;overflow:hidden;
+      transition:transform .5s var(--ease),border-color .4s,box-shadow .5s,opacity .3s}
+    .moto-card.hide{display:none}
+    .moto-card:hover{transform:translateY(-8px);border-color:var(--orange);
+      box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+    .moto-img{position:relative;aspect-ratio:5/4;overflow:hidden;background:var(--bg-3)}
+    .moto-img img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+    .moto-card:hover .moto-img img{transform:scale(1.07)}
+    /* Badge de estado tipo semáforo */
+    .moto-estado{position:absolute;top:var(--s-4);left:var(--s-4);
+      font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;
+      letter-spacing:.14em;text-transform:uppercase;padding:8px 16px;border-radius:3px;
+      color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+    .moto-estado.reservada{background:#E0A22A;color:#1a1206}
+    .moto-estado.vendida{background:#C0392B}
+    .moto-carnet{position:absolute;top:var(--s-4);right:var(--s-4);
+      background:var(--orange);color:#150f0b;font-size:11px;font-weight:600;
+      letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:2px}
+    .moto-cat{position:absolute;bottom:var(--s-4);left:var(--s-4);
+      font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+      color:var(--text);background:rgba(20,17,16,.7);backdrop-filter:blur(6px);
+      padding:5px 12px;border-radius:2px}
+    /* Info más compacta */
+    .moto-info{padding:var(--s-4) var(--s-5) var(--s-5);display:flex;flex-direction:column;flex:1}
+    .moto-top{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3);
+      margin-bottom:var(--s-2)}
+    .moto-top h3{font-size:var(--fs-h3);font-weight:600;color:var(--text);line-height:1.1}
+    .moto-top h3 span{font-weight:400;color:var(--text-dim)}
+    .moto-price{font-size:22px;font-weight:700;color:var(--orange-bright);white-space:nowrap}
+    .moto-meta{display:flex;align-items:center;gap:var(--s-3);color:var(--text-dim);
+      font-size:13px;letter-spacing:.04em;margin-bottom:var(--s-4)}
+    .moto-meta i{width:3px;height:3px;border-radius:50%;background:var(--text-faint)}
+    .moto-link{margin-top:auto;font-size:12px;font-weight:600;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--orange-bright);display:inline-flex;
+      align-items:center;gap:var(--s-2);transition:gap .3s var(--ease)}
+    .moto-card:hover .moto-link{gap:var(--s-4)}
+    .cat-empty{text-align:center;color:var(--text-dim);padding:var(--s-8) 0;font-size:15px}
+    .cat-empty button{background:none;border:none;color:var(--orange-bright);cursor:pointer;
+      text-decoration:underline;font-size:15px}
+
+    /* Vendidas recientemente */
+    .vendidas-sec{padding:var(--s-9) 0}
+    .vendidas-head{text-align:center;margin-bottom:var(--s-7)}
+    .vendidas-head .eyebrow{justify-content:center;margin-bottom:var(--s-4)}
+    .vendidas-head .eyebrow::before{display:none}
+    .vendidas-lead{color:var(--text-dim);font-size:var(--fs-small);max-width:520px;
+      margin:var(--s-4) auto 0;line-height:1.7}
+    .vendidas-grid{margin-top:var(--s-6)}
+    .es-vendida .moto-img img{filter:grayscale(70%) brightness(.82)}
+    .es-vendida:hover .moto-img img{filter:grayscale(30%) brightness(.95)}
+    .es-vendida .moto-price{color:var(--text-faint);text-decoration:line-through;
+      text-decoration-thickness:1px}
+
+    .cat-cta{text-align:center;padding:var(--s-9) 0}
+    .cat-cta h2{margin-bottom:var(--s-4)}
+    .cat-cta p{color:var(--text-dim);font-size:var(--fs-lead);max-width:460px;margin:0 auto var(--s-6)}
+
+    @media(max-width:860px){
+      .cat-grid{grid-template-columns:1fr 1fr;gap:var(--s-4)}
+      .filtros{position:static}
+      .fil-count{display:none}
+    }
+    @media(max-width:560px){
+      .cat-grid{grid-template-columns:1fr}
+      /* Banner: menos aire arriba y stats apilados limpios */
+      .cat-hero{padding-top:calc(74px + var(--s-6))}
+      .cat-stats{flex-direction:column;gap:var(--s-4);border-radius:14px;
+        width:100%;max-width:280px;padding:var(--s-5) var(--s-6)}
+      .cat-stat{flex-direction:row;justify-content:space-between;width:100%;
+        align-items:baseline;gap:var(--s-4)}
+      .cat-stat-n{font-size:20px}
+      .cat-stat-div{display:none}
+      .cat-stat:not(:last-child){border-bottom:1px solid var(--line);padding-bottom:var(--s-4)}
+    }
+  </style>
+
+  <script>
+    const grid = document.getElementById('catGrid');
+    const cards = [...grid.querySelectorAll('.moto-card')];
+    const chips = [...document.querySelectorAll('.chip')];
+    const precio = document.getElementById('precioMax');
+    const precioVal = document.getElementById('precioVal');
+    const filCount = document.getElementById('filCount');
+    const empty = document.getElementById('catEmpty');
+    const state = { tipo:"", carnet:"", precio:Infinity };
+    const apply = () => {
+      let visibles = 0;
+      cards.forEach(c=>{
+        const okTipo = !state.tipo || c.dataset.tipo===state.tipo;
+        const okCarnet = !state.carnet || c.dataset.carnet===state.carnet;
+        const okPrecio = +c.dataset.precio <= state.precio;
+        const show = okTipo && okCarnet && okPrecio;
+        c.classList.toggle('hide', !show);
+        if(show) visibles++;
+      });
+      filCount.textContent = visibles + (visibles===1?" moto":" motos");
+      empty.hidden = visibles>0;
+    };
+    chips.forEach(ch=>ch.addEventListener('click',()=>{
+      const fil = ch.dataset.fil;
+      document.querySelectorAll(`.chip[data-fil="${fil}"]`).forEach(x=>x.classList.remove('on'));
+      ch.classList.add('on'); state[fil] = ch.dataset.val; apply();
+    }));
+    precio.addEventListener('input',()=>{
+      const v = +precio.value;
+      state.precio = v>=10000 ? Infinity : v;
+      precioVal.textContent = v>=10000 ? "Sin límite" : (v.toLocaleString('es-ES')+" €");
+      apply();
+    });
+    document.getElementById('filReset')?.addEventListener('click',()=>{
+      state.tipo=""; state.carnet=""; state.precio=Infinity;
+      chips.forEach(x=>x.classList.toggle('on', x.dataset.val===""));
+      precio.value=10000; precioVal.textContent="Sin límite"; apply();
+    });
+  </script>
+
+</Base>
