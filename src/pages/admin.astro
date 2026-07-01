@@ -604,6 +604,11 @@ import Base from '../layouts/Base.astro';
     }
     // Identificadores: mayúsculas y sin espacios (NIF, matrícula, bastidor).
     function normId(s){ return (s||'').toUpperCase().replace(/\s+/g,''); }
+    function claveTexto(s){
+      return (s||'').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+        .toUpperCase().replace(/\b(S\.?L\.?U\.?|S\.?L\.?|S\.?A\.?|C\.?B\.?)\b/g,'')
+        .replace(/[^A-Z0-9]/g,'').trim();
+    }
 
     const NORMS = {
       cliente_nombre: normNombre,
@@ -1076,7 +1081,7 @@ headerRow.values = columnas.map(c => c.header);
         $(btn).classList.toggle('is-active', k===tab);
       });
       // Los proveedores se necesitan tanto en su pestaña como en el selector de gastos.
-      if((tab==='gastos'||tab==='proveedores') && !PROV_CARGADOS){ PROV_CARGADOS=true; cargarProveedores(); }
+      if(tab==='gastos'||tab==='proveedores') asegurarProveedores();
       if(tab==='gastos' && !GASTOS_CARGADOS){ GASTOS_CARGADOS=true; cargarGastos(); }
     }
     $('tabVentas').addEventListener('click',()=>activarTab('ventas'));
@@ -1182,10 +1187,7 @@ headerRow.values = columnas.map(c => c.header);
     $('g_proveedor_id').addEventListener('change', ()=>{
       const p = PROVEEDORES.find(x=>x.id===$('g_proveedor_id').value);
       if(!p) return; // opción "manual"
-      $('g_proveedor_nombre').value = p.nombre || '';
-      $('g_proveedor_nif').value = p.nif || '';
-      if(p.forma_pago) $('g_forma_pago').value = p.forma_pago;
-      if(p.categoria) $('g_categoria').value = p.categoria;
+      aplicarProveedorAGasto(p);
     });
     // Atajo para crear un proveedor sin salir manualmente.
     $('btnProvRapido').addEventListener('click', ()=>{ activarTab('proveedores'); abrirFormProv(); });
@@ -1230,6 +1232,7 @@ headerRow.values = columnas.map(c => c.header);
           campos = parsearCamposFactura(await extraerTextoFactura(file, prog));
         }
         fill.style.width='100%';
+        await asegurarProveedores();
         const n = aplicarCamposDetectados(campos);
         if(n){
           if(metodoLectura === 'ia'){
@@ -1260,6 +1263,7 @@ headerRow.values = columnas.map(c => c.header);
       const iva=parseFloat($('g_iva_pct').value)||0;
       if(c.base==null && c.total!=null){ $('g_base').value=(c.total/(1+iva/100)).toFixed(2); }
       else if(c.total==null && c.base!=null){ recalcTotalG(); }
+      if(seleccionarProveedorDetectado(c)) n++;
       return n;
     }
     $('g_file').addEventListener('change',e=>manejarArchivo(e.target.files[0]));
@@ -1367,7 +1371,7 @@ headerRow.values = columnas.map(c => c.header);
     // ============================================================
     //  PROVEEDORES  (datos de facturación reutilizables en gastos)
     // ============================================================
-    let PROVEEDORES = [], VISTAP = [], PROV_CARGADOS = false;
+    let PROVEEDORES = [], VISTAP = [], PROV_CARGADOS = false, PROV_PROMISE = null;
 
     function esc(s){ return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
@@ -1386,6 +1390,13 @@ headerRow.values = columnas.map(c => c.header);
       sel.value=actual;
     }
 
+    function asegurarProveedores(){
+      if(PROV_CARGADOS) return PROV_PROMISE || Promise.resolve();
+      PROV_CARGADOS = true;
+      PROV_PROMISE = cargarProveedores().finally(()=>{ PROV_PROMISE = null; });
+      return PROV_PROMISE;
+    }
+
     async function cargarProveedores(){
       $('listLoadingP').style.display='block'; $('tablaP').style.display='none'; $('listEmptyP').style.display='none';
       const { data, error } = await supabase.from('proveedores').select('*').order('nombre',{ascending:true});
@@ -1397,6 +1408,32 @@ headerRow.values = columnas.map(c => c.header);
       rellenarSelectProveedores();
       aplicarFiltrosP();
     }
+
+    function aplicarProveedorAGasto(p){
+      if(!p) return false;
+      $('g_proveedor_id').value = p.id;
+      $('g_proveedor_nombre').value = p.nombre || '';
+      $('g_proveedor_nif').value = p.nif || '';
+      if(p.forma_pago) $('g_forma_pago').value = p.forma_pago;
+      if(p.categoria) $('g_categoria').value = p.categoria;
+      return true;
+    }
+
+    function seleccionarProveedorDetectado(c){
+      if(!PROVEEDORES.length) return false;
+      const nifDetectado = normId(c.proveedor_nif || $('g_proveedor_nif').value);
+      let proveedor = nifDetectado
+        ? PROVEEDORES.find(p=>normId(p.nif) === nifDetectado)
+        : null;
+      if(!proveedor){
+        const nombreDetectado = claveTexto(c.proveedor_nombre || $('g_proveedor_nombre').value);
+        if(nombreDetectado.length >= 5){
+          proveedor = PROVEEDORES.find(p=>claveTexto(p.nombre) === nombreDetectado);
+        }
+      }
+      return proveedor ? aplicarProveedorAGasto(proveedor) : false;
+    }
+
     function aplicarFiltrosP(){
       const q=$('buscarP').value.toLowerCase().trim();
       VISTAP = PROVEEDORES.filter(p=> !q || `${p.nombre||''} ${p.nif||''}`.toLowerCase().includes(q));
