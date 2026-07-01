@@ -1191,6 +1191,14 @@ headerRow.values = columnas.map(c => c.header);
     $('btnProvRapido').addEventListener('click', ()=>{ activarTab('proveedores'); abrirFormProv(); });
 
     // ----- Subida + lectura automática -----
+    function resumirErrorIA(err){
+      const raw = String(err?.message || err || 'error desconocido');
+      if(/429|quota|RESOURCE_EXHAUSTED/i.test(raw)) return 'cuota de Gemini agotada';
+      if(/GEMINI_API_KEY/i.test(raw)) return 'falta la clave GEMINI_API_KEY';
+      if(/404|not found|FunctionsHttpError/i.test(raw)) return 'función de Supabase no desplegada';
+      return raw.replace(/\s+/g,' ').slice(0,140);
+    }
+
     async function manejarArchivo(file){
       if(!file) return;
       gPendingFile=file;
@@ -1202,13 +1210,17 @@ headerRow.values = columnas.map(c => c.header);
       const esImagen=(file.type||'').startsWith('image/');
       try{
         let campos;
+        let metodoLectura = esImagen ? 'ia' : 'pdf';
+        let motivoFallback = '';
         if(esImagen){
           // Las imágenes se leen con IA (Gemini) por precisión; si la función
           // no está desplegada o falla, se recurre al OCR local del navegador.
           try{
             campos = await extraerConIA(file, prog);
           }catch(e){
-            prog({msg:'IA no disponible, usando lectura local…'});
+            motivoFallback = resumirErrorIA(e);
+            metodoLectura = 'ocr';
+            prog({msg:`IA no disponible (${motivoFallback}), usando OCR local…`});
             await cargarLibsOCR();
             campos = parsearCamposFactura(await extraerTextoFactura(file, prog));
           }
@@ -1219,9 +1231,19 @@ headerRow.values = columnas.map(c => c.header);
         }
         fill.style.width='100%';
         const n = aplicarCamposDetectados(campos);
-        msg.textContent = n
-          ? `✓ ${n} campo(s) detectado(s). Revísalos antes de guardar.`
-          : 'No se detectaron campos automáticamente. Rellénalos a mano.';
+        if(n){
+          if(metodoLectura === 'ia'){
+            msg.textContent = `✓ ${n} campo(s) detectado(s) con IA. Revísalos antes de guardar.`;
+          }else if(metodoLectura === 'ocr'){
+            msg.textContent = `✓ ${n} campo(s) detectado(s) con OCR local. IA no disponible: ${motivoFallback}. Revísalos antes de guardar.`;
+          }else{
+            msg.textContent = `✓ ${n} campo(s) detectado(s) con lectura local del PDF. Revísalos antes de guardar.`;
+          }
+        }else{
+          msg.textContent = metodoLectura === 'ocr' && motivoFallback
+            ? `IA no disponible: ${motivoFallback}. OCR local sin campos claros; rellénalos a mano.`
+            : 'No se detectaron campos automáticamente. Rellénalos a mano.';
+        }
       }catch(err){
         msg.textContent='No se pudo leer el archivo automáticamente. Rellena los campos a mano.';
       }
