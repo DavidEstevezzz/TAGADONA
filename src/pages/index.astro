@@ -14,7 +14,10 @@ const marcas = ["yamaha","honda","kawasaki","suzuki","ktm","bmw","ducati","trium
 // Últimas incorporaciones: destacadas primero, máx 3
 const destacadas = [...motos].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).slice(0,3);
 ---
-<Base title="Tagadona Racing — Compraventa de motos en Granada">
+<Base
+  title="Tagadona Racing — Compraventa de motos en Granada"
+  desc="Compraventa de motos en Granada. Motos revisadas, venta con garantía y asistencia personalizada para comprar o vender tu moto con confianza."
+>
 
   <!-- ════════ HERO ════════ -->
   <section class="hero">
@@ -24,9 +27,9 @@ const destacadas = [...motos].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).s
     </div>
     <div class="hero-inner wrap">
       <img src="/img/logo.png" alt="Tagadona Racing" id="heroLogo" class="hero-logo reveal" />
-      <p class="eyebrow center hero-eb reveal d1">Confianza · Calidad · Asesoramiento</p>
+      <p class="eyebrow center hero-eb reveal d1">Compraventa · Garantía · Asistencia en compra</p>
       <h1 class="hero-title display reveal d1">Tagadona Racing</h1>
-      <p class="hero-sub reveal d2">Motos verificadas, listas para rodar.<br/>Más de diez años en Granada y Andalucía.</p>
+      <p class="hero-sub reveal d2">Compraventa de motos en Granada con revisión propia, garantía y asistencia personalizada para comprar o vender tu moto con confianza.</p>
       <div class="hero-actions reveal d3">
         <a href="/catalogo" class="btn btn-primary">Ver catálogo <span class="arr">→</span></a>
         <a href="/contacto" class="btn btn-ghost">Vender mi moto</a>
@@ -137,10 +140,10 @@ const destacadas = [...motos].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).s
       </div>
       <div class="servicios-grid">
         <article class="serv-card reveal">
-          <div class="serv-img"><img src="/img/servicio-llaves.jpg" alt="Compra de vehículos" loading="lazy" /></div>
+          <div class="serv-img"><img src="/img/servicio-llaves.jpg" alt="Compra y asistencia de motos" loading="lazy" /></div>
           <div class="serv-body">
-            <h3 class="head">Compra de vehículos</h3>
-            <p>Compramos valorando cada detalle. Te asesoramos, resolvemos tus dudas y te damos un precio justo cuando estés listo.</p>
+            <h3 class="head">Compra y asistencia</h3>
+            <p>Compramos motos y también te acompañamos si buscas una concreta: revisamos opciones, resolvemos dudas y te ayudamos a decidir con criterio.</p>
           </div>
         </article>
         <article class="serv-card reveal d1">
