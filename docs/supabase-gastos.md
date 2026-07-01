@@ -18,6 +18,7 @@ create table if not exists public.gastos (
   id             uuid primary key default gen_random_uuid(),
   creada_en      timestamptz not null default now(),
   fecha          date,
+  venta_id       uuid references public.facturas(id) on delete set null,
   proveedor_nombre text,
   proveedor_nif  text,
   concepto       text,
@@ -48,6 +49,14 @@ ejecuta también esta migración una sola vez:
 ```sql
 alter table public.gastos
   add column if not exists lineas jsonb not null default '[]'::jsonb;
+```
+
+Para poder asociar gastos a una venta/moto y calcular rentabilidad, ejecuta
+también:
+
+```sql
+alter table public.gastos
+  add column if not exists venta_id uuid references public.facturas(id) on delete set null;
 ```
 
 ---
@@ -97,6 +106,8 @@ puedes:
 - Añadir varias líneas de concepto dentro de una misma factura de gasto
   (por ejemplo ruedas, retrovisores y portamatrículas), con una base y total
   acumulados para el gasto completo.
+- Asociar cada gasto a una venta concreta para ver la rentabilidad de esa moto
+  en la pestaña **Rentabilidad**.
 - Ver el adjunto, editar, borrar, descargar el PDF del gasto y exportar los
   gastos filtrados a Excel.
 
