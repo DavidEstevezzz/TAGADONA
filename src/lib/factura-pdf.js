@@ -586,6 +586,11 @@ export async function descargarGastoPDF(g) {
   doc.save(`gasto_${fecha}_${proveedor}.pdf`);
 }
 
+export async function gastoPdfBlob(g) {
+  const doc = await construirGastoPDF(g);
+  return doc.output('blob');
+}
+
 export async function verPDF(f) {
   const doc = await construirFacturaPDF(f);
   window.open(doc.output('bloburl'), '_blank');

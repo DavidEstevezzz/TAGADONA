@@ -30,6 +30,7 @@ import Base from '../layouts/Base.astro';
         <div class="adm-tabs" role="tablist">
           <button class="adm-tab is-active" id="tabVentas" role="tab">Ventas</button>
           <button class="adm-tab" id="tabGastos" role="tab">Gastos</button>
+          <button class="adm-tab" id="tabRentabilidad" role="tab">Rentabilidad</button>
           <button class="adm-tab" id="tabProveedores" role="tab">Proveedores</button>
         </div>
 
@@ -153,6 +154,11 @@ import Base from '../layouts/Base.astro';
 
             <div class="adm-grid">
               <input type="hidden" id="g_id" />
+              <label class="adm-full">Venta asociada
+                <select id="g_venta_id" class="adm-input">
+                  <option value="">— Sin asociar a una venta —</option>
+                </select>
+              </label>
               <label class="adm-full">Proveedor
                 <div class="adm-prov-row">
                   <select id="g_proveedor_id" class="adm-input">
@@ -199,6 +205,31 @@ import Base from '../layouts/Base.astro';
             <p class="adm-empty" id="listEmptyG" style="display:none">No hay gastos que coincidan.</p>
           </div>
         </div><!-- /viewGastos -->
+
+        <!-- ===================== RENTABILIDAD ===================== -->
+        <div id="viewRentabilidad" hidden>
+          <div class="adm-resumen" id="resumenR"></div>
+
+          <div class="adm-bar">
+            <input type="text" id="buscarR" class="adm-input adm-search" placeholder="Buscar moto, cliente o matrícula…" />
+            <select id="filtroRentabilidadR" class="adm-input adm-mini-sel">
+              <option value="">Todas las ventas</option>
+              <option value="con_gastos">Con gastos</option>
+              <option value="sin_gastos">Sin gastos</option>
+            </select>
+          </div>
+
+          <div class="adm-list">
+            <p class="adm-loading" id="listLoadingR">Cargando…</p>
+            <table class="adm-table" id="tablaR" style="display:none">
+              <thead><tr><th>Fecha</th><th>Moto</th><th>Cliente</th><th>Venta</th><th>Gastos</th><th>Margen</th><th></th></tr></thead>
+              <tbody id="tbodyR"></tbody>
+            </table>
+            <p class="adm-empty" id="listEmptyR" style="display:none">No hay ventas que coincidan.</p>
+          </div>
+
+          <div class="adm-form" id="rentDetalle" style="display:none"></div>
+        </div><!-- /viewRentabilidad -->
 
         <!-- ===================== PROVEEDORES ===================== -->
         <div id="viewProveedores" hidden>
@@ -441,6 +472,18 @@ import Base from '../layouts/Base.astro';
     .adm-line-row{grid-template-columns:minmax(0,1fr) 112px 36px}
   }
 
+  .adm-rent-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:18px;
+  }
+  .adm-rent-head h2{margin-bottom:4px}
+  .adm-rent-sub{color:var(--text-dim);font-size:13px}
+  .adm-rent-resumen{margin-bottom:20px}
+  .adm-table.adm-table-rent{min-width:760px}
+
   /* La tabla de proveedores tiene menos columnas: no necesita el ancho mínimo grande. */
   .adm-table.adm-table-prov{min-width:680px}
 
@@ -533,12 +576,13 @@ import Base from '../layouts/Base.astro';
 </style>
   <script>
     import { supabase } from '../lib/supabase.js';
-    import { descargarPDF, descargarGastoPDF, verPDF, pdfBlob } from '../lib/factura-pdf.js';
+    import { descargarPDF, descargarGastoPDF, verPDF, pdfBlob, gastoPdfBlob } from '../lib/factura-pdf.js';
     import { cargarLibsOCR, extraerTextoFactura, parsearCamposFactura, extraerConIA } from '../lib/extraer-factura.js';
 
     const $ = (id)=>document.getElementById(id);
     let TODAS = [];   // todas las facturas cargadas
     let VISTA = [];   // las filtradas que se ven
+    let RENTABILIDAD = [], VISTAR = [], rentSeleccionadaId = '';
 
     // Cargar librerías externas (jsPDF, SheetJS, JSZip) una sola vez
     function cargarScript(src){ return new Promise((res,rej)=>{
@@ -614,6 +658,19 @@ import Base from '../layouts/Base.astro';
         forma_pago:$('f_forma_pago').value };
     }
     const eur=(n)=>Number(n||0).toLocaleString('es-ES',{minimumFractionDigits:2})+' €';
+    const fechaCorta=(f)=>f ? f.split('-').reverse().join('/') : '';
+    function motoTitulo(f){
+      return `${f?.moto_marca||''} ${f?.moto_modelo||''}`.trim() || 'Moto sin modelo';
+    }
+    function ventaLabel(f){
+      if(!f) return '';
+      const mat=f.moto_matricula ? ` · ${f.moto_matricula}` : '';
+      return `${motoTitulo(f)}${mat} · ${fechaCorta(f.fecha)} · ${f.numero||'sin nº'}`;
+    }
+    function archivoSeguro(v){
+      return String(v??'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+        .replace(/[^\w\-]+/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'') || 'archivo';
+    }
     function actualizarPreview(){
       const f=leerForm();
       $('prevDoc').innerHTML=`
@@ -726,7 +783,9 @@ import Base from '../layouts/Base.astro';
       $('listLoading').style.display='block'; $('tabla').style.display='none'; $('listEmpty').style.display='none';
       const { data } = await supabase.from('facturas').select('*').order('creada_en',{ascending:false});
       TODAS = data||[]; $('listLoading').style.display='none';
+      rellenarSelectVentasG();
       aplicarFiltros();
+      pintarRentabilidad();
     }
     function enPeriodo(f, modo){
       if(!modo) return true;
@@ -1114,6 +1173,15 @@ headerRow.values = columnas.map(c => c.header);
       'Suministros','Herramientas','Servicios profesionales','Impuestos / tasas','Publicidad','Otros'];
     let GASTOS = [], VISTAG = [], GASTOS_CARGADOS = false, gPendingFile = null;
 
+    function rellenarSelectVentasG(){
+      const sel=$('g_venta_id');
+      if(!sel) return;
+      const actual=sel.value;
+      sel.innerHTML = '<option value="">— Sin asociar a una venta —</option>' +
+        TODAS.map(f=>`<option value="${f.id}">${esc(ventaLabel(f))}</option>`).join('');
+      sel.value = actual;
+    }
+
     function rellenarCategorias(){
       const opt = CATEGORIAS.map(c=>`<option value="${c}">${c}</option>`).join('');
       $('g_categoria').innerHTML = opt;
@@ -1122,7 +1190,7 @@ headerRow.values = columnas.map(c => c.header);
     rellenarCategorias();
 
     // ----- Pestañas -----
-    const VIEWS = { ventas:['viewVentas','tabVentas'], gastos:['viewGastos','tabGastos'], proveedores:['viewProveedores','tabProveedores'] };
+    const VIEWS = { ventas:['viewVentas','tabVentas'], gastos:['viewGastos','tabGastos'], rentabilidad:['viewRentabilidad','tabRentabilidad'], proveedores:['viewProveedores','tabProveedores'] };
     function activarTab(tab){
       Object.entries(VIEWS).forEach(([k,[view,btn]])=>{
         $(view).hidden = k!==tab;
@@ -1130,10 +1198,12 @@ headerRow.values = columnas.map(c => c.header);
       });
       // Los proveedores se necesitan tanto en su pestaña como en el selector de gastos.
       if(tab==='gastos'||tab==='proveedores') asegurarProveedores();
-      if(tab==='gastos' && !GASTOS_CARGADOS){ GASTOS_CARGADOS=true; cargarGastos(); }
+      if((tab==='gastos'||tab==='rentabilidad') && !GASTOS_CARGADOS){ GASTOS_CARGADOS=true; cargarGastos(); }
+      if(tab==='rentabilidad') pintarRentabilidad();
     }
     $('tabVentas').addEventListener('click',()=>activarTab('ventas'));
     $('tabGastos').addEventListener('click',()=>activarTab('gastos'));
+    $('tabRentabilidad').addEventListener('click',()=>activarTab('rentabilidad'));
     $('tabProveedores').addEventListener('click',()=>activarTab('proveedores'));
 
     // ----- Cargar y filtrar -----
@@ -1146,6 +1216,7 @@ headerRow.values = columnas.map(c => c.header);
       }
       GASTOS = data||[]; $('listLoadingG').style.display='none';
       aplicarFiltrosG();
+      pintarRentabilidad();
     }
     function aplicarFiltrosG(){
       const q=$('buscarG').value.toLowerCase().trim();
@@ -1239,6 +1310,8 @@ headerRow.values = columnas.map(c => c.header);
       $('ocrBox').hidden=true; $('ocrBarFill').style.width='0%'; gPendingFile=null;
       $('formTitleG').textContent = g && g.id ? 'Editar gasto' : 'Nuevo gasto';
       $('g_id').value = g?.id || '';
+      rellenarSelectVentasG();
+      $('g_venta_id').value = g?.venta_id || '';
       $('g_proveedor_id').value = g?.proveedor_id || '';
       $('g_fecha').value = g?.fecha || new Date().toISOString().slice(0,10);
       $('g_categoria').value = g?.categoria || CATEGORIAS[0];
@@ -1399,6 +1472,7 @@ headerRow.values = columnas.map(c => c.header);
       const g={
         fecha:$('g_fecha').value||null,
         categoria:$('g_categoria').value,
+        venta_id:$('g_venta_id').value||null,
         proveedor_id:$('g_proveedor_id').value||null,
         proveedor_nombre:normIniciales($('g_proveedor_nombre').value),
         proveedor_nif:normId($('g_proveedor_nif').value),
@@ -1471,6 +1545,157 @@ headerRow.values = columnas.map(c => c.header);
       a.href=url; a.download=`gastos_tagadona_${new Date().toISOString().slice(0,10)}.xlsx`; a.click();
       URL.revokeObjectURL(url);
     });
+
+    // ============================================================
+    //  RENTABILIDAD  (ventas agrupadas con sus gastos asociados)
+    // ============================================================
+    function gastosDeVenta(ventaId){
+      return GASTOS.filter(g=>g.venta_id===ventaId);
+    }
+    function filaRentabilidad(f){
+      const gastos = gastosDeVenta(f.id);
+      const totalVenta = Number(f.total||0);
+      const totalGastos = gastos.reduce((s,g)=>s+Number(g.total||0),0);
+      return {
+        venta:f,
+        gastos,
+        totalVenta,
+        totalGastos,
+        margen:totalVenta-totalGastos,
+      };
+    }
+    function pintarRentabilidad(){
+      if(!$('resumenR')) return;
+      RENTABILIDAD = TODAS.map(filaRentabilidad).sort((a,b)=>String(b.venta.fecha||'').localeCompare(String(a.venta.fecha||'')));
+      aplicarFiltrosR();
+    }
+    function aplicarFiltrosR(){
+      if(!$('buscarR')) return;
+      const q=$('buscarR').value.toLowerCase().trim();
+      const filtro=$('filtroRentabilidadR').value;
+      VISTAR = RENTABILIDAD.filter(r=>{
+        if(filtro==='con_gastos' && !r.gastos.length) return false;
+        if(filtro==='sin_gastos' && r.gastos.length) return false;
+        const f=r.venta;
+        const texto=`${f.numero||''} ${f.cliente_nombre||''} ${f.moto_marca||''} ${f.moto_modelo||''} ${f.moto_matricula||''} ${f.moto_bastidor||''}`.toLowerCase();
+        return !q || texto.includes(q);
+      });
+      pintarResumenR();
+      pintarTablaR();
+      if(rentSeleccionadaId && !VISTAR.some(r=>r.venta.id===rentSeleccionadaId)){
+        rentSeleccionadaId = '';
+      }
+      const seleccion = rentSeleccionadaId
+        ? VISTAR.find(r=>r.venta.id===rentSeleccionadaId)
+        : null;
+      pintarDetalleRentabilidad(seleccion);
+    }
+    ['buscarR','filtroRentabilidadR'].forEach(id=>$(id).addEventListener('input',aplicarFiltrosR));
+
+    function pintarResumenR(){
+      const totalVentas=VISTAR.reduce((s,r)=>s+r.totalVenta,0);
+      const totalGastos=VISTAR.reduce((s,r)=>s+r.totalGastos,0);
+      const margen=totalVentas-totalGastos;
+      $('resumenR').innerHTML=`
+        <div class="adm-stat"><div class="adm-stat-n">${VISTAR.length}</div><div class="adm-stat-l">Motos vendidas</div></div>
+        <div class="adm-stat"><div class="adm-stat-n">${eur(totalVentas)}</div><div class="adm-stat-l">Ventas</div></div>
+        <div class="adm-stat"><div class="adm-stat-n">${eur(totalGastos)}</div><div class="adm-stat-l">Gastos asociados</div></div>
+        <div class="adm-stat"><div class="adm-stat-n">${eur(margen)}</div><div class="adm-stat-l">Margen</div></div>`;
+    }
+    function pintarTablaR(){
+      $('listLoadingR').style.display='none';
+      if(!VISTAR.length){ $('tablaR').style.display='none'; $('listEmptyR').style.display='block'; return; }
+      $('listEmptyR').style.display='none';
+      const tb=$('tbodyR'); tb.innerHTML='';
+      VISTAR.forEach(r=>{
+        const f=r.venta;
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${fechaCorta(f.fecha)}</td>
+          <td>${esc(motoTitulo(f))}${f.moto_matricula?`<br><small>${esc(f.moto_matricula)}</small>`:''}</td>
+          <td>${esc(f.cliente_nombre)||'—'}</td>
+          <td>${eur(r.totalVenta)}</td>
+          <td>${eur(r.totalGastos)}</td>
+          <td>${eur(r.margen)}</td>
+          <td><div class="adm-row-btns">
+            <button class="adm-mini" data-rent="${f.id}">Ver</button>
+            <button class="adm-mini" data-pack="${f.id}">ZIP</button>
+          </div></td>`;
+        tb.appendChild(tr);
+      });
+      $('tablaR').style.display='table';
+      tb.querySelectorAll('[data-rent]').forEach(b=>b.onclick=()=>{
+        rentSeleccionadaId=b.dataset.rent;
+        pintarDetalleRentabilidad(VISTAR.find(r=>r.venta.id===rentSeleccionadaId));
+      });
+      tb.querySelectorAll('[data-pack]').forEach(b=>b.onclick=()=>descargarPaqueteMoto(b.dataset.pack));
+    }
+    function pintarDetalleRentabilidad(r){
+      const box=$('rentDetalle');
+      if(!r){ box.style.display='none'; box.innerHTML=''; return; }
+      const f=r.venta;
+      box.style.display='block';
+      box.innerHTML=`
+        <div class="adm-rent-head">
+          <div>
+            <h2 class="head">${esc(motoTitulo(f))}</h2>
+            <p class="adm-rent-sub">${esc(f.numero||'')} · ${fechaCorta(f.fecha)} · ${esc(f.cliente_nombre||'Sin cliente')}</p>
+          </div>
+          <button class="adm-mini" id="btnPackMoto">Exportar paquete ZIP</button>
+        </div>
+        <div class="adm-resumen adm-rent-resumen">
+          <div class="adm-stat"><div class="adm-stat-n">${eur(r.totalVenta)}</div><div class="adm-stat-l">Venta</div></div>
+          <div class="adm-stat"><div class="adm-stat-n">${eur(r.totalGastos)}</div><div class="adm-stat-l">Gastos</div></div>
+          <div class="adm-stat"><div class="adm-stat-n">${eur(r.margen)}</div><div class="adm-stat-l">Margen</div></div>
+          <div class="adm-stat"><div class="adm-stat-n">${r.gastos.length}</div><div class="adm-stat-l">Facturas gasto</div></div>
+        </div>
+        <div class="adm-list">
+          <table class="adm-table adm-table-rent">
+            <thead><tr><th>Tipo</th><th>Fecha</th><th>Concepto</th><th>Total</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="adm-tag rebu">Venta</span></td>
+                <td>${fechaCorta(f.fecha)}</td>
+                <td>${esc(ventaLabel(f))}</td>
+                <td>${eur(r.totalVenta)}</td>
+                <td><div class="adm-row-btns">
+                  <button class="adm-mini" id="btnVentaPdf">PDF</button>
+                </div></td>
+              </tr>
+              ${r.gastos.map(g=>`<tr>
+                <td><span class="adm-tag iva">Gasto</span></td>
+                <td>${fechaCorta(g.fecha)}</td>
+                <td>${esc(g.proveedor_nombre||'Proveedor')} · ${esc(conceptoResumenG(g)||'Gasto')}</td>
+                <td>${eur(g.total)}</td>
+                <td><div class="adm-row-btns">
+                  ${g.archivo_path?`<button class="adm-mini" data-adjg="${g.id}">Adjunto</button>`:''}
+                  <button class="adm-mini" data-gastopdf="${g.id}">PDF</button>
+                </div></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+      $('btnPackMoto').onclick=()=>descargarPaqueteMoto(f.id);
+      $('btnVentaPdf').onclick=()=>descargarPDF(f);
+      box.querySelectorAll('[data-gastopdf]').forEach(b=>b.onclick=()=>descargarGastoPDF(GASTOS.find(g=>g.id===b.dataset.gastopdf)));
+      box.querySelectorAll('[data-adjg]').forEach(b=>b.onclick=()=>verAdjunto(GASTOS.find(g=>g.id===b.dataset.adjg)));
+      box.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    async function descargarPaqueteMoto(ventaId){
+      const r=RENTABILIDAD.find(x=>x.venta.id===ventaId);
+      if(!r){ alert('No se encontró la venta.'); return; }
+      if(!window.JSZip){ alert('No se pudo cargar la librería ZIP. Recarga la página.'); return; }
+      const zip=new JSZip();
+      const f=r.venta;
+      const baseNombre=archivoSeguro(`${f.fecha||''}_${motoTitulo(f)}_${f.moto_matricula||f.numero||''}`);
+      zip.file(`venta_${archivoSeguro(f.numero||'factura')}.pdf`, await pdfBlob(f));
+      for(const [i,g] of r.gastos.entries()){
+        const nombre=`gasto_${String(i+1).padStart(2,'0')}_${archivoSeguro(g.proveedor_nombre||conceptoResumenG(g)||'gasto')}.pdf`;
+        zip.file(nombre, await gastoPdfBlob(g));
+      }
+      const blob=await zip.generateAsync({type:'blob'});
+      const url=URL.createObjectURL(blob); const a=document.createElement('a');
+      a.href=url; a.download=`moto_${baseNombre}.zip`; a.click(); URL.revokeObjectURL(url);
+    }
 
     // ============================================================
     //  PROVEEDORES  (datos de facturación reutilizables en gastos)
