@@ -213,17 +213,52 @@ function fileToBase64(file) {
   });
 }
 
-// Envía la factura a la Edge Function 'extraer-factura' y devuelve los campos
-// ya estructurados. Lanza error si la función no está desplegada o falla, para
-// que quien la llame pueda recurrir al OCR local.
-export async function extraerConIA(file, onProgress = () => {}) {
-  onProgress({ pct: 30, msg: 'Analizando la factura con IA…' });
-  const dataBase64 = await fileToBase64(file);
+// Reescala las imágenes grandes (fotos de móvil) antes de enviarlas: reduce el
+// tamaño del envío y mejora la fiabilidad de la lectura. Los no-imagen van tal cual.
+async function prepararArchivo(file, maxDim = 1600) {
+  if (!(file.type || '').startsWith('image/')) {
+    return { dataBase64: await fileToBase64(file), mimeType: file.type || 'application/octet-stream' };
+  }
+  try {
+    const bitmap = await createImageBitmap(file);
+    const escala = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
+    const w = Math.round(bitmap.width * escala);
+    const h = Math.round(bitmap.height * escala);
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, w, h);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+    return { dataBase64: dataUrl.split(',')[1] || '', mimeType: 'image/jpeg' };
+  } catch {
+    // Formatos que el navegador no sabe redimensionar (p. ej. HEIC): se envía crudo.
+    return { dataBase64: await fileToBase64(file), mimeType: file.type || 'image/jpeg' };
+  }
+}
 
+// Lee el motivo REAL del fallo de la Edge Function. supabase.functions.invoke
+// solo da un mensaje genérico ("non-2xx status code"); el detalle viene en el
+// cuerpo de la respuesta (error.context), que es donde la función pone {error}.
+async function motivoErrorFuncion(error) {
+  try {
+    const cuerpo = await error?.context?.json?.();
+    if (cuerpo?.error) return cuerpo.error;
+  } catch { /* sin cuerpo JSON legible */ }
+  return error?.message || 'no se pudo contactar con la función';
+}
+
+// Envía la factura a la Edge Function 'extraer-factura' y devuelve los campos
+// ya estructurados. Lanza un error DESCRIPTIVO si la función no está desplegada
+// o falla, para que quien la llame pueda recurrir al OCR local e informar.
+export async function extraerConIA(file, onProgress = () => {}) {
+  onProgress({ pct: 20, msg: 'Preparando la imagen…' });
+  const { dataBase64, mimeType } = await prepararArchivo(file);
+
+  onProgress({ pct: 45, msg: 'Analizando la factura con IA…' });
   const { data, error } = await supabase.functions.invoke('extraer-factura', {
-    body: { mimeType: file.type || 'application/octet-stream', dataBase64 },
+    body: { mimeType, dataBase64 },
   });
-  if (error) throw error;
+  if (error) throw new Error(await motivoErrorFuncion(error));
   if (data && data.error) throw new Error(data.error);
 
   onProgress({ pct: 100, msg: 'Datos recibidos de la IA.' });
