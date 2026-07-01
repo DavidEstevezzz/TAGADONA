@@ -6,6 +6,8 @@
 // Todo es "mejor esfuerzo": prerrellena el formulario para que la persona
 // revise y confirme. Nunca sustituye la validación humana.
 
+import { supabase } from './supabase.js';
+
 const PDFJS_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
 const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 const TESSERACT_SRC = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
@@ -198,6 +200,41 @@ function buscarProveedor(texto) {
     if (l.replace(/[^a-záéíóúñ]/gi, '').length >= 4) return l.slice(0, 80);
   }
   return '';
+}
+
+// ===== Extracción con IA (Gemini a través de una Edge Function de Supabase) =====
+
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(String(r.result).split(',')[1] || ''); // quita "data:...;base64,"
+    r.onerror = () => rej(new Error('No se pudo leer el archivo'));
+    r.readAsDataURL(file);
+  });
+}
+
+// Envía la factura a la Edge Function 'extraer-factura' y devuelve los campos
+// ya estructurados. Lanza error si la función no está desplegada o falla, para
+// que quien la llame pueda recurrir al OCR local.
+export async function extraerConIA(file, onProgress = () => {}) {
+  onProgress({ pct: 30, msg: 'Analizando la factura con IA…' });
+  const dataBase64 = await fileToBase64(file);
+
+  const { data, error } = await supabase.functions.invoke('extraer-factura', {
+    body: { mimeType: file.type || 'application/octet-stream', dataBase64 },
+  });
+  if (error) throw error;
+  if (data && data.error) throw new Error(data.error);
+
+  onProgress({ pct: 100, msg: 'Datos recibidos de la IA.' });
+  return {
+    fecha: data?.fecha || '',
+    proveedor_nombre: data?.proveedor_nombre || '',
+    proveedor_nif: data?.proveedor_nif || '',
+    base: data?.base ?? null,
+    iva_pct: data?.iva_pct ?? null,
+    total: data?.total ?? null,
+  };
 }
 
 // Analiza el texto y devuelve los campos detectados (los no hallados van vacíos).
