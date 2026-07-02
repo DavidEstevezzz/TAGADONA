@@ -20,11 +20,13 @@ const corsHeaders = {
 };
 
 const PROMPT = `Eres un extractor de datos de facturas españolas. Analiza el documento (una factura RECIBIDA de un proveedor) y devuelve SOLO un JSON válido, sin texto adicional ni markdown, con exactamente esta forma:
-{"fecha":"","proveedor_nombre":"","proveedor_nif":"","lineas":[],"base":null,"iva_pct":null,"total":null}
+{"fecha":"","proveedor_nombre":"","proveedor_nif":"","proveedor_direccion":"","proveedor_telefono":"","lineas":[],"base":null,"iva_pct":null,"total":null}
 Reglas:
 - fecha: fecha de emisión en formato ISO YYYY-MM-DD. Si no se ve, "".
 - proveedor_nombre: nombre o razón social de quien EMITE la factura (no el cliente/destinatario). Si no se ve, "".
 - proveedor_nif: NIF o CIF del emisor, en mayúsculas y sin espacios. Si no se ve, "".
+- proveedor_direccion: dirección postal del emisor en una sola línea (calle y número, código postal y población). Es la dirección de quien EMITE la factura, NO la del cliente/destinatario. Si no se ve, "".
+- proveedor_telefono: teléfono de contacto del emisor. Si aparecen varios, elige el principal. Conserva el prefijo si lo hay y quita textos como "Tel." o "Móvil". Si no se ve, "".
 - lineas: el detalle de conceptos/artículos facturados, cada uno como {"concepto":"", "base":null}.
   MUY IMPORTANTE: cada fila, línea o artículo del detalle de la factura debe ser un elemento SEPARADO del array. NUNCA juntes ni concatenes varios conceptos en un mismo elemento. Si la factura detalla 4 artículos, el array debe tener 4 elementos, uno por artículo.
   · concepto: la descripción de ESE artículo o servicio (por ejemplo "Neumático 120/70 R17", "Retrovisor izquierdo", "Mano de obra"). No lo mezcles con otros.
@@ -46,6 +48,8 @@ const RESPONSE_SCHEMA = {
     fecha: { type: "STRING" },
     proveedor_nombre: { type: "STRING" },
     proveedor_nif: { type: "STRING" },
+    proveedor_direccion: { type: "STRING" },
+    proveedor_telefono: { type: "STRING" },
     lineas: {
       type: "ARRAY",
       items: {
@@ -62,8 +66,8 @@ const RESPONSE_SCHEMA = {
     iva_pct: { type: "INTEGER", nullable: true },
     total: { type: "NUMBER", nullable: true },
   },
-  required: ["fecha", "proveedor_nombre", "proveedor_nif", "lineas", "base", "iva_pct", "total"],
-  propertyOrdering: ["fecha", "proveedor_nombre", "proveedor_nif", "lineas", "base", "iva_pct", "total"],
+  required: ["fecha", "proveedor_nombre", "proveedor_nif", "proveedor_direccion", "proveedor_telefono", "lineas", "base", "iva_pct", "total"],
+  propertyOrdering: ["fecha", "proveedor_nombre", "proveedor_nif", "proveedor_direccion", "proveedor_telefono", "lineas", "base", "iva_pct", "total"],
 };
 
 Deno.serve(async (req) => {

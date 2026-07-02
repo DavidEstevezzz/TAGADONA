@@ -21,6 +21,8 @@ create table if not exists public.gastos (
   venta_id       uuid references public.facturas(id) on delete set null,
   proveedor_nombre text,
   proveedor_nif  text,
+  proveedor_direccion text,
+  proveedor_telefono  text,
   concepto       text,
   lineas         jsonb not null default '[]'::jsonb,
   categoria      text,
@@ -57,6 +59,16 @@ también:
 ```sql
 alter table public.gastos
   add column if not exists venta_id uuid references public.facturas(id) on delete set null;
+```
+
+Si ya tenías la tabla creada y quieres guardar también la dirección y el
+teléfono del proveedor en cada gasto (los rellena la lectura automática),
+ejecuta una sola vez:
+
+```sql
+alter table public.gastos
+  add column if not exists proveedor_direccion text,
+  add column if not exists proveedor_telefono  text;
 ```
 
 ---
@@ -101,8 +113,8 @@ puedes:
 
 - **+ Nuevo gasto**: crear el registro a mano.
 - **⬆ Subir factura**: subir un PDF o una imagen. El programa intenta leer
-  automáticamente fecha, proveedor, NIF/CIF, base, IVA y total, y prerrellena
-  el formulario para que lo **revises** antes de guardar.
+  automáticamente fecha, proveedor, NIF/CIF, dirección, teléfono, base, IVA y
+  total, y prerrellena el formulario para que lo **revises** antes de guardar.
 - Añadir varias líneas de concepto dentro de una misma factura de gasto
   (por ejemplo ruedas, retrovisores y portamatrículas), con una base y total
   acumulados para el gasto completo.

@@ -171,6 +171,8 @@ import Base from '../layouts/Base.astro';
               <label>Categoría<select id="g_categoria" class="adm-input"></select></label>
               <label>Proveedor — Nombre<input type="text" id="g_proveedor_nombre" class="adm-input" /></label>
               <label>Proveedor — NIF/CIF<input type="text" id="g_proveedor_nif" class="adm-input" /></label>
+              <label class="adm-full">Proveedor — Dirección<input type="text" id="g_proveedor_direccion" class="adm-input" /></label>
+              <label>Proveedor — Teléfono<input type="text" id="g_proveedor_telefono" class="adm-input" /></label>
               <div class="adm-full adm-lines-box">
                 <div class="adm-lines-head">
                   <span>Conceptos de la factura</span>
@@ -1358,6 +1360,8 @@ headerRow.values = columnas.map(c => c.header);
       $('g_categoria').value = g?.categoria || CATEGORIAS[0];
       $('g_proveedor_nombre').value = g?.proveedor_nombre || '';
       $('g_proveedor_nif').value = g?.proveedor_nif || '';
+      $('g_proveedor_direccion').value = g?.proveedor_direccion || '';
+      $('g_proveedor_telefono').value = g?.proveedor_telefono || '';
       $('g_iva_pct').value = g?.iva_pct ?? 21;
       renderLineasGasto(lineasGasto(g));
       $('g_forma_pago').value = g?.forma_pago ?? 'Transferencia bancaria';
@@ -1458,6 +1462,8 @@ headerRow.values = columnas.map(c => c.header);
       if(c.fecha){ $('g_fecha').value=c.fecha; n++; }
       if(c.proveedor_nombre){ $('g_proveedor_nombre').value=normIniciales(c.proveedor_nombre); n++; }
       if(c.proveedor_nif){ $('g_proveedor_nif').value=normId(c.proveedor_nif); n++; }
+      if(c.proveedor_direccion){ $('g_proveedor_direccion').value=c.proveedor_direccion.trim(); n++; }
+      if(c.proveedor_telefono){ $('g_proveedor_telefono').value=c.proveedor_telefono.trim(); n++; }
       if(c.iva_pct!=null){ $('g_iva_pct').value=c.iva_pct; n++; }
       const iva=parseFloat($('g_iva_pct').value)||0;
       const detectadas = Array.isArray(c.lineas) ? c.lineas.map(l=>({
@@ -1513,6 +1519,8 @@ headerRow.values = columnas.map(c => c.header);
         proveedor_id:$('g_proveedor_id').value||null,
         proveedor_nombre:normIniciales($('g_proveedor_nombre').value),
         proveedor_nif:normId($('g_proveedor_nif').value),
+        proveedor_direccion:$('g_proveedor_direccion').value.trim(),
+        proveedor_telefono:$('g_proveedor_telefono').value.trim(),
         concepto,
         lineas,
         base, iva_pct:ivaPct, iva_importe:ivaImporte, total,
@@ -1778,6 +1786,10 @@ headerRow.values = columnas.map(c => c.header);
       $('g_proveedor_id').value = p.id;
       $('g_proveedor_nombre').value = p.nombre || '';
       $('g_proveedor_nif').value = p.nif || '';
+      // Solo sobrescribimos dirección/teléfono si el proveedor los tiene, para
+      // no borrar los que haya detectado la IA cuando la ficha esté incompleta.
+      if(p.direccion) $('g_proveedor_direccion').value = p.direccion;
+      if(p.telefono) $('g_proveedor_telefono').value = p.telefono;
       if(p.forma_pago) $('g_forma_pago').value = p.forma_pago;
       if(p.categoria) $('g_categoria').value = p.categoria;
       return true;
