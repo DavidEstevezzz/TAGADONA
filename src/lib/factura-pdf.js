@@ -429,6 +429,8 @@ export async function construirGastoPDF(g) {
     [
       safe(g.proveedor_nombre) || '—',
       g.proveedor_nif ? 'NIF/CIF: ' + safe(g.proveedor_nif) : '',
+      g.proveedor_direccion ? safe(g.proveedor_direccion) : '',
+      g.proveedor_telefono ? 'Tel.: ' + safe(g.proveedor_telefono) : '',
     ],
     cardTextW
   );

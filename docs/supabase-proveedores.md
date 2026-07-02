@@ -2,7 +2,8 @@
 
 La pestaña **Proveedores** permite guardar los datos de facturación de cada
 proveedor una sola vez y, al crear un gasto, elegirlo en un desplegable para
-que se rellenen automáticamente (nombre, NIF/CIF, forma de pago y categoría).
+que se rellenen automáticamente (nombre, NIF/CIF, dirección, teléfono, forma de
+pago y categoría).
 
 Hay que ejecutar este SQL **una vez** en Supabase → **SQL Editor**.
 
@@ -58,7 +59,7 @@ En el panel verás una tercera pestaña, **Proveedores**, donde puedes crear,
 editar y borrar proveedores con sus datos de facturación.
 
 Al crear o editar un **gasto**, el primer campo es un desplegable **Proveedor**:
-- Si eliges uno, se rellenan su nombre, NIF/CIF, forma de pago y categoría
-  (puedes seguir editándolos: el gasto guarda su propia copia).
+- Si eliges uno, se rellenan su nombre, NIF/CIF, dirección, teléfono, forma de
+  pago y categoría (puedes seguir editándolos: el gasto guarda su propia copia).
 - Con **“— Manual / sin proveedor —”** rellenas los datos a mano como hasta ahora.
 - El botón **“+ Nuevo”** te lleva a la pestaña Proveedores para dar de alta uno.

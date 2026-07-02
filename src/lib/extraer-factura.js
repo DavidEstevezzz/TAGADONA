@@ -160,6 +160,22 @@ function buscarNIF(texto) {
   return (filtrados[0] || matches[0] || '').replace(/\s+/g, '');
 }
 
+function buscarTelefono(texto) {
+  // Preferimos un teléfono etiquetado ("Tel.", "Teléfono", "Móvil"…).
+  const etiquetado = texto.match(
+    /(?:tel[eé]fono|tel[eé]f?\.?|tlf\.?|m[oó]vil|movil)\s*[:.]?\s*(\+?\d[\d\s().\-]{7,})/i,
+  );
+  const cand = etiquetado
+    ? etiquetado[1]
+    : (texto.match(/\+?\d[\d\s().\-]{8,}/g) || []).find((s) => {
+        const d = s.replace(/\D/g, '');
+        return d.length >= 9 && d.length <= 12; // descarta importes/NIF/fechas largas
+      });
+  if (!cand) return '';
+  const limpio = cand.replace(/[^\d+]/g, '');
+  return limpio.replace(/\D/g, '').length >= 9 ? limpio : '';
+}
+
 function buscarTotal(texto) {
   const lineas = texto.split(/\n/);
   const candidatos = [];
@@ -253,6 +269,8 @@ export async function extraerConIA(file, onProgress = () => {}) {
     fecha: data?.fecha || '',
     proveedor_nombre: data?.proveedor_nombre || '',
     proveedor_nif: data?.proveedor_nif || '',
+    proveedor_direccion: data?.proveedor_direccion || '',
+    proveedor_telefono: data?.proveedor_telefono || '',
     lineas,
     base: data?.base ?? null,
     iva_pct: data?.iva_pct ?? null,
@@ -269,6 +287,10 @@ export function parsearCamposFactura(texto) {
     fecha: buscarFecha(t),
     proveedor_nombre: buscarProveedor(t),
     proveedor_nif: buscarNIF(t),
+    // La dirección es difícil de aislar con heurísticas locales; se deja vacía
+    // (la vía principal, la IA, sí la extrae). El teléfono sí se intenta.
+    proveedor_direccion: '',
+    proveedor_telefono: buscarTelefono(t),
     lineas: [],
     base,
     iva_pct: ivaPct,
