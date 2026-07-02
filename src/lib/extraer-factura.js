@@ -1,7 +1,10 @@
 // Extracción asistida de datos de facturas de gasto (PDF o imagen).
-// - PDF con texto: se lee directamente con pdf.js.
-// - PDF escaneado o imagen: OCR con Tesseract.js (idioma español).
-// Las librerías se cargan desde CDN bajo demanda (solo al subir un archivo).
+// - Vía principal: IA (Gemini) a través de una Edge Function de Supabase.
+//   Gemini lee tanto imágenes como PDFs directamente (ver `extraerConIA`).
+// - Red de seguridad (lectura local, si la IA no está disponible):
+//     · PDF con texto: se lee directamente con pdf.js.
+//     · PDF escaneado o imagen: OCR con Tesseract.js (idioma español).
+//   Las librerías locales se cargan desde CDN bajo demanda.
 //
 // Todo es "mejor esfuerzo": prerrellena el formulario para que la persona
 // revise y confirme. Nunca sustituye la validación humana.
@@ -213,15 +216,28 @@ function fileToBase64(file) {
   });
 }
 
-// Envía la factura a la Edge Function 'extraer-factura' y devuelve los campos
-// ya estructurados. Lanza error si la función no está desplegada o falla, para
-// que quien la llame pueda recurrir al OCR local.
+// Tipo MIME del archivo: usa el que trae el navegador y, si viene vacío, lo
+// deduce de la extensión. Es importante para que Gemini reciba los PDFs con
+// "application/pdf" y no como binario genérico.
+function mimeDeArchivo(file) {
+  if (file.type) return file.type;
+  const n = file.name || '';
+  if (/\.pdf$/i.test(n)) return 'application/pdf';
+  if (/\.png$/i.test(n)) return 'image/png';
+  if (/\.jpe?g$/i.test(n)) return 'image/jpeg';
+  if (/\.webp$/i.test(n)) return 'image/webp';
+  return 'application/octet-stream';
+}
+
+// Envía la factura (imagen o PDF) a la Edge Function 'extraer-factura' y
+// devuelve los campos ya estructurados. Lanza error si la función no está
+// desplegada o falla, para que quien la llame pueda recurrir a la lectura local.
 export async function extraerConIA(file, onProgress = () => {}) {
   onProgress({ pct: 30, msg: 'Analizando la factura con IA…' });
   const dataBase64 = await fileToBase64(file);
 
   const { data, error } = await supabase.functions.invoke('extraer-factura', {
-    body: { mimeType: file.type || 'application/octet-stream', dataBase64 },
+    body: { mimeType: mimeDeArchivo(file), dataBase64 },
   });
   if (error) throw error;
   if (data && data.error) throw new Error(data.error);

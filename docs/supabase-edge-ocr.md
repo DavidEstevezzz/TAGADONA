@@ -1,16 +1,19 @@
-# Lectura de facturas en imagen con IA (Google Gemini)
+# Lectura de facturas (imagen y PDF) con IA (Google Gemini)
 
-Las **fotos y escaneos** de facturas se leen ahora con un modelo de visión de
-Google (Gemini), mucho más preciso que el OCR del navegador. La clave de Gemini
-se guarda como **secreto en Supabase** y nunca llega al navegador: el front
-llama a una *Edge Function* (`extraer-factura`) que hace de intermediaria.
+Las facturas de gasto —tanto **fotos y escaneos** como **PDFs**— se leen con un
+modelo de visión de Google (Gemini), mucho más preciso que el OCR del navegador.
+Gemini acepta el PDF directamente (todas sus páginas, con o sin capa de texto).
+La clave de Gemini se guarda como **secreto en Supabase** y nunca llega al
+navegador: el front llama a una *Edge Function* (`extraer-factura`) que hace de
+intermediaria.
 
-> Mientras la función no esté desplegada, todo sigue funcionando: las imágenes
-> caen automáticamente al OCR local (Tesseract) y los PDFs se leen en local como
-> hasta ahora. No se rompe nada.
+> Mientras la función no esté desplegada (o si se agota la cuota), todo sigue
+> funcionando: se recurre automáticamente a la lectura local del navegador
+> —OCR con Tesseract para imágenes, texto/OCR de pdf.js para PDFs—. No se rompe
+> nada; solo baja la precisión.
 
-Los **PDFs** se siguen leyendo en local (texto directo con pdf.js), que es
-gratis y preciso; solo las **imágenes** pasan por Gemini.
+El volumen esperado (unas decenas de facturas al mes) entra de sobra en el plan
+gratuito de Gemini.
 
 ---
 
@@ -58,10 +61,10 @@ El código ya está en el repo, en `supabase/functions/extraer-factura/`.
 supabase functions deploy extraer-factura
 ```
 
-Cuando termine, ya está: al subir una **foto** de una factura en la pestaña
-Gastos, el programa la enviará a Gemini y rellenará fecha, proveedor, NIF/CIF,
-IVA y total, además del **desglose de conceptos** (una línea por artículo o
-servicio, con su base), para que lo revises antes de guardar.
+Cuando termine, ya está: al subir una **foto o un PDF** de una factura en la
+pestaña Gastos, el programa lo enviará a Gemini y rellenará fecha, proveedor,
+NIF/CIF, IVA y total, además del **desglose de conceptos** (una línea por
+artículo o servicio, con su base), para que lo revises antes de guardar.
 
 > El desglose por líneas se fuerza con un `responseSchema` en la Edge Function:
 > cada concepto de la factura llega como una fila independiente en el formulario,

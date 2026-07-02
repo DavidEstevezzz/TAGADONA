@@ -1418,22 +1418,19 @@ headerRow.values = columnas.map(c => c.header);
       const esImagen=(file.type||'').startsWith('image/');
       try{
         let campos;
-        let metodoLectura = esImagen ? 'ia' : 'pdf';
+        // Tanto imágenes como PDFs se leen con IA (Gemini) por precisión:
+        // Gemini acepta el PDF directamente (todas sus páginas, con o sin capa
+        // de texto). Si la función no está desplegada, falla o se agota la
+        // cuota, se recurre a la lectura local del navegador como red de
+        // seguridad: OCR para imágenes, texto/OCR de pdf.js para PDFs.
+        let metodoLectura = 'ia';
         let motivoFallback = '';
-        if(esImagen){
-          // Las imágenes se leen con IA (Gemini) por precisión; si la función
-          // no está desplegada o falla, se recurre al OCR local del navegador.
-          try{
-            campos = await extraerConIA(file, prog);
-          }catch(e){
-            motivoFallback = resumirErrorIA(e);
-            metodoLectura = 'ocr';
-            prog({msg:`IA no disponible (${motivoFallback}), usando OCR local…`});
-            await cargarLibsOCR();
-            campos = parsearCamposFactura(await extraerTextoFactura(file, prog));
-          }
-        } else {
-          // PDFs: extracción local (texto directo, u OCR si está escaneado).
+        try{
+          campos = await extraerConIA(file, prog);
+        }catch(e){
+          motivoFallback = resumirErrorIA(e);
+          metodoLectura = esImagen ? 'ocr' : 'pdf';
+          prog({msg:`IA no disponible (${motivoFallback}), usando lectura local…`});
           await cargarLibsOCR();
           campos = parsearCamposFactura(await extraerTextoFactura(file, prog));
         }
@@ -1443,14 +1440,13 @@ headerRow.values = columnas.map(c => c.header);
         if(n){
           if(metodoLectura === 'ia'){
             msg.textContent = `✓ ${n} campo(s) detectado(s) con IA. Revísalos antes de guardar.`;
-          }else if(metodoLectura === 'ocr'){
-            msg.textContent = `✓ ${n} campo(s) detectado(s) con OCR local. IA no disponible: ${motivoFallback}. Revísalos antes de guardar.`;
           }else{
-            msg.textContent = `✓ ${n} campo(s) detectado(s) con lectura local del PDF. Revísalos antes de guardar.`;
+            const comoLocal = metodoLectura === 'ocr' ? 'OCR local' : 'lectura local del PDF';
+            msg.textContent = `✓ ${n} campo(s) detectado(s) con ${comoLocal}. IA no disponible: ${motivoFallback}. Revísalos antes de guardar.`;
           }
         }else{
-          msg.textContent = metodoLectura === 'ocr' && motivoFallback
-            ? `IA no disponible: ${motivoFallback}. OCR local sin campos claros; rellénalos a mano.`
+          msg.textContent = motivoFallback
+            ? `IA no disponible: ${motivoFallback}. Lectura local sin campos claros; rellénalos a mano.`
             : 'No se detectaron campos automáticamente. Rellénalos a mano.';
         }
       }catch(err){
