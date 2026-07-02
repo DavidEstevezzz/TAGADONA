@@ -60,7 +60,12 @@ supabase functions deploy extraer-factura
 
 Cuando termine, ya está: al subir una **foto** de una factura en la pestaña
 Gastos, el programa la enviará a Gemini y rellenará fecha, proveedor, NIF/CIF,
-base, IVA y total para que los revises antes de guardar.
+IVA y total, además del **desglose de conceptos** (una línea por artículo o
+servicio, con su base), para que lo revises antes de guardar.
+
+> El desglose por líneas se fuerza con un `responseSchema` en la Edge Function:
+> cada concepto de la factura llega como una fila independiente en el formulario,
+> en lugar de amontonarse todo en una sola línea.
 
 ---
 
