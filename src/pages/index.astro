@@ -243,7 +243,14 @@ const destacadas = [...motos].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).s
     .hero-eb{color:var(--text);margin-bottom:var(--s-5);opacity:.92}
     .hero-eb::before{background:var(--orange-bright)}
     .hero-title{font-size:var(--fs-display);line-height:.9;color:var(--orange-bright);
-      letter-spacing:.005em;text-shadow:0 6px 40px rgba(0,0,0,.45);margin-bottom:var(--s-5)}
+      letter-spacing:.005em;
+      text-shadow:
+      1px 1px 0 rgba(0,0,0,.5),
+      2px 2px 0 rgba(0,0,0,.4),
+      3px 3px 0 rgba(0,0,0,.3),
+      4px 4px 0 rgba(0,0,0,.2),
+      0 8px 30px rgba(0,0,0,.55);
+      margin-bottom:var(--s-5)}
     .hero-sub{font-size:var(--fs-lead);color:var(--text);font-weight:400;
       max-width:540px;margin:0 auto var(--s-7);line-height:1.55;opacity:.92}
 .hero-actions{display:flex;gap:var(--s-4);justify-content:center;flex-wrap:wrap;
