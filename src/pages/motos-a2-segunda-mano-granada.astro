@@ -1,0 +1,88 @@
+---
+import Base from '../layouts/Base.astro';
+import LandingCategoria from '../components/LandingCategoria.astro';
+import { motos } from '../data/motos.js';
+import { breadcrumbSchema, faqSchema } from '../lib/seo.js';
+
+const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const PATH = "/motos-a2-segunda-mano-granada/";
+
+// Motos A2: el carnet incluye "A2", excluyendo las vendidas.
+const seleccion = motos
+  .filter((m) => /A2/.test(m.carnet) && m.estado !== "Vendida")
+  .sort((a, b) => (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0));
+
+const faqs = [
+  {
+    q: "¿Qué motos puedo llevar con el carnet A2?",
+    a: "Con el carnet A2 puedes conducir motos de hasta 35 kW (unos 47 CV) y con una relación potencia/peso que no supere 0,2 kW/kg. Muchas motos de mayor potencia se venden en versión limitable a A2, así que la oferta es enorme: naked, trail, deportivas y maxiscooters.",
+  },
+  {
+    q: "¿Cuándo puedo sacarme el A2?",
+    a: "Puedes obtener el carnet A2 a partir de los 18 años. Tras 2 años con el A2, puedes pasar al carnet A (sin límite de potencia) realizando una formación o examen, según la normativa vigente.",
+  },
+  {
+    q: "¿Qué significa que una moto es 'limitable a A2'?",
+    a: "Significa que, aunque el modelo tenga más potencia de origen, se puede restringir electrónicamente o mediante homologación para no superar los 35 kW del A2. Así puedes disfrutarla con el A2 y, cuando pases al carnet A, liberar toda su potencia.",
+  },
+  {
+    q: "¿Es una A2 suficiente para carretera y viajes?",
+    a: "Totalmente. Una A2 de 35 kW mueve con soltura por autovía, puertos y viajes de fin de semana. Es el escalón perfecto entre la 125 urbana y las motos de gran cilindrada.",
+  },
+  {
+    q: "¿Tenéis motos A2 revisadas y con garantía?",
+    a: "Sí. Toda moto que publicamos pasa una inspección completa y se entrega con garantía por escrito y transferencia incluida. Si ahora no ves una A2 en stock, escríbenos: entran unidades nuevas continuamente y también localizamos por encargo.",
+  },
+];
+
+const breadcrumb = breadcrumbSchema([
+  { name: "Inicio", path: "/" },
+  { name: "Motos A2 de segunda mano en Granada", path: PATH },
+], SITE);
+const faqLd = faqSchema(faqs);
+---
+<Base
+  title="Motos A2 de segunda mano en Granada | Tagadona Racing"
+  desc="Motos A2 de segunda mano en Granada, revisadas y con garantía. Hasta 35 kW, ideales para el carnet A2. Transferencia incluida y prueba con cita previa."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+
+  <LandingCategoria
+    crumbLabel="Motos A2 segunda mano"
+    eyebrow="Segunda mano · Granada"
+    h1="Motos A2 de segunda mano en Granada"
+    intro={[
+      "El carnet <strong>A2</strong> abre la puerta a las motos de verdad: hasta 35 kW (unos 47 CV) de naked, trail, deportivas y maxiscooters. Es el escalón perfecto para quien quiere dar el salto desde la 125 o empezar directamente con una moto con potencia de sobra para carretera.",
+      "En Tagadona Racing seleccionamos motos A2 <strong>revisadas punto por punto</strong>, con garantía y transferencia incluida, para que disfrutes de tu moto sin sorpresas.",
+    ]}
+    bloques={[
+      {
+        title: "¿Qué carnet necesito?",
+        body: [
+          "El carnet <strong>A2</strong> se obtiene a partir de los 18 años y permite motos de hasta 35 kW y hasta 0,2 kW/kg de relación potencia/peso.",
+          "Muchos modelos se venden <strong>limitables a A2</strong>: los disfrutas ahora y, al pasar al carnet A (tras 2 años), liberas toda su potencia sin cambiar de moto.",
+        ],
+      },
+      {
+        title: "¿Para qué uso es ideal?",
+        body: [
+          "Una A2 vale para <strong>todo</strong>: ciudad, carretera, autovía y escapadas de fin de semana. Tiene empuje suficiente para viajar cómodo y con seguridad.",
+          "Es la opción ideal si quieres una sola moto para el día a día y para disfrutar de rutas, sin la limitación de una 125.",
+        ],
+      },
+    ]}
+    motos={seleccion}
+    gridEyebrow="Nuestro stock"
+    gridTitle="Motos A2 disponibles ahora"
+    emptyTitle="Ahora mismo no tenemos ninguna A2 disponible"
+    emptyText="Las A2 vuelan. Entra stock nuevo continuamente y también localizamos por encargo: dinos qué modelo A2 buscas y nos ponemos a ello."
+    faqs={faqs}
+    relacionadas={[
+      { label: "Motos 125 de segunda mano en Granada", href: "/motos-125-segunda-mano-granada/" },
+      { label: "Scooters de segunda mano en Granada", href: "/scooters-segunda-mano-granada/" },
+      { label: "Ver todo el catálogo", href: "/catalogo/" },
+      { label: "Contacto y cómo llegar", href: "/contacto/" },
+    ]}
+  />
+</Base>

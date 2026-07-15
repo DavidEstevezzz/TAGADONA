@@ -1,0 +1,89 @@
+---
+import Base from '../layouts/Base.astro';
+import LandingCategoria from '../components/LandingCategoria.astro';
+import { motos } from '../data/motos.js';
+import { breadcrumbSchema, faqSchema } from '../lib/seo.js';
+
+const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const PATH = "/motos-carnet-b-granada/";
+
+// Motos que se pueden llevar con el carnet de coche (B): el campo carnet
+// contiene "B" como palabra (p. ej. "A1 / B + 3 años" o "B"). Sin vendidas.
+const seleccion = motos
+  .filter((m) => /\bB\b/.test(m.carnet) && m.estado !== "Vendida")
+  .sort((a, b) => (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0));
+
+const faqs = [
+  {
+    q: "¿Qué moto puedo llevar con el carnet de coche (B)?",
+    a: "Con el carnet B y al menos 3 años de antigüedad puedes conducir motos y scooters de 125 cc (hasta 15 CV y 11 kW) por todo el territorio nacional. Además, puedes llevar triciclos y algunos vehículos de tres ruedas de más cilindrada, según su ficha técnica.",
+  },
+  {
+    q: "¿Necesito hacer algún curso para llevar una 125 con el carnet B?",
+    a: "No. En España, si tienes el carnet B con 3 años o más de antigüedad, estás autorizado a conducir una 125 sin cursos ni exámenes adicionales. Solo necesitas la moto, el seguro y las ganas.",
+  },
+  {
+    q: "¿Cuánto tiempo de carnet B necesito exactamente?",
+    a: "Tres años. Desde el momento en que tu permiso B cumple 3 años de antigüedad, queda habilitado para conducir motocicletas de hasta 125 cc y 11 kW dentro de España.",
+  },
+  {
+    q: "¿Qué tipo de moto me conviene si vengo del coche?",
+    a: "Para la mayoría de gente que da el salto desde el coche, una scooter 125 automática es lo más cómodo: sin embrague, con hueco para el casco y muy fácil de manejar en ciudad. Si buscas algo con más carácter, una naked 125 también es apta con el carnet B.",
+  },
+  {
+    q: "¿Las motos para carnet B de Tagadona Racing llevan garantía?",
+    a: "Sí. Todas se entregan revisadas punto por punto, con garantía por escrito y con el cambio de nombre incluido. Puedes verlas y probarlas con cita previa en Cogollos de la Vega (Granada).",
+  },
+];
+
+const breadcrumb = breadcrumbSchema([
+  { name: "Inicio", path: "/" },
+  { name: "Motos con carnet B en Granada", path: PATH },
+], SITE);
+const faqLd = faqSchema(faqs);
+---
+<Base
+  title="Motos para carnet B (coche) de segunda mano en Granada | Tagadona Racing"
+  desc="Motos y scooters 125 que puedes llevar con el carnet de coche (B) con 3 años. De segunda mano, revisadas, con garantía y transferencia incluida en Granada."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+
+  <LandingCategoria
+    crumbLabel="Motos carnet B"
+    eyebrow="Segunda mano · Granada"
+    h1="Motos para carnet B (coche) en Granada"
+    intro={[
+      "Si tienes el <strong>carnet de coche (B) con 3 años</strong> de antigüedad, ya puedes conducir una moto o scooter de 125 cc sin sacarte ningún carnet adicional. Es la forma más rápida y barata de empezar en moto.",
+      "En Tagadona Racing reunimos las motos aptas para carnet B —principalmente <strong>125 revisadas punto por punto</strong>— con garantía y transferencia incluida, listas para circular a tu nombre.",
+    ]}
+    bloques={[
+      {
+        title: "¿Qué puedo conducir con el carnet B?",
+        body: [
+          "Con el <strong>carnet B y 3 años</strong> de antigüedad puedes llevar motos y scooters de hasta <strong>125 cc, 15 CV y 11 kW</strong> por toda España, sin cursos ni exámenes.",
+          "También puedes conducir triciclos y ciertos vehículos de tres ruedas según su ficha técnica. Si dudas con un modelo, pregúntanos.",
+        ],
+      },
+      {
+        title: "¿Cuál me conviene?",
+        body: [
+          "Si vienes del coche, lo más cómodo suele ser una <strong>scooter 125 automática</strong>: sin embrague, con hueco para el casco y muy fácil en ciudad.",
+          "Si prefieres algo con más carácter, una <strong>naked 125</strong> también entra dentro del carnet B y ofrece una conducción más deportiva.",
+        ],
+      },
+    ]}
+    motos={seleccion}
+    gridEyebrow="Nuestro stock"
+    gridTitle="Motos aptas para carnet B disponibles ahora"
+    emptyTitle="Ahora mismo no tenemos ninguna disponible para carnet B"
+    emptyText="Entran motos 125 nuevas cada semana. Dinos qué buscas y te avisamos en cuanto llegue, o te la localizamos por encargo."
+    faqs={faqs}
+    relacionadas={[
+      { label: "Motos 125 de segunda mano en Granada", href: "/motos-125-segunda-mano-granada/" },
+      { label: "Scooters de segunda mano en Granada", href: "/scooters-segunda-mano-granada/" },
+      { label: "Ver todo el catálogo", href: "/catalogo/" },
+      { label: "Contacto y cómo llegar", href: "/contacto/" },
+    ]}
+  />
+</Base>

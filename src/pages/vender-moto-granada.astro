@@ -1,0 +1,214 @@
+---
+import Base from '../layouts/Base.astro';
+import Faq from '../components/Faq.astro';
+import { breadcrumbSchema, faqSchema } from '../lib/seo.js';
+
+const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const PATH = "/vender-moto-granada/";
+
+const WHATSAPP = "https://wa.me/34644904418";
+const msg = encodeURIComponent("Hola, quiero vender mi moto. Os paso los datos: marca, modelo, año y kilómetros.");
+const WA_TASACION = `${WHATSAPP}?text=${msg}`;
+const TELEFONO = "tel:+34644904418";
+
+// Cómo tasamos (pasos)
+const pasos = [
+  { n: "01", t: "Nos cuentas tu moto", d: "Nos escribes por WhatsApp con marca, modelo, año, kilómetros y estado general. Cuantas más fotos, mejor y más rápida la valoración." },
+  { n: "02", t: "Te damos una tasación", d: "Valoramos tu moto con precios reales de mercado, sin humo. Te decimos qué podemos ofrecerte y por qué." },
+  { n: "03", t: "La revisamos con cita", d: "Si encaja, quedamos en Cogollos de la Vega (Granada) para verla en persona y confirmar el estado." },
+  { n: "04", t: "Cerramos y pagamos", d: "Acordamos el precio, hacemos el cambio de nombre y te pagamos. Sin esperas ni papeleos por tu parte." },
+];
+
+// Documentación necesaria para vender
+const docs = [
+  "DNI o documento de identidad en vigor del titular.",
+  "Permiso de circulación de la moto.",
+  "Ficha técnica (tarjeta ITV) con la ITV en vigor.",
+  "Último recibo del seguro y del Impuesto de Circulación (IVTM) pagado.",
+  "Justificante de estar al día de posibles multas, si las hubiera.",
+  "Las dos llaves, si dispones de ellas, y el libro de mantenimiento.",
+];
+
+const faqs = [
+  {
+    q: "¿Cómo tasáis mi moto?",
+    a: "Valoramos tu moto según el modelo, el año, los kilómetros, el estado general y los precios reales de mercado en ese momento. Te damos una cifra clara y te explicamos cómo la hemos calculado, sin sorpresas.",
+  },
+  {
+    q: "¿Qué documentación necesito para vender mi moto?",
+    a: "Necesitas el DNI del titular, el permiso de circulación, la ficha técnica con la ITV en vigor y el último recibo del seguro e impuesto de circulación pagados. Si tienes las dos llaves y el libro de mantenimiento, mejor.",
+  },
+  {
+    q: "¿Vosotros os encargáis del cambio de nombre?",
+    a: "Sí. Nos ocupamos de toda la gestión de la transferencia y el cambio de nombre. Tú no tienes que ir a Tráfico ni hacer trámites: te desvinculas de la moto de forma segura y legal.",
+  },
+  {
+    q: "¿Compráis la moto directamente o solo la vendéis por mí?",
+    a: "Podemos comprarte la moto directamente, aceptarla como parte del pago de otra que te lleves, o ayudarte a venderla. Te contamos las opciones y eliges la que más te convenga.",
+  },
+  {
+    q: "¿Cuánto tarda todo el proceso?",
+    a: "En cuanto nos pasas los datos, la tasación suele ser cosa de horas. Si nos ponemos de acuerdo, el cierre, el cambio de nombre y el pago se resuelven muy rápido, normalmente en la misma visita.",
+  },
+];
+
+const breadcrumb = breadcrumbSchema([
+  { name: "Inicio", path: "/" },
+  { name: "Vender tu moto en Granada", path: PATH },
+], SITE);
+const faqLd = faqSchema(faqs);
+---
+<Base
+  title="Vender tu moto en Granada | Tasación y cambio de nombre | Tagadona Racing"
+  desc="¿Quieres vender tu moto en Granada? Te la tasamos sin compromiso, nos encargamos del cambio de nombre y te pagamos rápido. Escríbenos por WhatsApp."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+
+  <div class="ld-top wrap">
+    <nav class="crumb cond" aria-label="Ruta">
+      <a href="/">Inicio</a><span>/</span><em>Vender tu moto</em>
+    </nav>
+  </div>
+
+  <!-- Hero -->
+  <section class="vd-hero">
+    <div class="vd-hero-glow" aria-hidden="true"></div>
+    <div class="wrap vd-hero-inner">
+      <p class="eyebrow center reveal in">Compramos tu moto · Granada</p>
+      <h1 class="vd-h1 display reveal in">Vende tu moto en Granada</h1>
+      <p class="vd-lead reveal in">Te la <strong>tasamos sin compromiso</strong>, nos encargamos del cambio de nombre y te pagamos rápido. Tú solo tienes que contarnos qué moto tienes.</p>
+      <div class="vd-hero-btns reveal in">
+        <a href={WA_TASACION} target="_blank" rel="noopener" class="btn btn-primary">Pedir tasación por WhatsApp <span class="arr">→</span></a>
+        <a href="/contacto/" class="btn btn-ghost">Otras formas de contacto</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cómo tasamos -->
+  <section class="vd-proceso">
+    <div class="wrap">
+      <div class="vd-sec-head reveal">
+        <p class="eyebrow">Cómo lo hacemos</p>
+        <h2 class="sec-title">Cómo tasamos tu moto</h2>
+        <p class="vd-sec-lead">Un proceso claro y sin rodeos: de la primera foto al pago, sin que tú tengas que pelearte con el papeleo.</p>
+      </div>
+      <div class="vd-pasos">
+        {pasos.map((p) => (
+          <div class="vd-paso reveal">
+            <span class="vd-paso-n cond">{p.n}</span>
+            <h3 class="head">{p.t}</h3>
+            <p>{p.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Documentación + cambio de nombre -->
+  <section class="vd-docs div-soft panel-soft">
+    <div class="wrap vd-docs-grid">
+      <div class="reveal">
+        <h2 class="vd-block-t head">Documentación necesaria</h2>
+        <p class="vd-block-lead">Para vender tu moto con todas las garantías, ten a mano:</p>
+        <ul class="vd-list">
+          {docs.map((d) => <li>{d}</li>)}
+        </ul>
+        <p class="vd-block-note">¿Te falta algún papel? No pasa nada, cuéntanoslo y te decimos cómo resolverlo.</p>
+      </div>
+      <div class="reveal d1">
+        <h2 class="vd-block-t head">El cambio de nombre, de nuestra cuenta</h2>
+        <p>Uno de los mayores quebraderos de cabeza al vender una moto entre particulares es el <strong>cambio de nombre</strong>: citas en Tráfico, impuestos, formularios… y el miedo a seguir figurando como titular si el comprador no lo tramita.</p>
+        <p>Con nosotros eso desaparece. Nos encargamos de <strong>toda la transferencia</strong> y de darte de baja como titular de forma segura y legal. Te desvinculas de la moto el mismo día, sin sorpresas de multas ni impuestos posteriores.</p>
+        <p>Y si lo que quieres es cambiar tu moto por otra, la tasamos y la aceptamos como parte del pago. <a href="/motos-segunda-mano-granada/">Mira las motos disponibles</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <Faq faqs={faqs} title="Preguntas frecuentes sobre vender tu moto" />
+
+  <!-- CTA final -->
+  <section class="vd-cta">
+    <div class="wrap-narrow reveal">
+      <h2 class="sec-title">¿Le ponemos precio a tu moto?</h2>
+      <p>Escríbenos por WhatsApp con marca, modelo, año y kilómetros. En unas horas tendrás una valoración sin compromiso.</p>
+      <div class="vd-cta-btns">
+        <a href={WA_TASACION} target="_blank" rel="noopener" class="btn btn-primary">Pedir tasación por WhatsApp <span class="arr">→</span></a>
+        <a href={TELEFONO} class="btn btn-ghost">Llamar al 644 904 418</a>
+      </div>
+      <p class="vd-cta-loc cond">Cita previa · Paraje de Catacena, 18211 Cogollos de la Vega (Granada)</p>
+    </div>
+  </section>
+
+  <style>
+    .ld-top{padding-top:calc(74px + var(--s-6))}
+    .crumb{display:flex;align-items:center;gap:var(--s-3);font-size:12px;
+      letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+    .crumb a{color:var(--text-dim);transition:color .3s}
+    .crumb a:hover{color:var(--orange-bright)}
+    .crumb em{font-style:normal;color:var(--orange-bright)}
+    .crumb span{opacity:.4}
+
+    /* Hero */
+    .vd-hero{position:relative;padding:var(--s-7) 0 var(--s-8);text-align:center;overflow:hidden}
+    .vd-hero-glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+      width:min(900px,90%);height:420px;pointer-events:none;
+      background:radial-gradient(60% 70% at 50% 0%,rgba(217,122,40,.22),transparent 70%)}
+    .vd-hero-inner{position:relative;z-index:1}
+    .vd-hero .eyebrow{margin-bottom:var(--s-5)}
+    .vd-h1{font-size:clamp(40px,7vw,80px);line-height:.98;color:var(--orange-bright);
+      margin-bottom:var(--s-5);max-width:14ch;margin-inline:auto}
+    .vd-lead{color:var(--text-dim);font-size:var(--fs-lead);max-width:600px;
+      margin:0 auto var(--s-6);line-height:1.7}
+    .vd-lead strong{color:var(--text);font-weight:600}
+    .vd-hero-btns{display:flex;gap:var(--s-3);justify-content:center;flex-wrap:wrap}
+
+    /* Proceso */
+    .vd-proceso{padding:var(--s-8) 0}
+    .vd-sec-head{text-align:center;margin-bottom:var(--s-7)}
+    .vd-sec-head .eyebrow{justify-content:center;margin-bottom:var(--s-4)}
+    .vd-sec-head .eyebrow::before{display:none}
+    .vd-sec-lead{color:var(--text-dim);font-size:var(--fs-lead);max-width:560px;
+      margin:var(--s-4) auto 0;line-height:1.6}
+    .vd-pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-5)}
+    .vd-paso{border:1px solid var(--line);border-radius:8px;padding:var(--s-6);
+      background:rgba(255,255,255,.02);transition:border-color .4s,transform .4s var(--ease)}
+    .vd-paso:hover{border-color:var(--orange);transform:translateY(-6px)}
+    .vd-paso-n{font-size:26px;font-weight:700;color:var(--orange-bright);display:block;margin-bottom:var(--s-3)}
+    .vd-paso h3{font-size:var(--fs-h3);font-weight:600;color:var(--text);margin-bottom:var(--s-3)}
+    .vd-paso p{color:var(--text-dim);font-size:var(--fs-small);line-height:1.7}
+
+    /* Documentación */
+    .vd-docs{padding:var(--s-9) 0}
+    .vd-docs-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,64px);align-items:start}
+    .vd-block-t{font-size:var(--fs-h3);font-weight:700;color:var(--text);
+      margin-bottom:var(--s-4);padding-bottom:var(--s-3);border-bottom:1px solid var(--line)}
+    .vd-block-lead{color:var(--text-dim);margin-bottom:var(--s-4)}
+    .vd-list{list-style:none;display:flex;flex-direction:column;gap:var(--s-3)}
+    .vd-list li{position:relative;padding-left:var(--s-6);color:var(--text-dim);line-height:1.6}
+    .vd-list li::before{content:"";position:absolute;left:0;top:9px;width:8px;height:8px;
+      border-radius:50%;background:var(--orange)}
+    .vd-block-note{margin-top:var(--s-5);color:var(--text-faint);font-size:var(--fs-small)}
+    .vd-docs-grid p{color:var(--text-dim);line-height:1.8;margin-bottom:var(--s-3)}
+    .vd-docs-grid strong{color:var(--text);font-weight:600}
+    .vd-docs-grid a{color:var(--orange-bright);text-decoration:underline;text-underline-offset:3px}
+
+    /* CTA final */
+    .vd-cta{padding:var(--s-9) 0;text-align:center}
+    .vd-cta .sec-title{margin-bottom:var(--s-4)}
+    .vd-cta > .wrap-narrow > p{color:var(--text-dim);font-size:var(--fs-lead);
+      max-width:520px;margin:0 auto var(--s-6)}
+    .vd-cta-btns{display:flex;gap:var(--s-3);justify-content:center;flex-wrap:wrap}
+    .vd-cta-loc{margin-top:var(--s-5);font-size:12px;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--text-faint)}
+
+    @media(max-width:860px){
+      .vd-pasos{grid-template-columns:1fr 1fr}
+      .vd-docs-grid{grid-template-columns:1fr;gap:var(--s-7)}
+    }
+    @media(max-width:560px){
+      .vd-pasos{grid-template-columns:1fr}
+    }
+  </style>
+</Base>
