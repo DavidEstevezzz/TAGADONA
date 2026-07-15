@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "validate:data": "node scripts/validate-data.mjs",
+    "validate:links": "node scripts/validate-links.mjs",
+    "audit": "npm run validate:data && npm run build && npm run validate:links"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",

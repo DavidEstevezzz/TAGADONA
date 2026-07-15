@@ -10,6 +10,17 @@
 //
 //  Las fotos van en  public/img/  y aquí pones solo el nombre.
 //  La primera foto del array es la principal.
+//
+//  Campos obligatorios: slug, marca, modelo, categoria, anio, km,
+//  precio, estado, fotos (>=1), cilindrada, potencia, combustible,
+//  carnet, descripcion.  Estado válido: "Disponible" | "Reservada" | "Vendida".
+//
+//  Campos opcionales estructurados (se validan si los usas):
+//    orden (número, para forzar el orden), garantiaMeses (número),
+//    fechaPublicacion / fechaActualizacion / fechaVenta ("AAAA-MM-DD").
+//
+//  Antes de publicar, ejecuta:  npm run validate:data
+//  Comprueba slugs únicos, estados, precios, fotos existentes, etc.
 // ============================================================
 
 export const motos = [
@@ -31,7 +42,7 @@ export const motos = [
       "medley125-5.PNG",
       "medley125-6.PNG",
       "medley125-7.jpg",
-      "medley125-8.png",
+      "medley125-8.PNG",
     ],
     // Datos rápidos (los 4 de arriba)
     cilindrada: "125 cc",
