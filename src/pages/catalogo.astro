@@ -59,6 +59,7 @@ const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservad
            data-tipo={m.categoria.split(" · ")[0].trim()}
            data-carnet={m.carnet.replace(/\s*\(.*\)/,"").trim()}
            data-precio={m.precio}
+           data-track="ver_ficha" data-source="catalogo" data-moto={m.slug}
            style={`transition-delay:${(idx%3)*80}ms`} href={`/motos/${m.slug}/`}>
           <div class="moto-img">
             <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo} ${m.anio} de segunda mano en Granada`} loading="lazy" />
@@ -92,7 +93,7 @@ const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservad
         </div>
         <div class="cat-grid vendidas-grid">
           {vendidas.map((m, idx) => (
-            <a class="moto-card es-vendida reveal" style={`transition-delay:${(idx%3)*80}ms`} href={`/motos/${m.slug}/`}>
+            <a class="moto-card es-vendida reveal" data-track="ver_ficha" data-source="catalogo_vendidas" data-moto={m.slug} style={`transition-delay:${(idx%3)*80}ms`} href={`/motos/${m.slug}/`}>
               <div class="moto-img">
                 <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo} ${m.anio} de segunda mano en Granada`} loading="lazy" />
                 <span class="moto-estado vendida">Vendida</span>

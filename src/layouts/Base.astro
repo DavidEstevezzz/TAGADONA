@@ -201,13 +201,13 @@ const negocioSchema = {
     <div class="wrap ft-bottom">
       <span>© 2026 Tagadona Racing. Todos los derechos reservados.</span>
       <div class="ft-social" aria-label="Redes sociales">
-        <a href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram">
+        <a href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram" data-track="red_social" data-source="footer_instagram">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
             <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/>
             <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
           </svg>
         </a>
-        <a href={TIKTOK} target="_blank" rel="noopener" aria-label="TikTok">
+        <a href={TIKTOK} target="_blank" rel="noopener" aria-label="TikTok" data-track="red_social" data-source="footer_tiktok">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M16.5 3c.3 2.1 1.5 3.4 3.5 3.6v2.4c-1.2.1-2.4-.3-3.5-1v5.7c0 3.4-2.5 5.3-5.2 5.3-2.5 0-4.6-1.8-4.6-4.4 0-2.7 2.1-4.5 4.7-4.4.3 0 .5 0 .8.1v2.5c-.2-.1-.5-.1-.8-.1-1.2 0-2.2.9-2.2 2 0 1.2.9 2 2.1 2 1.3 0 2.2-.9 2.2-2.6V3h2.7z"/>
           </svg>
@@ -329,6 +329,31 @@ const negocioSchema = {
   </style>
 
   <script>
+    // ===== MEDICIÓN DE CONVERSIONES (no bloqueante) =====
+    // Un único listener delegado envía un evento por cada clic en un elemento
+    // con [data-track]. Si hay Google Tag Manager (dataLayer) o Google
+    // Analytics (gtag) en la página, reenvía el evento; si no hay ninguno,
+    // no hace nada (sin errores). Así se puede conectar GA/GTM más adelante
+    // sin tocar el marcado. Requiere aviso de cookies según la herramienta.
+    document.addEventListener('click', (e) => {
+      const el = e.target.closest && e.target.closest('[data-track]');
+      if (!el) return;
+      try {
+        const payload = {
+          event: 'cta_click',
+          cta: el.dataset.track,
+          source: el.dataset.source || null,
+          moto: el.dataset.moto || null,
+        };
+        if (Array.isArray(window.dataLayer)) window.dataLayer.push(payload);
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', el.dataset.track, {
+            source: payload.source, moto: payload.moto,
+          });
+        }
+      } catch (_) { /* la medición nunca debe romper la navegación */ }
+    }, { passive: true });
+
     // Nav con fondo al hacer scroll
     const nav = document.getElementById('nav');
     const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 24);
