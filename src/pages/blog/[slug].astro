@@ -16,8 +16,41 @@ const otras = (await getCollection('blog'))
   .filter(e=>e.slug!==entrada.slug)
   .sort((a,b)=>b.data.fecha.getTime()-a.data.fecha.getTime())
   .slice(0,2);
+
+// SEO: datos estructurados del artículo
+const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const artUrl = new URL(`/blog/${entrada.slug}/`, SITE).href;
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: titulo,
+  description: resumen,
+  image: new URL(`/img/blog/${imagen}`, SITE).href,
+  datePublished: fecha.toISOString(),
+  dateModified: fecha.toISOString(),
+  articleSection: categoria,
+  mainEntityOfPage: { "@type": "WebPage", "@id": artUrl },
+  author: { "@type": "Organization", name: "Tagadona Racing", url: SITE.href },
+  publisher: {
+    "@type": "Organization",
+    name: "Tagadona Racing",
+    logo: { "@type": "ImageObject", url: new URL("/img/logo.png", SITE).href },
+  },
+};
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", SITE).href },
+    { "@type": "ListItem", position: 2, name: "Blog", item: new URL("/blog/", SITE).href },
+    { "@type": "ListItem", position: 3, name: titulo, item: artUrl },
+  ],
+};
 ---
-<Base title={`${titulo} — Tagadona Racing`} desc={resumen}>
+<Base title={`${titulo} — Tagadona Racing`} desc={resumen} image={`/img/blog/${imagen}`} ogType="article">
+
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <article class="art">
     <header class="art-head wrap-narrow">
