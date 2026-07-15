@@ -112,6 +112,7 @@ const negocioSchema = {
       <nav class="nav-links">
         <a href="/" class={isActive("/") ? "on" : ""}>Inicio</a>
         <a href="/catalogo/" class={isActive("/catalogo") || isActive("/motos") ? "on" : ""}>Catálogo</a>
+        <a href="/vender-moto-granada/" class={isActive("/vender-moto-granada") ? "on" : ""} data-track="vender_moto" data-source="nav">Vender moto</a>
         <a href="/blog/" class={isActive("/blog") ? "on" : ""}>Blog</a>
       </nav>
       <a href="/contacto/" class="nav-cta">Contactar</a>
@@ -140,6 +141,7 @@ const negocioSchema = {
         <nav class="mnav-links">
           <a href="/">Inicio</a>
           <a href="/catalogo/">Catálogo</a>
+          <a href="/vender-moto-granada/" data-track="vender_moto" data-source="nav_movil">Vender moto</a>
           <a href="/blog/">Blog</a>
           <a href="/contacto/">Contacto</a>
         </nav>
@@ -308,6 +310,7 @@ const negocioSchema = {
     .mnav.open .mnav-links a:nth-child(2){transition-delay:.14s}
     .mnav.open .mnav-links a:nth-child(3){transition-delay:.20s}
     .mnav.open .mnav-links a:nth-child(4){transition-delay:.26s}
+    .mnav.open .mnav-links a:nth-child(5){transition-delay:.32s}
     .mnav-social{display:flex;gap:var(--s-4);margin-top:var(--s-4)}
     .mnav-social a{color:var(--text-dim);width:46px;height:46px;border-radius:50%;
       border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
