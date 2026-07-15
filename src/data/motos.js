@@ -25,11 +25,11 @@ export const motos = [
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
       "medley125-1.jpg",
-      "medley125-2.png",
-      "medley125-3.png",
+      "medley125-2.PNG",
+      "medley125-3.PNG",
       "medley125-4.jpg",
-      "medley125-5.png",
-      "medley125-6.png",
+      "medley125-5.PNG",
+      "medley125-6.PNG",
       "medley125-7.jpg",
       "medley125-8.png",
     ],
@@ -105,7 +105,7 @@ export const motos = [
     anio: 2017,
     km: 21700,
     precio: 7900,
-    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    estado: "Vendida",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
       "tmax530-1.png",
@@ -146,7 +146,7 @@ export const motos = [
     anio: 2025,
     km: 600,
     precio: 2750,
-    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    estado: "Vendida",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
       "nk125-1.jpeg",
