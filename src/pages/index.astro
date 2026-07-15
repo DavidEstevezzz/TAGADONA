@@ -31,8 +31,8 @@ const destacadas = [...motos].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).s
       <h1 class="hero-title display reveal d1">Tagadona Racing</h1>
       <p class="hero-sub reveal d2">Compraventa de motos en Granada con revisión propia, garantía y asistencia personalizada para comprar o vender tu moto con confianza.</p>
       <div class="hero-actions reveal d3">
-        <a href="/catalogo" class="btn btn-primary">Ver catálogo <span class="arr">→</span></a>
-        <a href="/contacto" class="btn btn-ghost">Vender mi moto</a>
+        <a href="/catalogo/" class="btn btn-primary">Ver catálogo <span class="arr">→</span></a>
+        <a href="/contacto/" class="btn btn-ghost">Vender mi moto</a>
       </div>
     </div>
     <a href="#marcas" class="hero-scroll" aria-label="Bajar"><span class="hero-scroll-line"></span></a>
@@ -79,11 +79,11 @@ const destacadas = [...motos].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).s
           <p class="eyebrow">Recién llegadas</p>
           <h2 class="sec-title">Últimas incorporaciones</h2>
         </div>
-        <a href="/catalogo" class="link-arrow cond">Ver todo el catálogo <span class="arr">→</span></a>
+        <a href="/catalogo/" class="link-arrow cond">Ver todo el catálogo <span class="arr">→</span></a>
       </div>
       <div class="ultimas-grid">
         {destacadas.map((m, idx)=>(
-          <a class="umoto reveal" style={`transition-delay:${idx*80}ms`} href={`/motos/${m.slug}`}>
+          <a class="umoto reveal" style={`transition-delay:${idx*80}ms`} href={`/motos/${m.slug}/`}>
             <div class="umoto-img">
               <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo}`} loading="lazy" />
               {m.estado!=="Disponible" && <span class="umoto-badge">{m.estado}</span>}
@@ -126,7 +126,7 @@ const destacadas = [...motos].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).s
         <h2 class="sec-title">Una compraventa<br/><em>hecha de oficio</em></h2>
         <p>Trabajamos en Granada y zonas cercanas de Andalucía, siempre con un enfoque personal y transparente. Aquí no hay letra pequeña ni prisas: cada cliente se lleva exactamente lo que espera.</p>
         <p>Revisamos cada vehículo que entra y solo vendemos lo que nosotros mismos compraríamos. Si buscas comprar con tranquilidad o vender sin complicaciones, estás en el sitio adecuado. Nuestro sello de calidad te lo garantiza.</p>
-        <a href="/catalogo" class="link-arrow cond">Ver nuestras motos <span class="arr">→</span></a>
+        <a href="/catalogo/" class="link-arrow cond">Ver nuestras motos <span class="arr">→</span></a>
       </div>
     </div>
   </section>
@@ -217,7 +217,7 @@ const destacadas = [...motos].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).s
     <h2 class="cta-title display">Llámanos para<br/>comprar o vender</h2>
     <p class="cta-sub">Cuéntanos qué buscas y lo localizamos por ti. Sin compromiso.</p>
     <div class="cta-actions">
-      <a href="/contacto" class="btn btn-primary">Contacto <span class="arr">→</span></a>
+      <a href="/contacto/" class="btn btn-primary">Contacto <span class="arr">→</span></a>
       <a href="tel:+34644904418" class="btn btn-ghost">+34 644 904 418</a>
     </div>
   </div>
