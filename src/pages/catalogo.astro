@@ -9,17 +9,17 @@ const carnets = [...new Set(activas.map(m=>m.carnet.replace(/\s*\(.*\)/,"").trim
 const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservada" : "";
 ---
 <Base
-  title="Motos de segunda mano en Granada | Tagadona Racing"
-  desc="Motos de segunda mano revisadas en Granada. Scooters, motos 125 y motos A2 con garantía, transferencia incluida y atención personalizada."
+  title="Catálogo de motos disponibles en Granada | Tagadona Racing"
+  desc="Consulta las motos disponibles actualmente en Tagadona Racing. Scooters, motos 125 y motos A2 revisadas, con garantía y transferencia incluida. Filtra por tipo, carnet y precio."
 >
 
   <!-- Banner -->
   <section class="cat-hero">
     <div class="cat-hero-glow" aria-hidden="true"></div>
     <div class="wrap cat-hero-inner">
-      <p class="eyebrow center reveal in">Confianza · Calidad · Asesoramiento</p>
-      <h1 class="cat-h1 display reveal in">Nuestras motos</h1>
-      <p class="cat-lead reveal in">Cada moto pasa una inspección completa antes de publicarse. Compra con garantía y sin sorpresas.</p>
+      <p class="eyebrow center reveal in">Stock actual · Precios · Kilómetros</p>
+      <h1 class="cat-h1 display reveal in">Motos disponibles</h1>
+      <p class="cat-lead reveal in">Nuestro inventario a día de hoy. Filtra por tipo, carnet y precio para encontrar la tuya. ¿Prefieres saber primero cómo compramos y vendemos? Empieza por la guía de <a href="/motos-segunda-mano-granada/">motos de segunda mano en Granada</a>.</p>
       <div class="cat-stats reveal in">
         <div class="cat-stat"><span class="cat-stat-n cond">{total}</span><span class="cat-stat-l cond">disponibles</span></div>
         <span class="cat-stat-div"></span>
@@ -176,7 +176,8 @@ const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservad
     .cat-hero-inner{position:relative;z-index:1}
     .cat-hero .eyebrow{margin-bottom:var(--s-5)}
     .cat-h1{font-size:clamp(48px,8vw,96px);line-height:.92;color:var(--orange-bright);margin-bottom:var(--s-4)}
-    .cat-lead{color:var(--text-dim);font-size:var(--fs-lead);max-width:520px;margin:0 auto var(--s-6);line-height:1.6}
+    .cat-lead{color:var(--text-dim);font-size:var(--fs-lead);max-width:560px;margin:0 auto var(--s-6);line-height:1.6}
+    .cat-lead a{color:var(--orange-bright);text-decoration:underline;text-underline-offset:3px}
     .cat-stats{display:inline-flex;align-items:center;gap:clamp(20px,4vw,40px);
       border:1px solid var(--line);border-radius:100px;padding:var(--s-4) clamp(24px,4vw,40px);
       background:rgba(255,255,255,.02)}
