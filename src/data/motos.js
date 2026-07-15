@@ -24,14 +24,14 @@ export const motos = [
     estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
-      "medley125-1.jpeg",
-      "medley125-2.jpeg",
-      "medley125-3.jpeg",
-      "medley125-4.jpeg",
-      "medley125-5.jpeg",
-      "medley125-6.jpeg",
-      "medley125-7.jpeg",
-      "medley125-8.jpeg",
+      "medley125-1.jpg",
+      "medley125-2.png",
+      "medley125-3.png",
+      "medley125-4.jpg",
+      "medley125-5.png",
+      "medley125-6.png",
+      "medley125-7.jpg",
+      "medley125-8.png",
     ],
     // Datos rápidos (los 4 de arriba)
     cilindrada: "125 cc",
