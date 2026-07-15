@@ -9,6 +9,7 @@
 // ============================================================
 import MotoCardGrid from './MotoCardGrid.astro';
 import Faq from './Faq.astro';
+import { whatsapp, business } from '../config/business.js';
 
 const {
   crumbLabel,
@@ -25,12 +26,12 @@ const {
   relacionadas = [],     // [{ label, href }] — enlaces internos
 } = Astro.props;
 
-const WHATSAPP = "https://wa.me/34644904418";
+const WHATSAPP = whatsapp;
 
 // Pasos del proceso de compra (idénticos en todas las landings de categoría)
 const proceso = [
   { n: "01", t: "Revisión completa", d: "Cada moto pasa una inspección punto por punto antes de publicarse: motor, frenos, neumáticos, electrónica y estética." },
-  { n: "02", t: "La ves con cita previa", d: "Vienes a Cogollos de la Vega, la ves con calma y la pruebas. Sin prisas y sin compromiso." },
+  { n: "02", t: "La ves con cita previa", d: `Vienes a ${business.municipio}, la ves con calma y la pruebas. Sin prisas y sin compromiso.` },
   { n: "03", t: "Transferencia incluida", d: "Nos encargamos del cambio de nombre y de todo el papeleo. Te la llevas lista para circular a tu nombre." },
   { n: "04", t: "Garantía por escrito", d: "Sales con garantía y con nuestro teléfono directo para cualquier cosa después de la compra." },
 ];
@@ -115,7 +116,7 @@ const proceso = [
     <div class="ld-cta">
       <p>¿Tienes claro lo que buscas o quieres que te asesoremos?</p>
       <div class="ld-cta-btns">
-        <a href={WHATSAPP} target="_blank" rel="noopener" class="btn btn-primary">Escríbenos por WhatsApp <span class="arr">→</span></a>
+        <a href={WHATSAPP} target="_blank" rel="noopener" class="btn btn-primary" data-track="whatsapp_general" data-source="landing">Escríbenos por WhatsApp <span class="arr">→</span></a>
         <a href="/contacto/" class="btn btn-ghost">Ver formas de contacto</a>
       </div>
     </div>

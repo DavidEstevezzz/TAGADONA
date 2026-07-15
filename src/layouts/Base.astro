@@ -1,64 +1,67 @@
 ---
 import '../styles/global.css';
+import { business, tel, mailto, whatsapp } from '../config/business.js';
 const {
   title = "Tagadona Racing",
   desc = "Compraventa de motos en Granada y Andalucía. Inspección, garantía y trato directo.",
   // Permite marcar páginas como no indexables (p. ej. /admin/). Por defecto, indexable.
   robots = "index,follow",
   // Imagen para redes (Open Graph / Twitter). Por defecto, la del taller.
-  image = "/img/hero-taller.jpg",
+  image = business.imagenSocial,
+  // Texto alternativo de la imagen social (Open Graph / Twitter).
+  imageAlt = "Tagadona Racing — compraventa de motos en Granada",
+  // Dimensiones de la imagen social. Solo se emiten si se conocen; por
+  // defecto, las de la imagen del taller (hero-taller.jpg).
+  imageW,
+  imageH,
   ogType = "website",
 } = Astro.props;
+const usaImagenDefecto = image === business.imagenSocial;
+const ogImageW = imageW ?? (usaImagenDefecto ? 2560 : null);
+const ogImageH = imageH ?? (usaImagenDefecto ? 1435 : null);
 const path = Astro.url.pathname;
 const isActive = (p) => p === "/" ? path === "/" : path.startsWith(p);
 // URL canónica (con barra final) para que Google consolide una sola versión
-const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const SITE = Astro.site ?? new URL(business.dominio);
 const canonicalPath = path === "/" ? "/" : path.replace(/\/?$/, "/");
 const canonical = new URL(canonicalPath, SITE).href;
 // Imagen social en URL absoluta (Open Graph exige URL completa)
 const ogImage = new URL(image, SITE).href;
-const INSTAGRAM = "https://www.instagram.com/tagadonaracing/";
-const TIKTOK = "https://www.tiktok.com/@tagadona.racing";
+const INSTAGRAM = business.instagram;
+const TIKTOK = business.tiktok;
 
 // Datos estructurados del negocio (se incluyen en todas las páginas para
 // mantener un NAP —nombre, dirección, teléfono— coherente en todo el sitio).
+// Todo sale de src/config/business.js para evitar contradicciones.
 const negocioSchema = {
   "@context": "https://schema.org",
   "@type": "MotorcycleDealer",
-  "@id": "https://tagadonaracing.es/#negocio",
-  name: "Tagadona Racing",
-  url: "https://tagadonaracing.es/",
-  telephone: "+34644904418",
-  email: "info@tagadonaracing.es",
-  image: "https://tagadonaracing.es/img/hero-taller.jpg",
-  logo: "https://tagadonaracing.es/img/logo.png",
+  "@id": new URL("/#negocio", SITE).href,
+  name: business.nombre,
+  url: new URL("/", SITE).href,
+  telephone: business.telefonoE164,
+  email: business.email,
+  image: new URL(business.imagenSocial, SITE).href,
+  logo: new URL(business.logo, SITE).href,
   priceRange: "€€",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Paraje de Catacena",
-    postalCode: "18211",
-    addressLocality: "Cogollos de la Vega",
-    addressRegion: "Granada",
-    addressCountry: "ES",
+    streetAddress: business.direccion,
+    postalCode: business.codigoPostal,
+    addressLocality: business.municipio,
+    addressRegion: business.provincia,
+    addressCountry: business.pais,
   },
   areaServed: {
     "@type": "AdministrativeArea",
-    name: "Granada y Andalucía",
+    name: business.areaServida,
   },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "09:30",
-      closes: "14:00",
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "17:00",
-      closes: "20:00",
-    },
-  ],
+  openingHoursSpecification: business.horario.map((h) => ({
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: h.dias,
+    opens: h.abre,
+    closes: h.cierra,
+  })),
   sameAs: [INSTAGRAM, TIKTOK],
 };
 ---
@@ -67,6 +70,7 @@ const negocioSchema = {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#141110" />
   <meta name="description" content={desc} />
   <meta name="robots" content={robots} />
   <link rel="canonical" href={canonical} />
@@ -80,10 +84,14 @@ const negocioSchema = {
   <meta property="og:description" content={desc} />
   <meta property="og:url" content={canonical} />
   <meta property="og:image" content={ogImage} />
+  {ogImageW && <meta property="og:image:width" content={String(ogImageW)} />}
+  {ogImageH && <meta property="og:image:height" content={String(ogImageH)} />}
+  <meta property="og:image:alt" content={imageAlt} />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={desc} />
   <meta name="twitter:image" content={ogImage} />
+  <meta name="twitter:image:alt" content={imageAlt} />
 
   <!-- Datos estructurados del negocio (JSON-LD) -->
   <script type="application/ld+json" set:html={JSON.stringify(negocioSchema)} />
@@ -153,7 +161,7 @@ const negocioSchema = {
 
   <main><slot /></main>
 
-  <a class="wa-float" href="https://wa.me/34644904418" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+  <a class="wa-float" href={whatsapp} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" data-track="whatsapp_flotante" data-source="wa_float">
     <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2"/></svg>
   </a>
 
@@ -183,9 +191,9 @@ const negocioSchema = {
       </div>
       <div class="ft-col">
         <h4 class="cond">Contacto</h4>
-        <a href="tel:+34644904418">+34 644 904 418</a>
-        <a href="mailto:info@tagadonaracing.es">info@tagadonaracing.es</a>
-        <span>Granada, Andalucía</span>
+        <a href={tel} data-track="telefono" data-source="footer">{business.telefonoVisible}</a>
+        <a href={mailto} data-track="email" data-source="footer">{business.email}</a>
+        <span>{business.municipio} · {business.provincia}</span>
       </div>
     </div>
     <div class="wrap ft-bottom">
