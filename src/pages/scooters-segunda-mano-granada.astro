@@ -1,0 +1,88 @@
+---
+import Base from '../layouts/Base.astro';
+import LandingCategoria from '../components/LandingCategoria.astro';
+import { motos } from '../data/motos.js';
+import { breadcrumbSchema, faqSchema } from '../lib/seo.js';
+
+const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const PATH = "/scooters-segunda-mano-granada/";
+
+// Scooters: categoría que empieza por "Scooter", excluyendo las vendidas.
+const seleccion = motos
+  .filter((m) => m.categoria.startsWith("Scooter") && m.estado !== "Vendida")
+  .sort((a, b) => (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0));
+
+const faqs = [
+  {
+    q: "¿Qué carnet necesito para una scooter?",
+    a: "Depende de la cilindrada. Una scooter de 125 se lleva con carnet A1 o con el de coche (B) con 3 años de antigüedad. Las scooter de 300 cc con dos o tres ruedas (tipo Tricity) también pueden llevarse con carnet B en muchos casos. Para maxiscooters más potentes necesitarás A2 o A.",
+  },
+  {
+    q: "¿Es mejor una scooter o una moto con marchas para ciudad?",
+    a: "Para el día a día urbano la scooter suele ganar: cambio automático, plataforma para los pies, hueco bajo el asiento para el casco y una conducción cómoda y sin embrague. Si buscas sensaciones más deportivas o hacer más carretera, una naked o una moto con marchas encaja mejor.",
+  },
+  {
+    q: "¿Cuánto gasta una scooter de segunda mano?",
+    a: "Una scooter 125 moderna ronda los 2 a 3 litros a los 100 km, así que el gasto en combustible es muy bajo. Sumado a un seguro económico y a un mantenimiento sencillo, es de los vehículos más baratos de tener.",
+  },
+  {
+    q: "¿Las scooters de Tagadona Racing están revisadas?",
+    a: "Sí. Cada scooter pasa una inspección completa (motor, transmisión CVT, frenos, neumáticos y electrónica) antes de publicarse, y se entrega con garantía por escrito y transferencia incluida.",
+  },
+  {
+    q: "¿Puedo probar la scooter antes de comprarla?",
+    a: "Claro. Atendemos con cita previa en Cogollos de la Vega (Granada) para que puedas verla con calma y probarla. Escríbenos y quedamos.",
+  },
+];
+
+const breadcrumb = breadcrumbSchema([
+  { name: "Inicio", path: "/" },
+  { name: "Scooters de segunda mano en Granada", path: PATH },
+], SITE);
+const faqLd = faqSchema(faqs);
+---
+<Base
+  title="Scooters de segunda mano en Granada | Tagadona Racing"
+  desc="Scooters de segunda mano en Granada revisadas y con garantía: 125, maxiscooter y triciclos. Transferencia incluida y prueba con cita previa."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+
+  <LandingCategoria
+    crumbLabel="Scooters segunda mano"
+    eyebrow="Segunda mano · Granada"
+    h1="Scooters de segunda mano en Granada"
+    intro={[
+      "La <strong>scooter</strong> es el vehículo urbano por excelencia: cambio automático, comodidad total y un consumo mínimo para moverte por Granada sin depender del coche ni pelear con los atascos.",
+      "En Tagadona Racing encontrarás scooters de segunda mano <strong>revisadas punto por punto</strong>, desde 125 para el día a día hasta maxiscooters y triciclos, todas con garantía y cambio de nombre incluido.",
+    ]}
+    bloques={[
+      {
+        title: "¿Qué carnet necesito?",
+        body: [
+          "Una scooter <strong>125</strong> se lleva con carnet A1 o con el de coche (B) con 3 años de antigüedad. Muchos <strong>triciclos de 300 cc</strong> también se pueden conducir con carnet B.",
+          "Para maxiscooters más potentes (500 cc y más) necesitarás el carnet <strong>A2 o A</strong>. Si tienes dudas con un modelo concreto, pregúntanos y te lo aclaramos.",
+        ],
+      },
+      {
+        title: "¿Para qué uso es ideal?",
+        body: [
+          "Para <strong>ciudad y trayectos diarios</strong> no hay nada tan cómodo: subes, arrancas y vas. Hueco para el casco, protección frente al viento y aparcamiento fácil.",
+          "Los modelos de rueda alta y los maxiscooters también rinden bien en carretera, ideales si combinas ciudad con salidas más largas.",
+        ],
+      },
+    ]}
+    motos={seleccion}
+    gridEyebrow="Nuestro stock"
+    gridTitle="Scooters disponibles ahora"
+    emptyTitle="Ahora mismo no tenemos ninguna scooter disponible"
+    emptyText="La rotación es constante y entran scooters nuevas cada semana. Dinos qué modelo buscas y te avisamos en cuanto llegue."
+    faqs={faqs}
+    relacionadas={[
+      { label: "Motos 125 de segunda mano en Granada", href: "/motos-125-segunda-mano-granada/" },
+      { label: "Motos con carnet B en Granada", href: "/motos-carnet-b-granada/" },
+      { label: "Ver todo el catálogo", href: "/catalogo/" },
+      { label: "Contacto y cómo llegar", href: "/contacto/" },
+    ]}
+  />
+</Base>

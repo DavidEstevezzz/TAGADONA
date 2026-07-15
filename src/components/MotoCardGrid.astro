@@ -1,0 +1,102 @@
+---
+// ============================================================
+//  MotoCardGrid — Rejilla de tarjetas de moto reutilizable
+//  Reutiliza la estructura y el estilo de tarjeta del catálogo
+//  (src/pages/catalogo.astro) para las landings de SEO.
+//  Si la lista viene vacía, muestra un CTA a contacto en vez de
+//  dejar un hueco.
+// ============================================================
+import { formatPrecio, formatKm } from '../data/motos.js';
+
+const {
+  motos = [],
+  emptyTitle = "Ahora mismo no tenemos ninguna disponible",
+  emptyText = "La rotación es constante y entran motos nuevas cada semana. Dinos qué buscas y te avisamos en cuanto llegue —o te la localizamos.",
+  emptyCta = "Cuéntanos qué buscas",
+  emptyHref = "/contacto/",
+} = Astro.props;
+
+const limpiarCarnet = (c) => c.replace(/\s*\(.*\)/, "").trim();
+const slugEstado = (e) => e === "Vendida" ? "vendida" : e === "Reservada" ? "reservada" : "";
+---
+
+{motos.length > 0 ? (
+  <div class="mg-grid">
+    {motos.map((m, idx) => (
+      <a class="moto-card reveal"
+         style={`transition-delay:${(idx % 3) * 80}ms`}
+         href={`/motos/${m.slug}/`}>
+        <div class="moto-img">
+          <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo} ${m.anio} de segunda mano en Granada`} loading="lazy" />
+          {m.estado !== "Disponible" && <span class={"moto-estado " + slugEstado(m.estado)}>{m.estado}</span>}
+          <span class="moto-carnet cond">Carnet {limpiarCarnet(m.carnet)}</span>
+          <span class="moto-cat cond">{m.categoria}</span>
+        </div>
+        <div class="moto-info">
+          <div class="moto-top">
+            <h3 class="head">{m.marca} <span>{m.modelo}</span></h3>
+            <span class="moto-price cond">{formatPrecio(m.precio)}</span>
+          </div>
+          <div class="moto-meta cond">
+            <span>{m.anio}</span><i></i><span>{formatKm(m.km)}</span><i></i><span>{m.cilindrada}</span>
+          </div>
+          <span class="moto-link cond">Ver ficha <span class="arr">→</span></span>
+        </div>
+      </a>
+    ))}
+  </div>
+) : (
+  <div class="mg-empty">
+    <h3 class="head">{emptyTitle}</h3>
+    <p>{emptyText}</p>
+    <a href={emptyHref} class="btn btn-primary">{emptyCta} <span class="arr">→</span></a>
+  </div>
+)}
+
+<style>
+  /* Rejilla — misma línea visual que el catálogo */
+  .mg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-6)}
+  .moto-card{display:flex;flex-direction:column;background:rgba(255,255,255,.02);
+    border:1px solid var(--line);border-radius:6px;overflow:hidden;
+    transition:transform .5s var(--ease),border-color .4s,box-shadow .5s,opacity .3s}
+  .moto-card:hover{transform:translateY(-8px);border-color:var(--orange);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+  .moto-img{position:relative;aspect-ratio:5/4;overflow:hidden;background:var(--bg-3)}
+  .moto-img img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+  .moto-card:hover .moto-img img{transform:scale(1.07)}
+  .moto-estado{position:absolute;top:var(--s-4);left:var(--s-4);
+    font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;
+    letter-spacing:.14em;text-transform:uppercase;padding:8px 16px;border-radius:3px;
+    color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+  .moto-estado.reservada{background:#E0A22A;color:#1a1206}
+  .moto-estado.vendida{background:#C0392B}
+  .moto-carnet{position:absolute;top:var(--s-4);right:var(--s-4);
+    background:var(--orange);color:#150f0b;font-size:11px;font-weight:600;
+    letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:2px}
+  .moto-cat{position:absolute;bottom:var(--s-4);left:var(--s-4);
+    font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--text);background:rgba(20,17,16,.7);backdrop-filter:blur(6px);
+    padding:5px 12px;border-radius:2px}
+  .moto-info{padding:var(--s-4) var(--s-5) var(--s-5);display:flex;flex-direction:column;flex:1}
+  .moto-top{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s-3);
+    margin-bottom:var(--s-2)}
+  .moto-top h3{font-size:var(--fs-h3);font-weight:600;color:var(--text);line-height:1.1}
+  .moto-top h3 span{font-weight:400;color:var(--text-dim)}
+  .moto-price{font-size:22px;font-weight:700;color:var(--orange-bright);white-space:nowrap}
+  .moto-meta{display:flex;align-items:center;gap:var(--s-3);color:var(--text-dim);
+    font-size:13px;letter-spacing:.04em;margin-bottom:var(--s-4)}
+  .moto-meta i{width:3px;height:3px;border-radius:50%;background:var(--text-faint)}
+  .moto-link{margin-top:auto;font-size:12px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--orange-bright);display:inline-flex;
+    align-items:center;gap:var(--s-2);transition:gap .3s var(--ease)}
+  .moto-card:hover .moto-link{gap:var(--s-4)}
+
+  /* Estado vacío — CTA a contacto en vez de una rejilla vacía */
+  .mg-empty{text-align:center;border:1px solid var(--line);border-radius:10px;
+    background:rgba(255,255,255,.02);padding:var(--s-8) var(--s-6)}
+  .mg-empty h3{font-size:var(--fs-h3);font-weight:600;color:var(--text);margin-bottom:var(--s-3)}
+  .mg-empty p{color:var(--text-dim);max-width:520px;margin:0 auto var(--s-6);line-height:1.7}
+
+  @media(max-width:860px){.mg-grid{grid-template-columns:1fr 1fr;gap:var(--s-4)}}
+  @media(max-width:560px){.mg-grid{grid-template-columns:1fr}}
+</style>

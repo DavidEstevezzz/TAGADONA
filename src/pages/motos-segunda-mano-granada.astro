@@ -1,0 +1,90 @@
+---
+import Base from '../layouts/Base.astro';
+import LandingCategoria from '../components/LandingCategoria.astro';
+import { motos } from '../data/motos.js';
+import { breadcrumbSchema, faqSchema } from '../lib/seo.js';
+
+const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const PATH = "/motos-segunda-mano-granada/";
+
+// Página hub: todas las motos disponibles (no vendidas), destacadas primero.
+const seleccion = motos
+  .filter((m) => m.estado !== "Vendida")
+  .sort((a, b) => (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0));
+
+const faqs = [
+  {
+    q: "¿Dónde está Tagadona Racing?",
+    a: "Estamos en el Paraje de Catacena, 18211 Cogollos de la Vega (Granada). Atendemos solo con cita previa para que puedas ver y probar la moto con calma. Escríbenos o llámanos y quedamos.",
+  },
+  {
+    q: "¿Todas las motos están revisadas?",
+    a: "Sí. Cada moto pasa una inspección punto por punto (motor, frenos, neumáticos, electrónica y estética) antes de publicarse. Si algo no está a la altura, no se pone a la venta.",
+  },
+  {
+    q: "¿La transferencia y el cambio de nombre están incluidos?",
+    a: "Sí. Nos encargamos de todo el papeleo y del cambio de nombre. Te llevas la moto lista para circular a tu nombre, sin gestiones por tu parte.",
+  },
+  {
+    q: "¿Ofrecéis garantía en las motos de segunda mano?",
+    a: "Todas nuestras motos se entregan con garantía por escrito. Además, te damos nuestro teléfono directo para cualquier duda o incidencia después de la compra.",
+  },
+  {
+    q: "¿Puedo vender o cambiar mi moto actual?",
+    a: "Sí. Tasamos tu moto y estudiamos comprártela o aceptarla como parte del pago. Cuéntanos qué tienes en la página de vender tu moto y te damos una valoración.",
+  },
+];
+
+const breadcrumb = breadcrumbSchema([
+  { name: "Inicio", path: "/" },
+  { name: "Motos de segunda mano en Granada", path: PATH },
+], SITE);
+const faqLd = faqSchema(faqs);
+---
+<Base
+  title="Motos de segunda mano en Granada | Tagadona Racing"
+  desc="Compraventa de motos de segunda mano en Granada. Scooters, 125, A2 y carnet B revisadas, con garantía y transferencia incluida. Cita previa en Cogollos de la Vega."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+
+  <LandingCategoria
+    crumbLabel="Motos segunda mano Granada"
+    eyebrow="Compraventa · Granada"
+    h1="Motos de segunda mano en Granada"
+    intro={[
+      "En <strong>Tagadona Racing</strong> llevamos más de una década comprando y vendiendo motos de segunda mano en Granada con una idea muy sencilla: que compres con la misma confianza que si te la vendiera un amigo que entiende.",
+      "Cada moto se <strong>revisa punto por punto</strong> antes de publicarse y se entrega con garantía y transferencia incluida. Aquí abajo tienes lo disponible ahora; usa las categorías para encontrar la tuya según el carnet o el tipo de moto.",
+    ]}
+    bloques={[
+      {
+        title: "Encuentra tu moto por carnet",
+        body: [
+          "¿Tienes el carnet de coche? Mira las <a href=\"/motos-carnet-b-granada/\">motos para carnet B</a> y las <a href=\"/motos-125-segunda-mano-granada/\">125 de segunda mano</a>.",
+          "¿Ya tienes el A2? Echa un ojo a las <a href=\"/motos-a2-segunda-mano-granada/\">motos A2</a>, el escalón perfecto para carretera y viajes.",
+        ],
+      },
+      {
+        title: "O por tipo de moto",
+        body: [
+          "Si buscas comodidad urbana y cambio automático, nuestras <a href=\"/scooters-segunda-mano-granada/\">scooters de segunda mano</a> son la opción más práctica para el día a día.",
+          "¿Prefieres verlo todo de un vistazo? Entra en el <a href=\"/catalogo/\">catálogo completo</a> y filtra por tipo, carnet y precio.",
+        ],
+      },
+    ]}
+    motos={seleccion}
+    gridEyebrow="Nuestro stock"
+    gridTitle="Motos disponibles ahora"
+    emptyTitle="Ahora mismo no hay motos publicadas"
+    emptyText="La rotación es constante y entran motos nuevas cada semana. Dinos qué buscas y te avisamos en cuanto llegue, o te la localizamos por encargo."
+    faqs={faqs}
+    relacionadas={[
+      { label: "Motos 125 de segunda mano en Granada", href: "/motos-125-segunda-mano-granada/" },
+      { label: "Scooters de segunda mano en Granada", href: "/scooters-segunda-mano-granada/" },
+      { label: "Motos A2 de segunda mano en Granada", href: "/motos-a2-segunda-mano-granada/" },
+      { label: "Motos con carnet B en Granada", href: "/motos-carnet-b-granada/" },
+      { label: "Vender tu moto en Granada", href: "/vender-moto-granada/" },
+      { label: "Contacto y cómo llegar", href: "/contacto/" },
+    ]}
+  />
+</Base>

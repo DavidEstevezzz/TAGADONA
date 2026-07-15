@@ -1,0 +1,201 @@
+---
+// ============================================================
+//  LandingCategoria — Plantilla de página de aterrizaje (SEO)
+//  Estructura compartida por las landings de categoría:
+//    hero · intro · bloques (carnet/uso) · rejilla de motos ·
+//    garantía y proceso de compra · FAQ · enlaces internos.
+//  El contenido concreto (textos, motos, FAQs) llega por props;
+//  el JSON-LD (Breadcrumb + FAQPage) lo genera cada página.
+// ============================================================
+import MotoCardGrid from './MotoCardGrid.astro';
+import Faq from './Faq.astro';
+
+const {
+  crumbLabel,
+  eyebrow,
+  h1,
+  intro = [],            // string[] — párrafos introductorios
+  bloques = [],          // [{ title, body:[] }] — carnet, uso recomendado…
+  motos = [],            // motos que encajan (ya filtradas)
+  gridTitle = "Disponibles ahora",
+  gridEyebrow = "Nuestro stock",
+  emptyTitle,
+  emptyText,
+  faqs = [],
+  relacionadas = [],     // [{ label, href }] — enlaces internos
+} = Astro.props;
+
+const WHATSAPP = "https://wa.me/34644904418";
+
+// Pasos del proceso de compra (idénticos en todas las landings de categoría)
+const proceso = [
+  { n: "01", t: "Revisión completa", d: "Cada moto pasa una inspección punto por punto antes de publicarse: motor, frenos, neumáticos, electrónica y estética." },
+  { n: "02", t: "La ves con cita previa", d: "Vienes a Cogollos de la Vega, la ves con calma y la pruebas. Sin prisas y sin compromiso." },
+  { n: "03", t: "Transferencia incluida", d: "Nos encargamos del cambio de nombre y de todo el papeleo. Te la llevas lista para circular a tu nombre." },
+  { n: "04", t: "Garantía por escrito", d: "Sales con garantía y con nuestro teléfono directo para cualquier cosa después de la compra." },
+];
+---
+
+<div class="ld-top wrap">
+  <nav class="crumb cond" aria-label="Ruta">
+    <a href="/">Inicio</a><span>/</span><em>{crumbLabel}</em>
+  </nav>
+</div>
+
+<!-- Hero -->
+<section class="ld-hero">
+  <div class="ld-hero-glow" aria-hidden="true"></div>
+  <div class="wrap ld-hero-inner">
+    <p class="eyebrow center reveal in">{eyebrow}</p>
+    <h1 class="ld-h1 display reveal in">{h1}</h1>
+    <div class="ld-intro reveal in">
+      {intro.map((p) => <p set:html={p} />)}
+    </div>
+  </div>
+</section>
+
+<!-- Bloques informativos: carnet, uso recomendado… -->
+{bloques.length > 0 && (
+  <section class="wrap ld-bloques">
+    {bloques.map((b, i) => (
+      <div class={"ld-bloque reveal" + (i > 0 ? " d1" : "")}>
+        <h2 class="ld-bloque-t head">{b.title}</h2>
+        {b.body.map((p) => <p set:html={p} />)}
+      </div>
+    ))}
+  </section>
+)}
+
+<!-- Motos que encajan -->
+<section class="ld-motos">
+  <div class="wrap">
+    <div class="ld-sec-head reveal">
+      <p class="eyebrow">{gridEyebrow}</p>
+      <h2 class="sec-title">{gridTitle}</h2>
+    </div>
+    <MotoCardGrid motos={motos} emptyTitle={emptyTitle} emptyText={emptyText} />
+    <div class="ld-motos-foot reveal">
+      <a href="/catalogo/" class="btn btn-ghost">Ver todo el catálogo <span class="arr">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- Garantía y proceso de compra -->
+<section class="ld-proceso div-soft panel-soft">
+  <div class="wrap">
+    <div class="ld-sec-head center reveal">
+      <p class="eyebrow center">Cómo compras con nosotros</p>
+      <h2 class="sec-title">Garantía y transferencia incluidas</h2>
+      <p class="ld-sec-lead">No vendemos y desaparecemos. Cada moto se entrega revisada, con el cambio de nombre hecho y garantía por escrito.</p>
+    </div>
+    <div class="ld-pasos">
+      {proceso.map((p) => (
+        <div class="ld-paso reveal">
+          <span class="ld-paso-n cond">{p.n}</span>
+          <h3 class="head">{p.t}</h3>
+          <p>{p.d}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- FAQ visible + fuente del JSON-LD FAQPage -->
+<Faq faqs={faqs} />
+
+<!-- Enlaces internos -->
+<section class="ld-links">
+  <div class="wrap-narrow reveal">
+    <h2 class="sec-title">Sigue explorando</h2>
+    <div class="ld-links-grid">
+      {relacionadas.map((r) => (
+        <a class="ld-link" href={r.href}><span>{r.label}</span><span class="arr">→</span></a>
+      ))}
+    </div>
+    <div class="ld-cta">
+      <p>¿Tienes claro lo que buscas o quieres que te asesoremos?</p>
+      <div class="ld-cta-btns">
+        <a href={WHATSAPP} target="_blank" rel="noopener" class="btn btn-primary">Escríbenos por WhatsApp <span class="arr">→</span></a>
+        <a href="/contacto/" class="btn btn-ghost">Ver formas de contacto</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ld-top{padding-top:calc(74px + var(--s-6))}
+  .crumb{display:flex;align-items:center;gap:var(--s-3);font-size:12px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+  .crumb a{color:var(--text-dim);transition:color .3s}
+  .crumb a:hover{color:var(--orange-bright)}
+  .crumb em{font-style:normal;color:var(--orange-bright)}
+  .crumb span{opacity:.4}
+
+  /* Hero */
+  .ld-hero{position:relative;padding:var(--s-7) 0 var(--s-8);text-align:center;overflow:hidden}
+  .ld-hero-glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+    width:min(900px,90%);height:420px;pointer-events:none;
+    background:radial-gradient(60% 70% at 50% 0%,rgba(217,122,40,.22),transparent 70%)}
+  .ld-hero-inner{position:relative;z-index:1}
+  .ld-hero .eyebrow{margin-bottom:var(--s-5)}
+  .ld-h1{font-size:clamp(38px,6vw,72px);line-height:1;color:var(--orange-bright);
+    margin-bottom:var(--s-5);max-width:16ch;margin-inline:auto}
+  .ld-intro{max-width:680px;margin:0 auto}
+  .ld-intro p{color:var(--text-dim);font-size:var(--fs-lead);line-height:1.7;margin-bottom:var(--s-4)}
+  .ld-intro p:last-child{margin-bottom:0}
+  .ld-intro :global(strong){color:var(--text);font-weight:600}
+
+  /* Bloques informativos */
+  .ld-bloques{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,56px);
+    padding:var(--s-8) clamp(20px,5vw,48px);border-top:1px solid var(--line-soft)}
+  .ld-bloque-t{font-size:var(--fs-h3);font-weight:700;color:var(--text);
+    margin-bottom:var(--s-4);padding-bottom:var(--s-3);border-bottom:1px solid var(--line)}
+  .ld-bloque p{color:var(--text-dim);line-height:1.8;margin-bottom:var(--s-3)}
+  .ld-bloque p:last-child{margin-bottom:0}
+  .ld-bloque :global(strong){color:var(--text);font-weight:600}
+  .ld-bloque :global(a){color:var(--orange-bright);text-decoration:underline;text-underline-offset:3px}
+
+  /* Sección de motos */
+  .ld-motos{padding:var(--s-8) 0}
+  .ld-sec-head{margin-bottom:var(--s-6)}
+  .ld-sec-head .eyebrow{margin-bottom:var(--s-4)}
+  .ld-sec-head.center{text-align:center}
+  .ld-sec-head.center .eyebrow{justify-content:center}
+  .ld-sec-head.center .eyebrow::before{display:none}
+  .ld-sec-lead{color:var(--text-dim);font-size:var(--fs-lead);max-width:560px;
+    margin:var(--s-4) auto 0;line-height:1.6}
+  .ld-motos-foot{text-align:center;margin-top:var(--s-7)}
+
+  /* Proceso */
+  .ld-proceso{padding:var(--s-9) 0}
+  .ld-pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-5);margin-top:var(--s-7)}
+  .ld-paso{border:1px solid var(--line);border-radius:8px;padding:var(--s-6);
+    background:rgba(255,255,255,.02);transition:border-color .4s,transform .4s var(--ease)}
+  .ld-paso:hover{border-color:var(--orange);transform:translateY(-6px)}
+  .ld-paso-n{font-size:26px;font-weight:700;color:var(--orange-bright);display:block;margin-bottom:var(--s-3)}
+  .ld-paso h3{font-size:var(--fs-h3);font-weight:600;color:var(--text);margin-bottom:var(--s-3)}
+  .ld-paso p{color:var(--text-dim);font-size:var(--fs-small);line-height:1.7}
+
+  /* Enlaces internos */
+  .ld-links{padding:var(--s-9) 0}
+  .ld-links .sec-title{text-align:center;margin-bottom:var(--s-6)}
+  .ld-links-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3);margin-bottom:var(--s-8)}
+  .ld-link{display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);
+    border:1px solid var(--line);border-radius:6px;padding:var(--s-4) var(--s-5);
+    color:var(--text);font-weight:500;transition:border-color .3s,color .3s,transform .3s var(--ease)}
+  .ld-link:hover{border-color:var(--orange);color:var(--orange-bright);transform:translateX(4px)}
+  .ld-link .arr{color:var(--orange-bright);transition:transform .3s var(--ease)}
+  .ld-link:hover .arr{transform:translateX(4px)}
+  .ld-cta{text-align:center;border-top:1px solid var(--line-soft);padding-top:var(--s-7)}
+  .ld-cta p{color:var(--text-dim);font-size:var(--fs-lead);margin-bottom:var(--s-5)}
+  .ld-cta-btns{display:flex;gap:var(--s-3);justify-content:center;flex-wrap:wrap}
+
+  @media(max-width:860px){
+    .ld-bloques{grid-template-columns:1fr;gap:var(--s-6)}
+    .ld-pasos{grid-template-columns:1fr 1fr}
+    .ld-links-grid{grid-template-columns:1fr}
+  }
+  @media(max-width:560px){
+    .ld-pasos{grid-template-columns:1fr}
+  }
+</style>

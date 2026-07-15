@@ -1,0 +1,89 @@
+---
+import Base from '../layouts/Base.astro';
+import LandingCategoria from '../components/LandingCategoria.astro';
+import { motos } from '../data/motos.js';
+import { breadcrumbSchema, faqSchema } from '../lib/seo.js';
+
+const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const PATH = "/motos-125-segunda-mano-granada/";
+
+// Motos 125: cilindrada de 125 cc, excluyendo las ya vendidas.
+// Las destacadas primero, igual que en el catálogo.
+const seleccion = motos
+  .filter((m) => /^125/.test(m.cilindrada) && m.estado !== "Vendida")
+  .sort((a, b) => (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0));
+
+const faqs = [
+  {
+    q: "¿Qué carnet necesito para llevar una moto de 125 cc?",
+    a: "Puedes conducir una 125 con el carnet A1 desde los 16 años. Además, si tienes el carnet de coche (B) con al menos 3 años de antigüedad, también estás autorizado a llevar una 125 por ciudad y carretera sin sacarte otro carnet.",
+  },
+  {
+    q: "¿Una moto de 125 de segunda mano es buena opción para ciudad?",
+    a: "Es la opción más práctica para moverse por Granada: ágil, ligera, fácil de aparcar y con un consumo muy bajo. Una scooter o naked 125 revisada te permite ir al trabajo o a estudiar gastando poco y sin depender del coche.",
+  },
+  {
+    q: "¿Puedo circular por autovía con una 125?",
+    a: "Sí. Las 125 pueden circular por autovías y autopistas siempre que no esté prohibido por señalización. Eso sí, están pensadas sobre todo para ciudad y carretera secundaria; para viajes largos y frecuentes por autovía es más cómoda una cilindrada mayor.",
+  },
+  {
+    q: "¿Las motos de 125 de Tagadona Racing llevan garantía?",
+    a: "Sí. Todas nuestras motos se entregan revisadas punto por punto, con garantía por escrito y con el cambio de nombre (transferencia) incluido. Te la llevas lista para circular a tu nombre.",
+  },
+  {
+    q: "¿Cuánto cuesta una 125 de segunda mano en Granada?",
+    a: "Depende del modelo, los kilómetros y el año, pero en nuestro stock encontrarás 125 revisadas en una horquilla de precio contenida. Consulta las disponibles más arriba o escríbenos y te decimos qué tenemos ahora mismo.",
+  },
+];
+
+const breadcrumb = breadcrumbSchema([
+  { name: "Inicio", path: "/" },
+  { name: "Motos 125 de segunda mano en Granada", path: PATH },
+], SITE);
+const faqLd = faqSchema(faqs);
+---
+<Base
+  title="Motos 125 de segunda mano en Granada | Tagadona Racing"
+  desc="Motos y scooters 125 de segunda mano en Granada, revisadas y con garantía. Ideales para carnet A1 o coche (B) con 3 años. Transferencia incluida."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+
+  <LandingCategoria
+    crumbLabel="Motos 125 segunda mano"
+    eyebrow="Segunda mano · Granada"
+    h1="Motos 125 de segunda mano en Granada"
+    intro={[
+      "Las <strong>motos de 125 cc</strong> son la puerta de entrada al mundo de las dos ruedas y la forma más práctica de moverse por Granada: ligeras, ágiles y con un consumo mínimo. En Tagadona Racing seleccionamos scooters y nakeds 125 <strong>revisadas punto por punto</strong>, con garantía y transferencia incluida.",
+      "Ya sea que acabes de sacarte el carnet A1 o que tengas el de coche con la antigüedad suficiente, aquí encontrarás una 125 lista para circular y sin sorpresas.",
+    ]}
+    bloques={[
+      {
+        title: "¿Qué carnet necesito?",
+        body: [
+          "Para una 125 vale el carnet <strong>A1</strong> (desde los 16 años) o el carnet de coche <strong>B con 3 años</strong> de antigüedad. Es la única cilindrada que puedes llevar con el carnet de coche sin sacarte nada más.",
+          "Por eso es la opción favorita de quien quiere empezar en moto sin complicarse: cero cursos adicionales si ya conduces coche desde hace tiempo.",
+        ],
+      },
+      {
+        title: "¿Para qué uso es ideal?",
+        body: [
+          "Una 125 brilla en <strong>ciudad y trayectos diarios</strong>: ir al trabajo, a clase o a hacer recados esquivando atascos y aparcando en cualquier hueco.",
+          "Las scooter suman comodidad y hueco de carga; las naked, un punto más deportivo. Ambas aguantan bien la carretera secundaria y pueden circular por autovía cuando haga falta.",
+        ],
+      },
+    ]}
+    motos={seleccion}
+    gridEyebrow="Nuestro stock"
+    gridTitle="125 disponibles ahora"
+    emptyTitle="Ahora mismo no tenemos ninguna 125 disponible"
+    emptyText="Entran motos nuevas cada semana. Dinos qué 125 buscas y te avisamos en cuanto llegue, o te la localizamos por encargo."
+    faqs={faqs}
+    relacionadas={[
+      { label: "Scooters de segunda mano en Granada", href: "/scooters-segunda-mano-granada/" },
+      { label: "Motos con carnet B en Granada", href: "/motos-carnet-b-granada/" },
+      { label: "Ver todo el catálogo", href: "/catalogo/" },
+      { label: "Contacto y cómo llegar", href: "/contacto/" },
+    ]}
+  />
+</Base>
