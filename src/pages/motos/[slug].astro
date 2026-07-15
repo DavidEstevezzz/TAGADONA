@@ -17,8 +17,60 @@ const fichaBase = {
   "Kilómetros": formatKm(moto.km), "Cilindrada": moto.cilindrada, "Potencia": moto.potencia,
 };
 const ficha = { ...fichaBase, ...moto.especificaciones };
+
+// SEO: texto alternativo descriptivo reutilizable
+const altBase = `${moto.marca} ${moto.modelo} ${moto.anio} de segunda mano en Granada`;
+
+// SEO: título y descripción específicos de la ficha
+const seoTitle = `${moto.marca} ${moto.modelo} ${moto.anio} de segunda mano en Granada | ${formatPrecio(moto.precio)}`;
+const estadoTexto = vendida ? "Vendida" : moto.estado === "Reservada" ? "Reservada" : "Disponible";
+const seoDesc = `${moto.marca} ${moto.modelo} ${moto.anio} de segunda mano en Granada · ${formatKm(moto.km)} · ${formatPrecio(moto.precio)}. ${estadoTexto}, inspeccionada punto por punto, con garantía y transferencia (cambio de nombre) incluida.`;
+
+// SEO: datos estructurados de la moto (Product + Offer)
+const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const fichaUrl = new URL(`/motos/${moto.slug}/`, SITE).href;
+const disponibilidad = vendida
+  ? "https://schema.org/SoldOut"
+  : moto.estado === "Reservada"
+    ? "https://schema.org/LimitedAvailability"
+    : "https://schema.org/InStock";
+const motoSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: `${moto.marca} ${moto.modelo} ${moto.anio}`,
+  description: moto.descripcion.join(" "),
+  image: moto.fotos.map((f) => new URL(`/img/${f}`, SITE).href),
+  brand: { "@type": "Brand", name: moto.marca },
+  model: moto.modelo,
+  sku: moto.slug,
+  itemCondition: "https://schema.org/UsedCondition",
+  category: moto.categoria,
+  offers: {
+    "@type": "Offer",
+    url: fichaUrl,
+    price: moto.precio,
+    priceCurrency: "EUR",
+    itemCondition: "https://schema.org/UsedCondition",
+    availability: disponibilidad,
+    seller: { "@type": "Organization", name: "Tagadona Racing" },
+  },
+};
+
+// SEO: miga de pan (BreadcrumbList)
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", SITE).href },
+    { "@type": "ListItem", position: 2, name: "Catálogo", item: new URL("/catalogo/", SITE).href },
+    { "@type": "ListItem", position: 3, name: `${moto.marca} ${moto.modelo}`, item: fichaUrl },
+  ],
+};
 ---
-<Base title={`${moto.marca} ${moto.modelo} — Tagadona Racing`} desc={`${moto.marca} ${moto.modelo} ${moto.anio} · ${formatKm(moto.km)} · ${formatPrecio(moto.precio)}. Inspeccionada y con garantía.`}>
+<Base title={seoTitle} desc={seoDesc} image={`/img/${moto.fotos[0]}`} ogType="product">
+
+  <script type="application/ld+json" set:html={JSON.stringify(motoSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <div class="ficha-top wrap">
     <nav class="crumb cond" aria-label="Ruta">
@@ -32,7 +84,7 @@ const ficha = { ...fichaBase, ...moto.especificaciones };
     <div class="gal" id="gal" data-fotos={JSON.stringify(moto.fotos.map(f=>`/img/${f}`))}>
       <button class="gal-main" id="galMain" type="button" aria-label="Ampliar imagen">
         <span class={"gal-badge" + (moto.estado!=="Disponible" ? " alt" : "")}>{moto.estado}</span>
-        <img id="mainImg" src={`/img/${moto.fotos[0]}`} alt={`${moto.marca} ${moto.modelo}`} />
+        <img id="mainImg" src={`/img/${moto.fotos[0]}`} alt={altBase} width="800" height="600" fetchpriority="high" />
         <span class="gal-zoom" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/>
@@ -43,8 +95,8 @@ const ficha = { ...fichaBase, ...moto.especificaciones };
       {moto.fotos.length>1 && (
         <div class="gal-thumbs">
           {moto.fotos.map((f,i)=>(
-            <button class={"gal-thumb"+(i===0?" sel":"")} data-i={i} data-full={`/img/${f}`} aria-label={`Foto ${i+1}`}>
-              <img src={`/img/${f}`} alt="" loading="lazy" />
+            <button class={"gal-thumb"+(i===0?" sel":"")} data-i={i} data-full={`/img/${f}`} aria-label={`Foto ${i+1} de ${moto.marca} ${moto.modelo}`}>
+              <img src={`/img/${f}`} alt={`${altBase} — foto ${i+1}`} loading="lazy" />
             </button>
           ))}
         </div>

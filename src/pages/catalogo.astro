@@ -8,7 +8,10 @@ const tipos = [...new Set(activas.map(m=>m.categoria.split(" · ")[0].trim()))];
 const carnets = [...new Set(activas.map(m=>m.carnet.replace(/\s*\(.*\)/,"").trim()))];
 const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservada" : "";
 ---
-<Base title="Catálogo — Tagadona Racing">
+<Base
+  title="Motos de segunda mano en Granada | Tagadona Racing"
+  desc="Motos de segunda mano revisadas en Granada. Scooters, motos 125 y motos A2 con garantía, transferencia incluida y atención personalizada."
+>
 
   <!-- Banner -->
   <section class="cat-hero">
@@ -58,7 +61,7 @@ const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservad
            data-precio={m.precio}
            style={`transition-delay:${(idx%3)*80}ms`} href={`/motos/${m.slug}/`}>
           <div class="moto-img">
-            <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo}`} loading="lazy" />
+            <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo} ${m.anio} de segunda mano en Granada`} loading="lazy" />
             {m.estado!=="Disponible" && <span class={"moto-estado " + slugEstado(m.estado)}>{m.estado}</span>}
             <span class="moto-carnet cond">Carnet {m.carnet.replace(/\s*\(.*\)/,"").trim()}</span>
             <span class="moto-cat cond">{m.categoria}</span>
@@ -91,7 +94,7 @@ const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservad
           {vendidas.map((m, idx) => (
             <a class="moto-card es-vendida reveal" style={`transition-delay:${(idx%3)*80}ms`} href={`/motos/${m.slug}/`}>
               <div class="moto-img">
-                <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo}`} loading="lazy" />
+                <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo} ${m.anio} de segunda mano en Granada`} loading="lazy" />
                 <span class="moto-estado vendida">Vendida</span>
                 <span class="moto-carnet cond">Carnet {m.carnet.replace(/\s*\(.*\)/,"").trim()}</span>
                 <span class="moto-cat cond">{m.categoria}</span>

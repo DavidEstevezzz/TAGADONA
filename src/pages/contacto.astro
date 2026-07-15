@@ -2,16 +2,21 @@
 import Base from '../layouts/Base.astro';
 const WHATSAPP="https://wa.me/34644904418";
 const TELEFONO="tel:+34644904418";
-const EMAIL="mailto:info@tagadonaracing.com";
+const EMAIL="mailto:info@tagadonaracing.es";
 const INSTAGRAM="https://www.instagram.com/tagadonaracing/";
 const TIKTOK="https://www.tiktok.com/@tagadona.racing";
+// Enlace "cómo llegar" a Google Maps a partir de la dirección real
+const MAPS="https://www.google.com/maps/search/?api=1&query=Tagadona+Racing+Paraje+de+Catacena+Cogollos+de+la+Vega+Granada";
 const vias = [
   { lbl:"WhatsApp", val:"Respuesta rápida", href:WHATSAPP, tag:"WA" },
   { lbl:"Teléfono", val:"+34 644 904 418", href:TELEFONO, tag:"TEL" },
-  { lbl:"Email", val:"info@tagadonaracing.com", href:EMAIL, tag:"@" },
+  { lbl:"Email", val:"info@tagadonaracing.es", href:EMAIL, tag:"@" },
 ];
 ---
-<Base title="Contacto — Tagadona Racing">
+<Base
+  title="Comprar o vender una moto en Granada | Tagadona Racing"
+  desc="Contacta con Tagadona Racing para comprar o vender tu moto en Granada. Tasación, revisión, garantía y gestión del cambio de nombre."
+>
   <section class="ct-hero">
     <div class="wrap">
       <p class="eyebrow reveal in">Estamos en Granada</p>
@@ -30,7 +35,14 @@ const vias = [
     ))}
   </section>
   <section class="ct-info wrap reveal">
-    <div><h3 class="cond">Dónde estamos</h3><p>Granada, Andalucía. Atendemos con cita previa para que puedas ver y probar la moto con calma.</p></div>
+    <div>
+      <h3 class="cond">Dónde estamos</h3>
+      <p>
+        <span itemprop="address">Paraje de Catacena, 18211 Cogollos de la Vega (Granada)</span>.
+        Atendemos <strong>solo con cita previa</strong>, para que puedas ver y probar la moto con calma.
+      </p>
+      <a class="ct-maps" href={MAPS} target="_blank" rel="noopener">Cómo llegar →</a>
+    </div>
     <div><h3 class="cond">Horario</h3><p>Lunes a viernes · 9:30 – 14:00 y 17:00 – 20:00<br/>Sábados con cita previa.</p></div>
   </section>
 
@@ -92,6 +104,10 @@ const vias = [
       border-top:1px solid var(--line-soft)}
     .ct-info h3{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);margin-bottom:var(--s-3)}
     .ct-info p{color:var(--text-dim);line-height:1.7}
+    .ct-info p strong{color:var(--text);font-weight:600}
+    .ct-maps{display:inline-flex;align-items:center;margin-top:var(--s-3);font-size:var(--fs-small);
+      font-weight:600;letter-spacing:.06em;color:var(--orange-bright);transition:gap .3s var(--ease)}
+    .ct-maps:hover{text-decoration:underline;text-underline-offset:3px}
 
     /* Tarjetas de redes */
     .ct-redes{padding:var(--s-9) 0 var(--s-8)}

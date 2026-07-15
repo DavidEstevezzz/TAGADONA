@@ -55,7 +55,7 @@ const CONTACTO = {
   marca: 'Tagadona Racing',
   ciudad: 'Granada',
   telefono: '+34 644 904 418',
-  email: 'info@tagadonaracing.com',
+  email: 'info@tagadonaracing.es',
 };
 
 function drawLines(doc, lines, x, y, lineH = 5) {

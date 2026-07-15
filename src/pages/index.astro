@@ -85,7 +85,7 @@ const destacadas = [...motos].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).s
         {destacadas.map((m, idx)=>(
           <a class="umoto reveal" style={`transition-delay:${idx*80}ms`} href={`/motos/${m.slug}/`}>
             <div class="umoto-img">
-              <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo}`} loading="lazy" />
+              <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo} ${m.anio} de segunda mano en Granada`} loading="lazy" />
               {m.estado!=="Disponible" && <span class="umoto-badge">{m.estado}</span>}
             </div>
             <div class="umoto-info">
