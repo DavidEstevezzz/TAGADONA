@@ -14,6 +14,50 @@
 
 export const motos = [
   {
+    slug: "piaggio-medley-125-2020",
+    marca: "Piaggio",
+    modelo: "Medley 125",
+    categoria: "Scooter · Urbana",
+    anio: 2020,
+    km: 15463,
+    precio: 2200,
+    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    destacada: true,                 // true = sale primero en el catálogo
+    fotos: [
+      "medley125-1.jpeg",
+      "medley125-2.jpeg",
+      "medley125-3.jpeg",
+      "medley125-4.jpeg",
+      "medley125-5.jpeg",
+      "medley125-6.jpeg",
+      "medley125-7.jpeg",
+      "medley125-8.jpeg",
+    ],
+    // Datos rápidos (los 4 de arriba)
+    cilindrada: "125 cc",
+    potencia: "14,75 CV",
+    combustible: "Gasolina",
+    carnet: "A1 / B + 3 años",
+    // Ficha técnica completa
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos · Refrigeración líquida",
+      "Cambio": "Automático CVT",
+      "ABS": "Bosch de doble canal",
+      "Propietarios": "Una sola propietaria",
+      "Revisión": "Recién hecha",
+      "Estado general": "Muy buen estado",
+      "Color": "Blanco · tapicería marrón",
+      "Garantía": "12 meses",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Piaggio Medley 125 del año 2020 con 15.463 km, en muy buen estado y con una sola propietaria. Una scooter de rueda alta ideal para el día a día, cómoda y práctica, con un plus de estilo gracias a su tapicería y detalles en marrón.",
+      "La moto está recién revisada y lista para usar. Monta motor monocilíndrico de 4 tiempos con refrigeración líquida, cambio automático CVT y ABS Bosch de doble canal, un conjunto fiable y muy fácil de conducir.",
+      "Se vende por 2.200 €, con cambio de nombre incluido y un año de garantía. Disponible en Granada.",
+    ],
+  },
+
+  {
     slug: "yamaha-tricity-300",
     marca: "Yamaha",
     modelo: "Tricity 300",
