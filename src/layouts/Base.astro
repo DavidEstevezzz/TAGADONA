@@ -25,6 +25,9 @@ const isActive = (p) => p === "/" ? path === "/" : path.startsWith(p);
 const SITE = Astro.site ?? new URL(business.dominio);
 const canonicalPath = path === "/" ? "/" : path.replace(/\/?$/, "/");
 const canonical = new URL(canonicalPath, SITE).href;
+// Las páginas noindex (admin, 404…) no emiten canonical: no deben consolidar
+// autoridad hacia una URL que no queremos indexar.
+const emitCanonical = !/noindex/i.test(robots);
 // Imagen social en URL absoluta (Open Graph exige URL completa)
 const ogImage = new URL(image, SITE).href;
 const INSTAGRAM = business.instagram;
@@ -73,7 +76,7 @@ const negocioSchema = {
   <meta name="theme-color" content="#141110" />
   <meta name="description" content={desc} />
   <meta name="robots" content={robots} />
-  <link rel="canonical" href={canonical} />
+  {emitCanonical && <link rel="canonical" href={canonical} />}
   <title>{title}</title>
 
   <!-- Open Graph / Twitter (previsualización al compartir en WhatsApp, redes…) -->

@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import { whatsapp } from '../config/business.js';
+---
+<Base
+  title="Página no encontrada (404) | Tagadona Racing"
+  desc="La página que buscas no existe o se ha movido. Vuelve al inicio o explora el catálogo de motos de segunda mano en Granada."
+  robots="noindex,follow"
+>
+  <section class="nf">
+    <div class="wrap nf-inner">
+      <p class="eyebrow center">Error 404</p>
+      <h1 class="nf-h1 display">Esta página se nos ha escapado</h1>
+      <p class="nf-lead">La dirección que buscas no existe o ha cambiado. Puede que la moto ya se haya vendido. Prueba por aquí:</p>
+      <div class="nf-links">
+        <a href="/" class="btn btn-ghost">Inicio</a>
+        <a href="/catalogo/" class="btn btn-primary">Ver catálogo <span class="arr">→</span></a>
+        <a href="/vender-moto-granada/" class="btn btn-ghost">Vender mi moto</a>
+      </div>
+      <div class="nf-more">
+        <a href="/motos-segunda-mano-granada/">Motos de segunda mano en Granada</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contacto/">Contacto</a>
+        <a href={whatsapp} target="_blank" rel="noopener" data-track="whatsapp_general" data-source="404">WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .nf{padding:calc(74px + var(--s-9)) 0 var(--s-10);text-align:center}
+    .nf-inner{max-width:640px;margin:0 auto}
+    .nf .eyebrow{justify-content:center;margin-bottom:var(--s-5)}
+    .nf .eyebrow::before{display:none}
+    .nf-h1{font-size:clamp(36px,6vw,72px);line-height:1;color:var(--orange-bright);
+      margin-bottom:var(--s-5)}
+    .nf-lead{color:var(--text-dim);font-size:var(--fs-lead);line-height:1.6;
+      max-width:520px;margin:0 auto var(--s-7)}
+    .nf-links{display:flex;gap:var(--s-3);justify-content:center;flex-wrap:wrap;
+      margin-bottom:var(--s-7)}
+    .nf-more{display:flex;gap:var(--s-5);justify-content:center;flex-wrap:wrap;
+      padding-top:var(--s-6);border-top:1px solid var(--line-soft)}
+    .nf-more a{color:var(--text-dim);font-size:var(--fs-small);transition:color .3s}
+    .nf-more a:hover{color:var(--orange-bright)}
+  </style>
+</Base>
