@@ -25,9 +25,10 @@ const slugEstado = (e) => e === "Vendida" ? "vendida" : e === "Reservada" ? "res
     {motos.map((m, idx) => (
       <a class="moto-card reveal"
          style={`transition-delay:${(idx % 3) * 80}ms`}
-         href={`/motos/${m.slug}/`}>
+         href={`/motos/${m.slug}/`}
+         data-track="ver_ficha" data-source="grid" data-moto={m.slug}>
         <div class="moto-img">
-          <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo} ${m.anio} de segunda mano en Granada`} loading="lazy" />
+          <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo} ${m.anio} de segunda mano en Granada`} width="800" height="640" loading="lazy" decoding="async" />
           {m.estado !== "Disponible" && <span class={"moto-estado " + slugEstado(m.estado)}>{m.estado}</span>}
           <span class="moto-carnet cond">Carnet {limpiarCarnet(m.carnet)}</span>
           <span class="moto-cat cond">{m.categoria}</span>

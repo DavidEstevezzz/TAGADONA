@@ -1,10 +1,16 @@
 ---
 titulo: "Cómo revisar una moto de segunda mano antes de comprarla (guía completa)"
 fecha: 2026-06-09
+actualizado: 2026-07-15
+autor: "Tagadona Racing"
 imagen: "blog-revision-completa.png"
 categoria: "Consejos"
 resumen: "Una guía práctica y técnica para inspeccionar una moto usada: del número de bastidor al color del humo. Con trucos reales y el consejo más importante de todos."
 destacada: false
+relatedLanding:
+  href: "/catalogo/"
+  label: "motos disponibles"
+cta: "¿Prefieres comprar con la revisión ya hecha? Cada moto de nuestro catálogo pasa esta inspección punto por punto antes de salir a la venta, con garantía incluida."
 ---
 
 Comprar una moto de segunda mano puede ser una de las mejores decisiones de tu vida sobre dos ruedas... o el principio de una sangría de dinero en el taller. La diferencia casi siempre está en lo que hiciste **antes** de pagar. Esta guía recoge lo que de verdad importa revisar, explicado para que lo entienda cualquiera, pero sin perder el rigor técnico.
@@ -90,6 +96,6 @@ Puedes aprenderte esta guía de memoria, pero hay una verdad incómoda: **muchos
 
 No es desconfiar de ti: es que una hora de un experto te puede ahorrar miles de euros y un montón de disgustos. Es exactamente el tipo de tranquilidad que cuesta poco y vale mucho.
 
-En **Tagadona Racing** ofrecemos justo eso: un **servicio de revisión y asistencia en la compra**. Si has encontrado una moto por tu cuenta y tienes dudas, la inspeccionamos punto por punto con criterio profesional y te decimos, sin rodeos, si merece la pena o si vas a comprar un problema. Y si prefieres comprar directamente con todo resuelto, cada moto de nuestro catálogo ya pasa esta inspección antes de salir a la venta, con garantía incluida.
+En **Tagadona Racing** ofrecemos justo eso: un **servicio de revisión y asistencia en la compra**. Si has encontrado una moto por tu cuenta y tienes dudas, la inspeccionamos punto por punto con criterio profesional y te decimos, sin rodeos, si merece la pena o si vas a comprar un problema. Y si prefieres comprar directamente con todo resuelto, cada moto de nuestro [catálogo](/catalogo/) ya pasa esta inspección antes de salir a la venta, con garantía incluida.
 
-¿Tienes una moto en el punto de mira y quieres ojos expertos antes de decidir? Escríbenos y te ayudamos.
+¿Tienes una moto en el punto de mira y quieres ojos expertos antes de decidir? [Escríbenos](/contacto/) y te ayudamos. Y si además vas a dejar la tuya, [te la tasamos](/vender-moto-granada/) para que la cuentes como parte del pago.

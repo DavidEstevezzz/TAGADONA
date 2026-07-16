@@ -1,16 +1,53 @@
 ---
 import Base from '../../layouts/Base.astro';
+import MotoCardGrid from '../../components/MotoCardGrid.astro';
 import { motos, formatPrecio, formatKm } from '../../data/motos.js';
+import { whatsapp, tel, waLink } from '../../config/business.js';
 
 export function getStaticPaths(){
   return motos.map((moto)=>({ params:{slug:moto.slug}, props:{moto} }));
 }
 const { moto } = Astro.props;
-const WHATSAPP = "https://wa.me/34644904418";
-const TELEFONO = "tel:+34644904418";
+const WHATSAPP = whatsapp;
+const TELEFONO = tel;
 const msg = encodeURIComponent(`Hola, me interesa la ${moto.marca} ${moto.modelo} (${moto.anio}) que tenéis en el catálogo.`);
 const vendida = moto.estado === "Vendida";
 const msgParecida = encodeURIComponent(`Hola, vi que la ${moto.marca} ${moto.modelo} ya está vendida. ¿Podríais localizarme una parecida?`);
+
+// --- Landing de categoría más relevante para esta moto ---
+const num = (s) => parseInt(String(s).replace(/[^\d]/g, ""), 10) || 0;
+const catBase = (c) => c.split(" · ")[0].trim();
+const carnetLimpio = (c) => c.replace(/\s*\(.*\)/, "").trim();
+const cil = num(moto.cilindrada);
+const landingRel = /A2/.test(moto.carnet)
+  ? { href: "/motos-a2-segunda-mano-granada/", label: "motos A2 de segunda mano en Granada" }
+  : /scooter/i.test(moto.categoria)
+    ? { href: "/scooters-segunda-mano-granada/", label: "scooters de segunda mano en Granada" }
+    : cil > 0 && cil <= 125
+      ? { href: "/motos-125-segunda-mano-granada/", label: "motos 125 de segunda mano en Granada" }
+      : /\bB\b/.test(moto.carnet)
+        ? { href: "/motos-carnet-b-granada/", label: "motos para carnet B en Granada" }
+        : { href: "/motos-segunda-mano-granada/", label: "motos de segunda mano en Granada" };
+
+// --- Motos parecidas (solo disponibles), puntuando categoría, carnet,
+//     cilindrada, precio y marca. Sencillo y suficiente. ---
+const score = (m) => {
+  let s = 0;
+  if (catBase(m.categoria) === catBase(moto.categoria)) s += 3;
+  if (carnetLimpio(m.carnet) === carnetLimpio(moto.carnet)) s += 2;
+  if (m.marca === moto.marca) s += 1;
+  const dc = Math.abs(num(m.cilindrada) - cil);
+  if (dc <= 50) s += 2; else if (dc <= 150) s += 1;
+  const dp = Math.abs(m.precio - moto.precio);
+  if (dp <= 800) s += 2; else if (dp <= 2000) s += 1;
+  return s;
+};
+const similares = motos
+  .filter((m) => m.estado !== "Vendida" && m.slug !== moto.slug)
+  .map((m) => ({ m, s: score(m) }))
+  .sort((a, b) => b.s - a.s)
+  .slice(0, 3)
+  .map((x) => x.m);
 
 const fichaBase = {
   "Marca": moto.marca, "Modelo": moto.modelo, "Año": moto.anio,
@@ -123,16 +160,18 @@ const breadcrumbSchema = {
 
       {vendida ? (
   <div class="panel-cta">
-    <a class="btn btn-primary" href={`${WHATSAPP}?text=${msgParecida}`}>Quiero una parecida <span class="arr">→</span></a>
-    <a class="btn btn-ghost" href={TELEFONO}>Llamar</a>
+    <a class="btn btn-primary" href={`${WHATSAPP}?text=${msgParecida}`} target="_blank" rel="noopener" data-track="quiero_parecida" data-source="ficha" data-moto={moto.slug}>Quiero una parecida <span class="arr">→</span></a>
+    <a class="btn btn-ghost" href={TELEFONO} data-track="telefono" data-source="ficha" data-moto={moto.slug}>Llamar</a>
   </div>
   <p class="panel-trust cond"><span class="dot vendida-dot"></span> Esta moto ya está vendida · Te localizamos una igual o mejor</p>
+  <p class="panel-alt cond">Ver <a href={landingRel.href}>{landingRel.label}</a> disponibles ahora.</p>
 ) : (
   <div class="panel-cta">
-    <a class="btn btn-primary" href={`${WHATSAPP}?text=${msg}`}>Me interesa esta moto <span class="arr">→</span></a>
-    <a class="btn btn-ghost" href={TELEFONO}>Llamar</a>
+    <a class="btn btn-primary" href={`${WHATSAPP}?text=${msg}`} target="_blank" rel="noopener" data-track="whatsapp_moto" data-source="ficha" data-moto={moto.slug}>Me interesa esta moto <span class="arr">→</span></a>
+    <a class="btn btn-ghost" href={TELEFONO} data-track="telefono" data-source="ficha" data-moto={moto.slug}>Llamar</a>
   </div>
   <p class="panel-trust cond"><span class="dot"></span> Inspeccionada punto por punto · Garantía incluida</p>
+  <p class="panel-alt cond">¿Entregas tu moto como parte del pago? <a href="/vender-moto-granada/">Te la tasamos</a>.</p>
 )}
     </div>
   </section>
@@ -152,13 +191,35 @@ const breadcrumbSchema = {
     </div>
   </section>
 
+  {(vendida || similares.length > 0) && (
+    <section class="ficha-similares div-soft">
+      <div class="wrap">
+        <div class="ficha-sim-head reveal">
+          <p class="eyebrow">{vendida ? "Alternativas disponibles" : "También te puede interesar"}</p>
+          <h2 class="sec-title">{vendida ? "Motos parecidas que sí tenemos" : "Motos parecidas"}</h2>
+          {vendida && <p class="ficha-sim-lead">Esta ya voló, pero rota stock parecido cada semana. Estas están disponibles ahora, o dinos qué buscas y te la localizamos por encargo.</p>}
+        </div>
+        <MotoCardGrid
+          motos={similares}
+          emptyTitle="Ahora mismo no tenemos una parecida publicada"
+          emptyText="Entran motos nuevas continuamente y también localizamos por encargo. Cuéntanos qué buscas por WhatsApp y te avisamos en cuanto llegue."
+          emptyCta="Buscar por encargo (WhatsApp)"
+          emptyHref={`${WHATSAPP}?text=${msgParecida}`}
+        />
+        <div class="ficha-sim-foot reveal">
+          <a href="/catalogo/" class="btn btn-ghost" data-track="ver_catalogo" data-source="ficha_similares">Ver todo el catálogo <span class="arr">→</span></a>
+        </div>
+      </div>
+    </section>
+  )}
+
   <section class="ficha-contacto">
     <div class="wrap ficha-contacto-inner reveal">
       <div>
         <h3 class="display">¿Te encaja esta moto?</h3>
         <p>Escríbenos o pásate a verla. Te resolvemos cualquier duda sin compromiso.</p>
       </div>
-      <a class="btn btn-primary" href={`${WHATSAPP}?text=${msg}`}>Contactar ahora <span class="arr">→</span></a>
+      <a class="btn btn-primary" href={vendida ? `${WHATSAPP}?text=${msgParecida}` : `${WHATSAPP}?text=${msg}`} target="_blank" rel="noopener" data-track={vendida ? "quiero_parecida" : "whatsapp_moto"} data-source="ficha_contacto" data-moto={moto.slug}>Contactar ahora <span class="arr">→</span></a>
     </div>
   </section>
 
@@ -217,6 +278,17 @@ const breadcrumbSchema = {
       display:flex;align-items:center;gap:var(--s-2);letter-spacing:.02em}
     .panel-trust .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);flex:none}
     .panel-trust .vendida-dot{background:#C0392B}
+    .panel-alt{margin-top:var(--s-3);font-size:13px;color:var(--text-dim);letter-spacing:.02em}
+    .panel-alt a{color:var(--orange-bright);text-decoration:underline;text-underline-offset:3px}
+
+    /* Motos parecidas */
+    .ficha-similares{padding:var(--s-9) 0}
+    .ficha-sim-head{text-align:center;margin-bottom:var(--s-7)}
+    .ficha-sim-head .eyebrow{justify-content:center;margin-bottom:var(--s-4)}
+    .ficha-sim-head .eyebrow::before{display:none}
+    .ficha-sim-lead{color:var(--text-dim);font-size:var(--fs-small);max-width:560px;
+      margin:var(--s-4) auto 0;line-height:1.7}
+    .ficha-sim-foot{text-align:center;margin-top:var(--s-7)}
 
     .ficha-detalle{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,72px);
       padding-top:var(--s-9);padding-bottom:var(--s-9);align-items:start}

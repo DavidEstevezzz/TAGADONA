@@ -1,64 +1,70 @@
 ---
 import '../styles/global.css';
+import { business, tel, mailto, whatsapp } from '../config/business.js';
 const {
   title = "Tagadona Racing",
   desc = "Compraventa de motos en Granada y Andalucía. Inspección, garantía y trato directo.",
   // Permite marcar páginas como no indexables (p. ej. /admin/). Por defecto, indexable.
   robots = "index,follow",
   // Imagen para redes (Open Graph / Twitter). Por defecto, la del taller.
-  image = "/img/hero-taller.jpg",
+  image = business.imagenSocial,
+  // Texto alternativo de la imagen social (Open Graph / Twitter).
+  imageAlt = "Tagadona Racing — compraventa de motos en Granada",
+  // Dimensiones de la imagen social. Solo se emiten si se conocen; por
+  // defecto, las de la imagen del taller (hero-taller.jpg).
+  imageW,
+  imageH,
   ogType = "website",
 } = Astro.props;
+const usaImagenDefecto = image === business.imagenSocial;
+const ogImageW = imageW ?? (usaImagenDefecto ? 2560 : null);
+const ogImageH = imageH ?? (usaImagenDefecto ? 1435 : null);
 const path = Astro.url.pathname;
 const isActive = (p) => p === "/" ? path === "/" : path.startsWith(p);
 // URL canónica (con barra final) para que Google consolide una sola versión
-const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const SITE = Astro.site ?? new URL(business.dominio);
 const canonicalPath = path === "/" ? "/" : path.replace(/\/?$/, "/");
 const canonical = new URL(canonicalPath, SITE).href;
+// Las páginas noindex (admin, 404…) no emiten canonical: no deben consolidar
+// autoridad hacia una URL que no queremos indexar.
+const emitCanonical = !/noindex/i.test(robots);
 // Imagen social en URL absoluta (Open Graph exige URL completa)
 const ogImage = new URL(image, SITE).href;
-const INSTAGRAM = "https://www.instagram.com/tagadonaracing/";
-const TIKTOK = "https://www.tiktok.com/@tagadona.racing";
+const INSTAGRAM = business.instagram;
+const TIKTOK = business.tiktok;
 
 // Datos estructurados del negocio (se incluyen en todas las páginas para
 // mantener un NAP —nombre, dirección, teléfono— coherente en todo el sitio).
+// Todo sale de src/config/business.js para evitar contradicciones.
 const negocioSchema = {
   "@context": "https://schema.org",
   "@type": "MotorcycleDealer",
-  "@id": "https://tagadonaracing.es/#negocio",
-  name: "Tagadona Racing",
-  url: "https://tagadonaracing.es/",
-  telephone: "+34644904418",
-  email: "info@tagadonaracing.es",
-  image: "https://tagadonaracing.es/img/hero-taller.jpg",
-  logo: "https://tagadonaracing.es/img/logo.png",
+  "@id": new URL("/#negocio", SITE).href,
+  name: business.nombre,
+  url: new URL("/", SITE).href,
+  telephone: business.telefonoE164,
+  email: business.email,
+  image: new URL(business.imagenSocial, SITE).href,
+  logo: new URL(business.logo, SITE).href,
   priceRange: "€€",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Paraje de Catacena",
-    postalCode: "18211",
-    addressLocality: "Cogollos de la Vega",
-    addressRegion: "Granada",
-    addressCountry: "ES",
+    streetAddress: business.direccion,
+    postalCode: business.codigoPostal,
+    addressLocality: business.municipio,
+    addressRegion: business.provincia,
+    addressCountry: business.pais,
   },
   areaServed: {
     "@type": "AdministrativeArea",
-    name: "Granada y Andalucía",
+    name: business.areaServida,
   },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "09:30",
-      closes: "14:00",
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "17:00",
-      closes: "20:00",
-    },
-  ],
+  openingHoursSpecification: business.horario.map((h) => ({
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: h.dias,
+    opens: h.abre,
+    closes: h.cierra,
+  })),
   sameAs: [INSTAGRAM, TIKTOK],
 };
 ---
@@ -67,9 +73,10 @@ const negocioSchema = {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#141110" />
   <meta name="description" content={desc} />
   <meta name="robots" content={robots} />
-  <link rel="canonical" href={canonical} />
+  {emitCanonical && <link rel="canonical" href={canonical} />}
   <title>{title}</title>
 
   <!-- Open Graph / Twitter (previsualización al compartir en WhatsApp, redes…) -->
@@ -80,10 +87,14 @@ const negocioSchema = {
   <meta property="og:description" content={desc} />
   <meta property="og:url" content={canonical} />
   <meta property="og:image" content={ogImage} />
+  {ogImageW && <meta property="og:image:width" content={String(ogImageW)} />}
+  {ogImageH && <meta property="og:image:height" content={String(ogImageH)} />}
+  <meta property="og:image:alt" content={imageAlt} />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={desc} />
   <meta name="twitter:image" content={ogImage} />
+  <meta name="twitter:image:alt" content={imageAlt} />
 
   <!-- Datos estructurados del negocio (JSON-LD) -->
   <script type="application/ld+json" set:html={JSON.stringify(negocioSchema)} />
@@ -104,6 +115,7 @@ const negocioSchema = {
       <nav class="nav-links">
         <a href="/" class={isActive("/") ? "on" : ""}>Inicio</a>
         <a href="/catalogo/" class={isActive("/catalogo") || isActive("/motos") ? "on" : ""}>Catálogo</a>
+        <a href="/vender-moto-granada/" class={isActive("/vender-moto-granada") ? "on" : ""} data-track="vender_moto" data-source="nav">Vender moto</a>
         <a href="/blog/" class={isActive("/blog") ? "on" : ""}>Blog</a>
       </nav>
       <a href="/contacto/" class="nav-cta">Contactar</a>
@@ -132,6 +144,7 @@ const negocioSchema = {
         <nav class="mnav-links">
           <a href="/">Inicio</a>
           <a href="/catalogo/">Catálogo</a>
+          <a href="/vender-moto-granada/" data-track="vender_moto" data-source="nav_movil">Vender moto</a>
           <a href="/blog/">Blog</a>
           <a href="/contacto/">Contacto</a>
         </nav>
@@ -153,7 +166,7 @@ const negocioSchema = {
 
   <main><slot /></main>
 
-  <a class="wa-float" href="https://wa.me/34644904418" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+  <a class="wa-float" href={whatsapp} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" data-track="whatsapp_flotante" data-source="wa_float">
     <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2"/></svg>
   </a>
 
@@ -183,21 +196,21 @@ const negocioSchema = {
       </div>
       <div class="ft-col">
         <h4 class="cond">Contacto</h4>
-        <a href="tel:+34644904418">+34 644 904 418</a>
-        <a href="mailto:info@tagadonaracing.es">info@tagadonaracing.es</a>
-        <span>Granada, Andalucía</span>
+        <a href={tel} data-track="telefono" data-source="footer">{business.telefonoVisible}</a>
+        <a href={mailto} data-track="email" data-source="footer">{business.email}</a>
+        <span>{business.municipio} · {business.provincia}</span>
       </div>
     </div>
     <div class="wrap ft-bottom">
       <span>© 2026 Tagadona Racing. Todos los derechos reservados.</span>
       <div class="ft-social" aria-label="Redes sociales">
-        <a href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram">
+        <a href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram" data-track="red_social" data-source="footer_instagram">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
             <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/>
             <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
           </svg>
         </a>
-        <a href={TIKTOK} target="_blank" rel="noopener" aria-label="TikTok">
+        <a href={TIKTOK} target="_blank" rel="noopener" aria-label="TikTok" data-track="red_social" data-source="footer_tiktok">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M16.5 3c.3 2.1 1.5 3.4 3.5 3.6v2.4c-1.2.1-2.4-.3-3.5-1v5.7c0 3.4-2.5 5.3-5.2 5.3-2.5 0-4.6-1.8-4.6-4.4 0-2.7 2.1-4.5 4.7-4.4.3 0 .5 0 .8.1v2.5c-.2-.1-.5-.1-.8-.1-1.2 0-2.2.9-2.2 2 0 1.2.9 2 2.1 2 1.3 0 2.2-.9 2.2-2.6V3h2.7z"/>
           </svg>
@@ -300,6 +313,7 @@ const negocioSchema = {
     .mnav.open .mnav-links a:nth-child(2){transition-delay:.14s}
     .mnav.open .mnav-links a:nth-child(3){transition-delay:.20s}
     .mnav.open .mnav-links a:nth-child(4){transition-delay:.26s}
+    .mnav.open .mnav-links a:nth-child(5){transition-delay:.32s}
     .mnav-social{display:flex;gap:var(--s-4);margin-top:var(--s-4)}
     .mnav-social a{color:var(--text-dim);width:46px;height:46px;border-radius:50%;
       border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
@@ -318,6 +332,31 @@ const negocioSchema = {
   </style>
 
   <script>
+    // ===== MEDICIÓN DE CONVERSIONES (no bloqueante) =====
+    // Un único listener delegado envía un evento por cada clic en un elemento
+    // con [data-track]. Si hay Google Tag Manager (dataLayer) o Google
+    // Analytics (gtag) en la página, reenvía el evento; si no hay ninguno,
+    // no hace nada (sin errores). Así se puede conectar GA/GTM más adelante
+    // sin tocar el marcado. Requiere aviso de cookies según la herramienta.
+    document.addEventListener('click', (e) => {
+      const el = e.target.closest && e.target.closest('[data-track]');
+      if (!el) return;
+      try {
+        const payload = {
+          event: 'cta_click',
+          cta: el.dataset.track,
+          source: el.dataset.source || null,
+          moto: el.dataset.moto || null,
+        };
+        if (Array.isArray(window.dataLayer)) window.dataLayer.push(payload);
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', el.dataset.track, {
+            source: payload.source, moto: payload.moto,
+          });
+        }
+      } catch (_) { /* la medición nunca debe romper la navegación */ }
+    }, { passive: true });
+
     // Nav con fondo al hacer scroll
     const nav = document.getElementById('nav');
     const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 24);

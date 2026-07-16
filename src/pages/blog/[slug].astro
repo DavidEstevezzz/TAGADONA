@@ -8,7 +8,7 @@ export async function getStaticPaths(){
 }
 const { entrada } = Astro.props;
 const { Content } = await entrada.render();
-const { titulo, fecha, imagen, categoria, resumen } = entrada.data;
+const { titulo, fecha, actualizado, autor, imagen, categoria, resumen, fuentes, relatedLanding, cta } = entrada.data;
 const fmtFecha = (d)=> d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
 
 // Entradas relacionadas (otras 2, más recientes)
@@ -27,15 +27,16 @@ const articleSchema = {
   description: resumen,
   image: new URL(`/img/blog/${imagen}`, SITE).href,
   datePublished: fecha.toISOString(),
-  dateModified: fecha.toISOString(),
+  dateModified: (actualizado ?? fecha).toISOString(),
   articleSection: categoria,
   mainEntityOfPage: { "@type": "WebPage", "@id": artUrl },
-  author: { "@type": "Organization", name: "Tagadona Racing", url: SITE.href },
+  author: { "@type": "Organization", name: autor, url: SITE.href },
   publisher: {
     "@type": "Organization",
     name: "Tagadona Racing",
     logo: { "@type": "ImageObject", url: new URL("/img/logo.png", SITE).href },
   },
+  ...(fuentes.length ? { citation: fuentes.map((f) => f.nombre) } : {}),
 };
 const breadcrumbSchema = {
   "@context": "https://schema.org",
@@ -57,15 +58,41 @@ const breadcrumbSchema = {
       <nav class="crumb cond"><a href="/">Inicio</a><span>/</span><a href="/blog/">Blog</a><span>/</span><em>{categoria}</em></nav>
       <span class="art-cat cond">{categoria}</span>
       <h1 class="art-titulo display">{titulo}</h1>
-      <time class="art-fecha cond">{fmtFecha(fecha)}</time>
+      <p class="art-meta cond">
+        <span>Publicado el <time datetime={fecha.toISOString()}>{fmtFecha(fecha)}</time></span>
+        {actualizado && <span> · Actualizado el <time datetime={actualizado.toISOString()}>{fmtFecha(actualizado)}</time></span>}
+        <span> · Por {autor}</span>
+      </p>
     </header>
 
     <div class="art-img wrap">
-      <img src={`/img/blog/${imagen}`} alt={titulo} />
+      <img src={`/img/blog/${imagen}`} alt={titulo} width="1400" height="880" fetchpriority="high" decoding="async" />
     </div>
 
     <div class="art-body wrap-narrow">
       <Content />
+
+      {relatedLanding && (
+        <aside class="art-cta">
+          <p>{cta ?? "¿Buscas moto o quieres que te asesoremos? Estamos en Granada, con cita previa."}</p>
+          <div class="art-cta-btns">
+            <a class="btn btn-primary" href={relatedLanding.href} data-track="ver_catalogo" data-source="blog_cta">Ver {relatedLanding.label} <span class="arr">→</span></a>
+            <a class="btn btn-ghost" href="/contacto/" data-track="contacto" data-source="blog_cta">Contactar</a>
+          </div>
+        </aside>
+      )}
+
+      {fuentes.length > 0 && (
+        <div class="art-fuentes">
+          <h2>Fuentes consultadas</h2>
+          <ul>
+            {fuentes.map((f) => (
+              <li><a href={f.url} target="_blank" rel="noopener noreferrer nofollow">{f.nombre}</a></li>
+            ))}
+          </ul>
+          <p class="art-fuentes-nota">Las opiniones y recomendaciones son de Tagadona Racing; los datos externos proceden de las fuentes citadas.</p>
+        </div>
+      )}
     </div>
 
     <footer class="art-foot wrap-narrow">
@@ -105,6 +132,25 @@ const breadcrumbSchema = {
     .art-titulo{font-size:clamp(34px,5vw,60px);line-height:1.05;color:var(--text);
       max-width:880px;margin:0 auto var(--s-4)}
     .art-fecha{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint)}
+    .art-meta{font-size:13px;letter-spacing:.06em;color:var(--text-faint);
+      display:flex;flex-wrap:wrap;gap:0 6px;justify-content:center}
+    .art-meta time{color:var(--text-dim)}
+
+    /* CTA interno del artículo */
+    .art-cta{border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);
+      padding:var(--s-6);margin:var(--s-7) 0;text-align:center}
+    .art-cta p{font-size:var(--fs-lead);color:var(--text);margin-bottom:var(--s-5)}
+    .art-cta-btns{display:flex;gap:var(--s-3);justify-content:center;flex-wrap:wrap}
+
+    /* Fuentes consultadas */
+    .art-fuentes{border-top:1px solid var(--line);margin-top:var(--s-7);padding-top:var(--s-6)}
+    .art-fuentes h2{font-family:'Poppins',sans-serif;font-weight:600;font-size:var(--fs-h3);
+      color:var(--text);margin-bottom:var(--s-4)}
+    .art-fuentes ul{list-style:none;display:flex;flex-direction:column;gap:var(--s-2);
+      margin-bottom:var(--s-4)}
+    .art-fuentes a{color:var(--orange-bright);text-decoration:underline;text-underline-offset:3px;
+      word-break:break-word}
+    .art-fuentes-nota{font-size:13px;color:var(--text-faint);line-height:1.6}
 
     .art-img{margin:var(--s-8) auto}
     .art-img img{width:100%;max-height:520px;object-fit:cover;border-radius:10px;

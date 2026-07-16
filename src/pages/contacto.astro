@@ -1,16 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
-const WHATSAPP="https://wa.me/34644904418";
-const TELEFONO="tel:+34644904418";
-const EMAIL="mailto:info@tagadonaracing.es";
-const INSTAGRAM="https://www.instagram.com/tagadonaracing/";
-const TIKTOK="https://www.tiktok.com/@tagadona.racing";
+import { business, tel, mailto, whatsapp, direccionCompleta } from '../config/business.js';
+const WHATSAPP = whatsapp;
+const TELEFONO = tel;
+const EMAIL = mailto;
+const INSTAGRAM = business.instagram;
+const TIKTOK = business.tiktok;
 // Enlace "cómo llegar" a Google Maps a partir de la dirección real
-const MAPS="https://www.google.com/maps/search/?api=1&query=Tagadona+Racing+Paraje+de+Catacena+Cogollos+de+la+Vega+Granada";
+const MAPS = business.maps;
 const vias = [
-  { lbl:"WhatsApp", val:"Respuesta rápida", href:WHATSAPP, tag:"WA" },
-  { lbl:"Teléfono", val:"+34 644 904 418", href:TELEFONO, tag:"TEL" },
-  { lbl:"Email", val:"info@tagadonaracing.es", href:EMAIL, tag:"@" },
+  { lbl:"WhatsApp", val:"Respuesta rápida", href:WHATSAPP, tag:"WA", track:"whatsapp_general", source:"contacto" },
+  { lbl:"Teléfono", val:business.telefonoVisible, href:TELEFONO, tag:"TEL", track:"telefono", source:"contacto" },
+  { lbl:"Email", val:business.email, href:EMAIL, tag:"@", track:"email", source:"contacto" },
 ];
 ---
 <Base
@@ -26,7 +27,10 @@ const vias = [
   </section>
   <section class="ct-vias wrap">
     {vias.map((v,i)=>(
-      <a class="via reveal" style={`transition-delay:${i*80}ms`} href={v.href}>
+      <a class="via reveal" style={`transition-delay:${i*80}ms`} href={v.href}
+         data-track={v.track} data-source={v.source}
+         target={v.href.startsWith('http') ? '_blank' : undefined}
+         rel={v.href.startsWith('http') ? 'noopener' : undefined}>
         <span class="via-tag cond">{v.tag}</span>
         <span class="via-lbl head">{v.lbl}</span>
         <span class="via-val">{v.val}</span>
@@ -38,12 +42,12 @@ const vias = [
     <div>
       <h3 class="cond">Dónde estamos</h3>
       <p>
-        <span itemprop="address">Paraje de Catacena, 18211 Cogollos de la Vega (Granada)</span>.
+        <span itemprop="address">{direccionCompleta}</span>.
         Atendemos <strong>solo con cita previa</strong>, para que puedas ver y probar la moto con calma.
       </p>
-      <a class="ct-maps" href={MAPS} target="_blank" rel="noopener">Cómo llegar →</a>
+      <a class="ct-maps" href={MAPS} target="_blank" rel="noopener" data-track="como_llegar" data-source="contacto">Cómo llegar →</a>
     </div>
-    <div><h3 class="cond">Horario</h3><p>Lunes a viernes · 9:30 – 14:00 y 17:00 – 20:00<br/>Sábados con cita previa.</p></div>
+    <div><h3 class="cond">Horario</h3><p>{business.horarioTexto}<br/>{business.horarioSabado}</p></div>
   </section>
 
   <section class="ct-redes wrap">
@@ -53,7 +57,7 @@ const vias = [
       <p class="ct-redes-lead">Cada semana subimos las nuevas incorporaciones y novedades del taller. Échales un ojo antes de que vuelen.</p>
     </div>
     <div class="ct-redes-grid">
-      <a class="red-card red-ig reveal" href={INSTAGRAM} target="_blank" rel="noopener">
+      <a class="red-card red-ig reveal" href={INSTAGRAM} target="_blank" rel="noopener" data-track="red_social" data-source="contacto_instagram">
         <div class="red-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
             <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/>
@@ -68,7 +72,7 @@ const vias = [
         <span class="red-arr cond">Seguir →</span>
       </a>
 
-      <a class="red-card red-tk reveal d1" href={TIKTOK} target="_blank" rel="noopener">
+      <a class="red-card red-tk reveal d1" href={TIKTOK} target="_blank" rel="noopener" data-track="red_social" data-source="contacto_tiktok">
         <div class="red-icon">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M16.5 3c.3 2.1 1.5 3.4 3.5 3.6v2.4c-1.2.1-2.4-.3-3.5-1v5.7c0 3.4-2.5 5.3-5.2 5.3-2.5 0-4.6-1.8-4.6-4.4 0-2.7 2.1-4.5 4.7-4.4.3 0 .5 0 .8.1v2.5c-.2-.1-.5-.1-.8-.1-1.2 0-2.2.9-2.2 2 0 1.2.9 2 2.1 2 1.3 0 2.2-.9 2.2-2.6V3h2.7z"/>

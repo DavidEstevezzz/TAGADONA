@@ -2,45 +2,58 @@
 import Base from '../layouts/Base.astro';
 import Faq from '../components/Faq.astro';
 import { breadcrumbSchema, faqSchema } from '../lib/seo.js';
+import { business, tel, whatsapp, waLink, direccionCompleta } from '../config/business.js';
 
-const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const SITE = Astro.site ?? new URL(business.dominio);
 const PATH = "/vender-moto-granada/";
 
-const WHATSAPP = "https://wa.me/34644904418";
-const msg = encodeURIComponent("Hola, quiero vender mi moto. Os paso los datos: marca, modelo, año y kilómetros.");
-const WA_TASACION = `${WHATSAPP}?text=${msg}`;
-const TELEFONO = "tel:+34644904418";
+const WHATSAPP = whatsapp;
+const WA_TASACION = waLink(
+  "Hola, quiero una tasación para vender mi moto. Os paso los datos: marca, modelo, año, kilómetros y estado general. Os adjunto también unas fotos."
+);
+const TELEFONO = tel;
 
-// Cómo tasamos (pasos)
+// Cómo tasamos (pasos). Formulaciones prudentes: la valoración inicial
+// depende de las fotos y los datos, y el cierre, de verificar la documentación.
 const pasos = [
-  { n: "01", t: "Nos cuentas tu moto", d: "Nos escribes por WhatsApp con marca, modelo, año, kilómetros y estado general. Cuantas más fotos, mejor y más rápida la valoración." },
-  { n: "02", t: "Te damos una tasación", d: "Valoramos tu moto con precios reales de mercado, sin humo. Te decimos qué podemos ofrecerte y por qué." },
-  { n: "03", t: "La revisamos con cita", d: "Si encaja, quedamos en Cogollos de la Vega (Granada) para verla en persona y confirmar el estado." },
-  { n: "04", t: "Cerramos y pagamos", d: "Acordamos el precio, hacemos el cambio de nombre y te pagamos. Sin esperas ni papeleos por tu parte." },
+  { n: "01", t: "Nos cuentas tu moto", d: "Nos escribes por WhatsApp con marca, modelo, año, kilómetros y estado general. Cuantas más fotos y datos nos pases, más ajustada será la valoración." },
+  { n: "02", t: "Te damos una tasación", d: "Con esa información te damos una valoración orientativa según precios reales de mercado. Es una primera cifra a partir de fotos y datos, sujeta a ver la moto en persona." },
+  { n: "03", t: "La revisamos con cita", d: `Si encaja, quedamos en ${business.municipio} (${business.provincia}) para verla y confirmar su estado. Con la moto delante ajustamos la valoración final.` },
+  { n: "04", t: "Cerramos y pagamos", d: "Si nos ponemos de acuerdo, acordamos el precio, tramitamos el cambio de nombre y te pagamos. Nos ocupamos del papeleo por ti." },
 ];
 
-// Documentación necesaria para vender
-const docs = [
-  "DNI o documento de identidad en vigor del titular.",
+// Documentación agrupada. No presentamos como obligatorio lo que solo es
+// recomendable, ni afirmamos requisitos legales sin serlo.
+const docsImprescindible = [
+  "Documento de identidad (DNI o NIE) en vigor del titular.",
   "Permiso de circulación de la moto.",
-  "Ficha técnica (tarjeta ITV) con la ITV en vigor.",
-  "Último recibo del seguro y del Impuesto de Circulación (IVTM) pagado.",
-  "Justificante de estar al día de posibles multas, si las hubiera.",
-  "Las dos llaves, si dispones de ellas, y el libro de mantenimiento.",
+  "Ficha técnica (tarjeta de la ITV).",
+];
+const docsRecomendable = [
+  "Libro de mantenimiento e historial de revisiones.",
+  "Facturas de compra o de reparaciones importantes.",
+  "Segunda llave, si dispones de ella.",
+  "Último recibo del seguro y del impuesto de circulación (IVTM).",
+];
+const comprobaciones = [
+  "Titularidad y que los datos coinciden con la documentación.",
+  "Cargas o reservas de dominio que pudiera tener la moto.",
+  "Situación administrativa: ITV, impuestos y posibles multas pendientes.",
+  "Que la transferencia se pueda tramitar sin incidencias.",
 ];
 
 const faqs = [
   {
     q: "¿Cómo tasáis mi moto?",
-    a: "Valoramos tu moto según el modelo, el año, los kilómetros, el estado general y los precios reales de mercado en ese momento. Te damos una cifra clara y te explicamos cómo la hemos calculado, sin sorpresas.",
+    a: "Valoramos tu moto según el modelo, el año, los kilómetros, el estado general y los precios reales de mercado en ese momento. La primera cifra la damos a partir de las fotos y los datos que nos envías; es orientativa y puede ajustarse al ver la moto en persona. Te explicamos siempre cómo la hemos calculado.",
   },
   {
     q: "¿Qué documentación necesito para vender mi moto?",
-    a: "Necesitas el DNI del titular, el permiso de circulación, la ficha técnica con la ITV en vigor y el último recibo del seguro e impuesto de circulación pagados. Si tienes las dos llaves y el libro de mantenimiento, mejor.",
+    a: "Lo imprescindible es el documento de identidad del titular, el permiso de circulación y la ficha técnica. Ayuda mucho tener a mano el libro de mantenimiento, las facturas, la segunda llave y el último recibo del seguro e impuesto de circulación. Si te falta algún papel, cuéntanoslo y te decimos cómo resolverlo.",
   },
   {
     q: "¿Vosotros os encargáis del cambio de nombre?",
-    a: "Sí. Nos ocupamos de toda la gestión de la transferencia y el cambio de nombre. Tú no tienes que ir a Tráfico ni hacer trámites: te desvinculas de la moto de forma segura y legal.",
+    a: "Sí. Nos ocupamos de la gestión de la transferencia y el cambio de nombre. Una vez verificada la documentación, tramitamos la baja como titular de forma segura y legal, sin que tengas que ir a Tráfico.",
   },
   {
     q: "¿Compráis la moto directamente o solo la vendéis por mí?",
@@ -48,7 +61,7 @@ const faqs = [
   },
   {
     q: "¿Cuánto tarda todo el proceso?",
-    a: "En cuanto nos pasas los datos, la tasación suele ser cosa de horas. Si nos ponemos de acuerdo, el cierre, el cambio de nombre y el pago se resuelven muy rápido, normalmente en la misma visita.",
+    a: "La valoración inicial solemos darla rápido, en cuanto tenemos las fotos y los datos. El cierre, el cambio de nombre y el pago dependen del estado de la moto y de su situación administrativa, pero una vez verificada la documentación intentamos resolverlo cuanto antes.",
   },
 ];
 
@@ -79,7 +92,7 @@ const faqLd = faqSchema(faqs);
       <h1 class="vd-h1 display reveal in">Vende tu moto en Granada</h1>
       <p class="vd-lead reveal in">Te la <strong>tasamos sin compromiso</strong>, nos encargamos del cambio de nombre y te pagamos rápido. Tú solo tienes que contarnos qué moto tienes.</p>
       <div class="vd-hero-btns reveal in">
-        <a href={WA_TASACION} target="_blank" rel="noopener" class="btn btn-primary">Pedir tasación por WhatsApp <span class="arr">→</span></a>
+        <a href={WA_TASACION} target="_blank" rel="noopener" class="btn btn-primary" data-track="whatsapp_tasacion" data-source="vender_hero">Pedir tasación por WhatsApp <span class="arr">→</span></a>
         <a href="/contacto/" class="btn btn-ghost">Otras formas de contacto</a>
       </div>
     </div>
@@ -105,21 +118,34 @@ const faqLd = faqSchema(faqs);
     </div>
   </section>
 
-  <!-- Documentación + cambio de nombre -->
+  <!-- Documentación + comprobaciones + cambio de nombre -->
   <section class="vd-docs div-soft panel-soft">
     <div class="wrap vd-docs-grid">
       <div class="reveal">
-        <h2 class="vd-block-t head">Documentación necesaria</h2>
-        <p class="vd-block-lead">Para vender tu moto con todas las garantías, ten a mano:</p>
+        <h2 class="vd-block-t head">Documentación para vender</h2>
+        <p class="vd-block-lead">No necesitas tenerlo todo para pedir la tasación: para la primera valoración nos basta con unas fotos y los datos de la moto. Para cerrar la venta, esto es lo que conviene reunir.</p>
+
+        <h3 class="vd-docs-sub cond">Imprescindible</h3>
         <ul class="vd-list">
-          {docs.map((d) => <li>{d}</li>)}
+          {docsImprescindible.map((d) => <li>{d}</li>)}
+        </ul>
+
+        <h3 class="vd-docs-sub cond">Recomendable (suma valor)</h3>
+        <ul class="vd-list vd-list-soft">
+          {docsRecomendable.map((d) => <li>{d}</li>)}
         </ul>
         <p class="vd-block-note">¿Te falta algún papel? No pasa nada, cuéntanoslo y te decimos cómo resolverlo.</p>
       </div>
       <div class="reveal d1">
-        <h2 class="vd-block-t head">El cambio de nombre, de nuestra cuenta</h2>
+        <h2 class="vd-block-t head">Qué comprobamos nosotros</h2>
+        <p class="vd-block-lead">Antes de cerrar cualquier operación revisamos que todo esté en regla, para que la venta sea segura para ti y para nosotros:</p>
+        <ul class="vd-list">
+          {comprobaciones.map((c) => <li>{c}</li>)}
+        </ul>
+
+        <h3 class="vd-docs-sub cond" style="margin-top:var(--s-6)">El cambio de nombre, de nuestra cuenta</h3>
         <p>Uno de los mayores quebraderos de cabeza al vender una moto entre particulares es el <strong>cambio de nombre</strong>: citas en Tráfico, impuestos, formularios… y el miedo a seguir figurando como titular si el comprador no lo tramita.</p>
-        <p>Con nosotros eso desaparece. Nos encargamos de <strong>toda la transferencia</strong> y de darte de baja como titular de forma segura y legal. Te desvinculas de la moto el mismo día, sin sorpresas de multas ni impuestos posteriores.</p>
+        <p>Con nosotros eso desaparece. Nos encargamos de <strong>toda la transferencia</strong> y, una vez verificada la documentación, tramitamos tu baja como titular de forma segura y legal.</p>
         <p>Y si lo que quieres es cambiar tu moto por otra, la tasamos y la aceptamos como parte del pago. <a href="/motos-segunda-mano-granada/">Mira las motos disponibles</a>.</p>
       </div>
     </div>
@@ -132,12 +158,12 @@ const faqLd = faqSchema(faqs);
   <section class="vd-cta">
     <div class="wrap-narrow reveal">
       <h2 class="sec-title">¿Le ponemos precio a tu moto?</h2>
-      <p>Escríbenos por WhatsApp con marca, modelo, año y kilómetros. En unas horas tendrás una valoración sin compromiso.</p>
+      <p>Escríbenos por WhatsApp con marca, modelo, año, kilómetros y unas fotos. Te damos una valoración orientativa sin compromiso.</p>
       <div class="vd-cta-btns">
-        <a href={WA_TASACION} target="_blank" rel="noopener" class="btn btn-primary">Pedir tasación por WhatsApp <span class="arr">→</span></a>
-        <a href={TELEFONO} class="btn btn-ghost">Llamar al 644 904 418</a>
+        <a href={WA_TASACION} target="_blank" rel="noopener" class="btn btn-primary" data-track="whatsapp_tasacion" data-source="vender_cta">Pedir tasación por WhatsApp <span class="arr">→</span></a>
+        <a href={TELEFONO} class="btn btn-ghost" data-track="telefono" data-source="vender_cta">Llamar al {business.telefonoVisible.replace('+34 ', '')}</a>
       </div>
-      <p class="vd-cta-loc cond">Cita previa · Paraje de Catacena, 18211 Cogollos de la Vega (Granada)</p>
+      <p class="vd-cta-loc cond">Cita previa · {direccionCompleta}</p>
     </div>
   </section>
 
@@ -185,7 +211,10 @@ const faqLd = faqSchema(faqs);
     .vd-block-t{font-size:var(--fs-h3);font-weight:700;color:var(--text);
       margin-bottom:var(--s-4);padding-bottom:var(--s-3);border-bottom:1px solid var(--line)}
     .vd-block-lead{color:var(--text-dim);margin-bottom:var(--s-4)}
+    .vd-docs-sub{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+      color:var(--orange-bright);margin:var(--s-5) 0 var(--s-3)}
     .vd-list{list-style:none;display:flex;flex-direction:column;gap:var(--s-3)}
+    .vd-list-soft li::before{background:var(--text-faint)}
     .vd-list li{position:relative;padding-left:var(--s-6);color:var(--text-dim);line-height:1.6}
     .vd-list li::before{content:"";position:absolute;left:0;top:9px;width:8px;height:8px;
       border-radius:50%;background:var(--orange)}

@@ -29,7 +29,7 @@ const fmtFecha = (d)=> d.toLocaleDateString('es-ES',{day:'numeric',month:'long',
         {entradas.map((e, i)=>(
           <a class="post reveal" style={`transition-delay:${(i%3)*80}ms`} href={`/blog/${e.slug}/`}>
             <div class="post-img">
-              <img src={`/img/blog/${e.data.imagen}`} alt={e.data.titulo} loading="lazy" />
+              <img src={`/img/blog/${e.data.imagen}`} alt={e.data.titulo} width="800" height="500" loading="lazy" decoding="async" />
               <span class="post-cat cond">{e.data.categoria}</span>
             </div>
             <div class="post-body">
