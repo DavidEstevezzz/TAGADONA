@@ -35,14 +35,14 @@ export const motos = [
     estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
-      "medley125-1.jpg",
-      "medley125-2.PNG",
-      "medley125-3.PNG",
-      "medley125-4.jpg",
-      "medley125-5.PNG",
-      "medley125-6.PNG",
-      "medley125-7.jpg",
-      "medley125-8.PNG",
+      "piaggio-medley-125-2020-1.jpg",
+      "piaggio-medley-125-2020-2.jpg",
+      "piaggio-medley-125-2020-3.jpg",
+      "piaggio-medley-125-2020-4.jpg",
+      "piaggio-medley-125-2020-5.jpg",
+      "piaggio-medley-125-2020-6.jpg",
+      "piaggio-medley-125-2020-7.jpg",
+      "piaggio-medley-125-2020-8.jpg",
     ],
     // Datos rápidos (los 4 de arriba)
     cilindrada: "125 cc",
@@ -79,11 +79,11 @@ export const motos = [
     estado: "Vendida",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
-      "tricity300-1.jpeg",
-      "tricity300-2.jpeg",
-      "tricity300-3.jpeg",
-      "tricity300-4.jpeg",
-      "tricity300-5.jpeg"
+      "yamaha-tricity-300-1.jpg",
+      "yamaha-tricity-300-2.jpg",
+      "yamaha-tricity-300-3.jpg",
+      "yamaha-tricity-300-4.jpg",
+      "yamaha-tricity-300-5.jpg",
     ],
     // Datos rápidos (los 4 de arriba)
     cilindrada: "300 cc",
@@ -119,13 +119,12 @@ export const motos = [
     estado: "Vendida",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
-      "tmax530-1.png",
-      "tmax530-2.png",
-      "tmax530-3.png",
-      "tmax530-4.png",
-      "tmax530-5.png",
-      "tmax530-6.png",
-
+      "yamaha-tmax-530-sx-2017-1.jpg",
+      "yamaha-tmax-530-sx-2017-2.jpg",
+      "yamaha-tmax-530-sx-2017-3.jpg",
+      "yamaha-tmax-530-sx-2017-4.jpg",
+      "yamaha-tmax-530-sx-2017-5.jpg",
+      "yamaha-tmax-530-sx-2017-6.jpg",
     ],
     // Datos rápidos (los 4 de arriba)
     cilindrada: "530 cc",
@@ -160,9 +159,9 @@ export const motos = [
     estado: "Vendida",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
-      "nk125-1.jpeg",
-      "nk125-2.jpeg",
-      "nk125-3.jpeg",
+      "cfmoto-nk-125-2025-1.jpg",
+      "cfmoto-nk-125-2025-2.jpg",
+      "cfmoto-nk-125-2025-3.jpg",
     ],
     // Datos rápidos (los 4 de arriba)
     cilindrada: "125 cc",
@@ -196,11 +195,11 @@ export const motos = [
     estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,
     fotos: [
-      "honda-sh-1.png",
-      "honda-sh-2.png",
-      "honda-sh-3.png",
-      "honda-sh-4.png",
-      "honda-sh-5.png",
+      "honda-sh-125-2019-1.jpg",
+      "honda-sh-125-2019-2.jpg",
+      "honda-sh-125-2019-3.jpg",
+      "honda-sh-125-2019-4.jpg",
+      "honda-sh-125-2019-5.jpg",
     ],
     // Datos rápidos
     cilindrada: "125 cc",

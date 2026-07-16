@@ -22,11 +22,11 @@ const destacadas = [...motos].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).s
   <!-- ════════ HERO ════════ -->
   <section class="hero">
     <div class="hero-media">
-      <img src="/img/hero-taller.jpg" alt="Taller Tagadona Racing" />
+      <img src="/img/hero-taller.jpg" alt="Taller de Tagadona Racing en Granada" width="1920" height="1076" fetchpriority="high" decoding="async" />
       <div class="hero-grad"></div>
     </div>
     <div class="hero-inner wrap">
-      <img src="/img/logo.png" alt="Tagadona Racing" id="heroLogo" class="hero-logo reveal" />
+      <img src="/img/logo.png" alt="Tagadona Racing" id="heroLogo" class="hero-logo reveal" width="240" height="240" decoding="async" />
       <p class="eyebrow center hero-eb reveal d1">Compraventa · Garantía · Asistencia en compra</p>
       <h1 class="hero-title display reveal d1">Tagadona Racing</h1>
       <p class="hero-sub reveal d2">Compraventa de motos en Granada con revisión propia, garantía y asistencia personalizada para comprar o vender tu moto con confianza.</p>
@@ -85,7 +85,7 @@ const destacadas = [...motos].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).s
         {destacadas.map((m, idx)=>(
           <a class="umoto reveal" data-track="ver_ficha" data-source="home_ultimas" data-moto={m.slug} style={`transition-delay:${idx*80}ms`} href={`/motos/${m.slug}/`}>
             <div class="umoto-img">
-              <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo} ${m.anio} de segunda mano en Granada`} loading="lazy" />
+              <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo} ${m.anio} de segunda mano en Granada`} width="800" height="600" loading="lazy" decoding="async" />
               {m.estado!=="Disponible" && <span class="umoto-badge">{m.estado}</span>}
             </div>
             <div class="umoto-info">
