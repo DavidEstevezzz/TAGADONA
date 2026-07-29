@@ -137,7 +137,7 @@ const breadcrumbSchema = {
   <div class="ficha-top wrap">
     <nav class="crumb cond" aria-label="Ruta">
       <a href="/">Inicio</a><span>/</span><a href={seccionRel.href}>{seccionRel.label}</a><span>/</span>
-      <em>{moto.marca} {moto.modelo}</em>
+      <em>{moto.marca}{" "}{moto.modelo}</em>
     </nav>
   </div>
 
@@ -168,7 +168,7 @@ const breadcrumbSchema = {
     <!-- Panel -->
     <div class="panel">
       <p class="eyebrow no-rule panel-cat">{moto.categoria}</p>
-      <h1 class="panel-title head">{moto.marca} <span>{moto.modelo}</span></h1>
+      <h1 class="panel-title head">{moto.marca}{" "}<span>{moto.modelo}</span></h1>
       <p class="panel-meta cond">{moto.anio} · {formatKm(moto.km)}</p>
 
       <div class="panel-price">

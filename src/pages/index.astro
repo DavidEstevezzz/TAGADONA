@@ -91,7 +91,7 @@ const destacadas = [...motosVenta].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:
             </div>
             <div class="umoto-info">
               <span class="umoto-cat cond">{m.categoria}</span>
-              <h3 class="head">{m.marca} <span>{m.modelo}</span></h3>
+              <h3 class="head">{m.marca}{" "}<span>{m.modelo}</span></h3>
               <div class="umoto-bot">
                 <span class="umoto-meta cond">{m.anio} · {formatKm(m.km)}</span>
                 <span class="umoto-price cond">{formatPrecio(m.precio)}</span>

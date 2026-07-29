@@ -37,7 +37,9 @@ const slugEstado = (e) => e === "Vendida" ? "vendida" : e === "Reservada" ? "res
         </div>
         <div class="moto-info">
           <div class="moto-top">
-            <h3 class="head">{m.marca} <span>{m.modelo}</span></h3>
+            {/* El espacio explícito es necesario: el compilador se come el
+                blanco entre la expresión y el <span> y quedaría "PiaggioBeverly". */}
+            <h3 class="head">{m.marca}{" "}<span>{m.modelo}</span></h3>
             <span class="moto-price cond">{formatPrecio(m.precio)}</span>
           </div>
           <div class="moto-meta cond">
