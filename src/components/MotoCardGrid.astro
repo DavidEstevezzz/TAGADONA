@@ -17,6 +17,11 @@ const {
 } = Astro.props;
 
 const limpiarCarnet = (c) => c.replace(/\s*\(.*\)/, "").trim();
+// En las motos de la sección de reparación la categoría del dato viene como
+// "Scooter · Proyecto". En la tarjeta el "· Proyecto" sobra: ya lo dice el
+// distintivo "Para reparar". En el dato se mantiene, que es lo que filtra.
+const limpiarCategoria = (m) =>
+  esReparacion(m) ? m.categoria.replace(/\s*·\s*Proyecto\s*$/i, "").trim() : m.categoria;
 const slugEstado = (e) => e === "Vendida" ? "vendida" : e === "Reservada" ? "reservada" : "";
 ---
 
@@ -33,7 +38,7 @@ const slugEstado = (e) => e === "Vendida" ? "vendida" : e === "Reservada" ? "res
             ? <span class={"moto-estado " + slugEstado(m.estado)}>{m.estado}</span>
             : esReparacion(m) && <span class="moto-estado repara">Para reparar</span>}
           <span class="moto-carnet cond">Carnet {limpiarCarnet(m.carnet)}</span>
-          <span class="moto-cat cond">{m.categoria}</span>
+          <span class="moto-cat cond">{limpiarCategoria(m)}</span>
         </div>
         <div class="moto-info">
           <div class="moto-top">
@@ -53,7 +58,6 @@ const slugEstado = (e) => e === "Vendida" ? "vendida" : e === "Reservada" ? "res
               )}
             </ul>
           )}
-          {esReparacion(m) && <span class="moto-nogar cond">Se vende tal cual · Sin garantía</span>}
           <span class="moto-link cond">Ver ficha <span class="arr">→</span></span>
         </div>
       </a>
@@ -117,10 +121,6 @@ const slugEstado = (e) => e === "Vendida" ? "vendida" : e === "Reservada" ? "res
     width:6px;height:6px;border-radius:50%;background:#3E6E8E}
   .moto-imperf-mas{color:var(--text-faint);font-style:italic}
   .moto-imperf-mas::before{opacity:.5}
-  .moto-nogar{display:inline-block;align-self:flex-start;margin-bottom:var(--s-4);
-    font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-    color:#8FB6CE;border:1px solid rgba(62,110,142,.5);background:rgba(62,110,142,.12);
-    padding:4px 10px;border-radius:2px}
   .es-repara:hover{border-color:#3E6E8E}
 
   /* Estado vacío — CTA a contacto en vez de una rejilla vacía */
