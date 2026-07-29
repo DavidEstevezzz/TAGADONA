@@ -245,15 +245,139 @@ export const motos = [
   // ══════════════════════════════════════════════════════════
   //  MOTOS PARA REPARAR  (seccion: "reparacion")
   // ----------------------------------------------------------
-  //  Copia la plantilla de abajo, quita las barras /* */ y
-  //  rellena los datos. La moto aparecerá automáticamente en
-  //  /motos-para-reparar-granada/ con el aviso de venta sin
-  //  garantía y la lista de desperfectos.
+  //  Aparecen solo en /motos-para-reparar-granada/, con el aviso
+  //  de venta sin garantía y la lista de desperfectos.
   //
-  //  Mientras no haya ninguna, la página se muestra igual pero
-  //  con un aviso de "ahora mismo no tenemos ningún proyecto" y
-  //  un botón de WhatsApp. No hay que tocar nada más.
+  //  ⚠ PENDIENTE ANTES DE PUBLICAR EN PRODUCCIÓN:
+  //    1. Los PRECIOS son provisionales (marcados abajo).
+  //    2. Las FOTOS son marcadores de posición: sobrescribe los
+  //       archivos de public/img/ con las reales, con el MISMO
+  //       nombre, y ya está.
+  //    3. Confirmar la potencia y los datos marcados con "?".
   // ══════════════════════════════════════════════════════════
+
+  {
+    slug: "piaggio-beverly-125-2017",
+    marca: "Piaggio",
+    modelo: "Beverly 125",
+    categoria: "Scooter · Proyecto",
+    anio: 2017,
+    km: 44878,
+    precio: 1100,                    // ⚠ PRECIO PROVISIONAL — cambiar por el real
+    estado: "Disponible",
+    destacada: false,
+    seccion: "reparacion",
+    fotos: [
+      "piaggio-beverly-125-2017-1.jpg",
+      "piaggio-beverly-125-2017-2.jpg",
+      "piaggio-beverly-125-2017-3.jpg",
+      "piaggio-beverly-125-2017-4.jpg",
+      "piaggio-beverly-125-2017-5.jpg",
+    ],
+    cilindrada: "125 cc",
+    potencia: "11 CV",               // ⚠ confirmar
+    combustible: "Gasolina",
+    carnet: "A1 / B + 3 años",
+    imperfecciones: [
+      "Cuerpo de mariposa averiado: necesita reparación o sustitución",
+    ],
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos",
+      "Cambio": "Automático CVT",
+      "ITV": "En vigor",
+      "Estado general": "Para reparar",
+      "Ubicación": "Granada",
+      // Añade aquí "Arranca y rueda": "Sí" / "No · se entrega parada"
+    },
+    descripcion: [
+      "Piaggio Beverly 125 del año 2017 con 44.878 km, una scooter de rueda alta muy cómoda para el día a día que se vende como proyecto: necesita reparar el cuerpo de mariposa.",
+      "El resto de la moto es una Beverly de las de siempre —rueda grande, buena postura de conducción y espacio de sobra—, con la ITV en vigor. Es una avería concreta y localizada, no un problema de motor.",
+      "Se vende tal cual, con esa reparación por delante y sin garantía, a un precio muy por debajo del de una Beverly lista para circular. Buena opción para quien pueda resolver la mariposa por su cuenta.",
+    ],
+  },
+
+  {
+    slug: "piaggio-beverly-400-2007",
+    marca: "Piaggio",
+    modelo: "Beverly 400 ie",
+    categoria: "Scooter · Proyecto",
+    anio: 2007,
+    km: 46172,
+    precio: 950,                     // ⚠ PRECIO PROVISIONAL — cambiar por el real
+    estado: "Disponible",
+    destacada: false,
+    seccion: "reparacion",
+    fotos: [
+      "piaggio-beverly-400-2007-1.jpg",
+      "piaggio-beverly-400-2007-2.jpg",
+      "piaggio-beverly-400-2007-3.jpg",
+      "piaggio-beverly-400-2007-4.jpg",
+      "piaggio-beverly-400-2007-5.jpg",
+    ],
+    cilindrada: "400 cc",
+    potencia: "34 CV",               // ⚠ confirmar
+    combustible: "Gasolina",
+    carnet: "A2 / A",
+    imperfecciones: [
+      "Pérdida de aceite por la tapa de balancines",
+      "Plásticos y carenados en estado regular, con roces y marcas de uso",
+    ],
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos",
+      "Cambio": "Automático CVT",
+      "Arranca y rueda": "Sí · en funcionamiento",
+      "ITV": "En vigor",
+      "Estado general": "Para reparar",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Piaggio Beverly 400 ie del año 2007 con 46.172 km. Está en funcionamiento y con la ITV en vigor, pero pierde aceite por la tapa de balancines, así que se vende como proyecto.",
+      "La estética acompaña a los años que tiene: los plásticos están regular, con roces y marcas de uso. Nada de eso afecta a cómo se mueve, pero conviene saberlo antes de venir a verla.",
+      "Un maxiscooter de rueda alta con mucho fondo por poco dinero, para quien se maneje con una junta de tapa de balancines y quiera dejarlo fino. Se vende tal cual y sin garantía.",
+    ],
+  },
+
+  {
+    slug: "kymco-people-s-250-2008",
+    marca: "Kymco",
+    modelo: "People S 250",
+    categoria: "Scooter · Proyecto",
+    anio: 2008,
+    km: 22700,
+    precio: 800,                     // ⚠ PRECIO PROVISIONAL — cambiar por el real
+    estado: "Disponible",
+    destacada: false,
+    seccion: "reparacion",
+    fotos: [
+      "kymco-people-s-250-2008-1.jpg",
+      "kymco-people-s-250-2008-2.jpg",
+      "kymco-people-s-250-2008-3.jpg",
+      "kymco-people-s-250-2008-4.jpg",
+      "kymco-people-s-250-2008-5.jpg",
+    ],
+    cilindrada: "250 cc",
+    potencia: "21 CV",               // ⚠ confirmar
+    combustible: "Gasolina",
+    carnet: "A2 / A",
+    imperfecciones: [
+      "Pendiente la revisión de los 20.000 km: correa de transmisión sin hacer",
+    ],
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos",
+      "Cambio": "Automático CVT",
+      "Estado general": "Para reparar",
+      "Ubicación": "Granada",
+      // Añade aquí "Arranca y rueda" y el estado de la ITV
+    },
+    descripcion: [
+      "Kymco People S 250 del año 2008 con solo 22.700 km, muy pocos para su edad. Se vende como proyecto porque le falta la revisión de los 20.000 km: la correa de transmisión está sin hacer y toca cambiarla.",
+      "La People S es una scooter de rueda alta ligera y muy manejable, con una mecánica sencilla y conocida, de las que se dejan trabajar sin complicaciones.",
+      "Se vende tal cual, con esa revisión pendiente y sin garantía. Para quien sepa hacerse el conjunto de la transmisión, es mucha moto por muy poco.",
+    ],
+  },
+
+  // ── Plantilla para añadir otra moto para reparar ────────────
+  //  Copia el bloque de abajo, quita las barras /* */ y rellena.
   /*
   {
     slug: "marca-modelo-anio-para-reparar",   // parte de la URL: minúsculas y guiones
