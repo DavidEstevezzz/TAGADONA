@@ -19,6 +19,25 @@
 //    orden (número, para forzar el orden), garantiaMeses (número),
 //    fechaPublicacion / fechaActualizacion / fechaVenta ("AAAA-MM-DD").
 //
+//  ── SECCIÓN "PARA REPARAR" ──────────────────────────────────
+//  Por defecto una moto pertenece a la venta normal (con garantía
+//  y transferencia incluidas). Si la moto se vende TAL CUAL, con
+//  desperfectos conocidos y sin garantía, añade:
+//
+//      seccion: "reparacion",
+//      imperfecciones: [
+//        "Carenado lateral derecho rayado",
+//        "Batería que no mantiene la carga",
+//      ],
+//
+//  Esas motos NO salen en el catálogo general ni en las landings
+//  de categoría: van solo a /motos-para-reparar-granada/, con el
+//  aviso de venta sin garantía y la lista de desperfectos visible
+//  en la tarjeta y en la ficha.
+//
+//  El campo "imperfecciones" es obligatorio (mínimo 1) cuando
+//  seccion vale "reparacion": es lo que hace honesto el anuncio.
+//
 //  Antes de publicar, ejecuta:  npm run validate:data
 //  Comprueba slugs únicos, estados, precios, fotos existentes, etc.
 // ============================================================
@@ -222,7 +241,147 @@ export const motos = [
       "Una opción muy interesante para quien busque una scooter fiable, bien mantenida y lista para usar. Disponible por 2.499 € en Granada.",
     ],
   },
+
+  // ══════════════════════════════════════════════════════════
+  //  MOTOS PARA REPARAR  (seccion: "reparacion")
+  // ----------------------------------------------------------
+  //  ⚠ EJEMPLOS DE RELLENO: los tres bloques siguientes son
+  //  plantillas con fotos de marcador de posición para que la
+  //  página se pueda ver funcionando. Sustituye los datos y las
+  //  fotos por los reales —o borra los bloques— antes de subir
+  //  la web a producción.
+  // ══════════════════════════════════════════════════════════
+
+  {
+    slug: "honda-cbf-125-2012-para-reparar",
+    marca: "Honda",
+    modelo: "CBF 125",
+    categoria: "Naked · Proyecto",
+    anio: 2012,
+    km: 48200,
+    precio: 750,
+    estado: "Disponible",
+    destacada: false,
+    seccion: "reparacion",           // ← la manda a /motos-para-reparar-granada/
+    fotos: [
+      "reparar-ejemplo-1.jpg",
+    ],
+    cilindrada: "125 cc",
+    potencia: "11 CV",
+    combustible: "Gasolina",
+    carnet: "A1 / B + 3 años",
+    // Lo que hay que arreglar. Sé concreto: es lo que evita sorpresas.
+    imperfecciones: [
+      "Arranca y rueda, pero le cuesta arrancar en frío",
+      "Carenado lateral derecho rayado y guardabarros con una fisura",
+      "Escape original con óxido superficial",
+      "Neumático trasero al límite del dibujo",
+    ],
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos · Refrigeración por aire",
+      "Cambio": "Manual · 5 velocidades",
+      "Arranca y rueda": "Sí",
+      "Documentación": "En regla · ITV caducada",
+      "Estado general": "Para reparar",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Honda CBF 125 de 2012 con 48.200 km que se vende como proyecto: funciona y se mueve, pero necesita mano de mecánica y algo de chapa para dejarla fina.",
+      "El motor arranca y rueda, aunque en frío hay que insistir. La estética tiene el desgaste propio de los años: carenado rayado, una fisura en el guardabarros y óxido superficial en el escape. El neumático trasero pide cambio.",
+      "Se vende tal cual, con estos desperfectos detallados y sin garantía, a un precio acorde. Ideal para quien quiera una 125 barata y no le importe meterle horas de taller.",
+    ],
+  },
+
+  {
+    slug: "yamaha-aerox-50-2015-para-reparar",
+    marca: "Yamaha",
+    modelo: "Aerox 50",
+    categoria: "Scooter · Proyecto",
+    anio: 2015,
+    km: 19800,
+    precio: 450,
+    estado: "Disponible",
+    destacada: false,
+    seccion: "reparacion",
+    fotos: [
+      "reparar-ejemplo-2.jpg",
+    ],
+    cilindrada: "50 cc",
+    potencia: "4 CV",
+    combustible: "Gasolina",
+    carnet: "AM / B",
+    imperfecciones: [
+      "No arranca: falta de compresión, probable segmentos",
+      "Variador con holgura y correa vencida",
+      "Carenados con roces y un anclaje partido",
+      "Faro delantero con la óptica empañada",
+    ],
+    especificaciones: {
+      "Motor": "Monocilíndrico · 2 tiempos",
+      "Cambio": "Automático CVT",
+      "Arranca y rueda": "No · se entrega parada",
+      "Documentación": "En regla",
+      "Estado general": "Para reparar",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Yamaha Aerox 50 de 2015 que se vende parada, como proyecto de mecánica. Tiene falta de compresión, así que lo más probable es que pida segmentos o un pistón nuevo.",
+      "El variador tiene holgura y la correa está vencida, así que conviene hacer el conjunto entero. Estéticamente los carenados tienen roces y hay un anclaje partido; la óptica del faro está empañada.",
+      "Se entrega tal cual, sin garantía y con todo esto puesto por delante. Una base barata para quien disfrute reconstruyendo una scooter de 50.",
+    ],
+  },
+
+  {
+    slug: "kawasaki-er-6n-2009-para-reparar",
+    marca: "Kawasaki",
+    modelo: "ER-6n",
+    categoria: "Naked · Proyecto",
+    anio: 2009,
+    km: 62400,
+    precio: 1650,
+    estado: "Disponible",
+    destacada: false,
+    seccion: "reparacion",
+    fotos: [
+      "reparar-ejemplo-3.jpg",
+    ],
+    cilindrada: "650 cc",
+    potencia: "72 CV",
+    combustible: "Gasolina",
+    carnet: "A2 (limitable) / A",
+    imperfecciones: [
+      "Caída leve por el lado izquierdo: maneta, estribera y tapa rayadas",
+      "Horquilla derecha con sudor de aceite (retenes)",
+      "Kit de arrastre al límite, pide cadena y coronas",
+      "Testigo de inyección intermitente, pendiente de diagnosticar",
+    ],
+    especificaciones: {
+      "Motor": "Bicilíndrico en paralelo · 4 tiempos · Refrigeración líquida",
+      "Cambio": "Manual · 6 velocidades",
+      "Arranca y rueda": "Sí",
+      "Documentación": "En regla · ITV en vigor",
+      "Estado general": "Para reparar",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Kawasaki ER-6n de 2009 con 62.400 km. Arranca, rueda y frena, pero tiene una caída leve por el lado izquierdo y varios puntos que hay que atender antes de darla por lista.",
+      "Los retenes de la horquilla derecha sudan aceite, el kit de arrastre está al límite y el testigo de inyección se enciende de forma intermitente, sin que hayamos llegado a diagnosticar la causa.",
+      "Se vende tal cual, con todo esto por delante y sin garantía. Una A2 limitable a buen precio para quien se maneje con la llave inglesa.",
+    ],
+  },
 ];
+
+// --- Secciones de la web -------------------------------------
+// Una moto pertenece a la sección "reparacion" solo si lo dice
+// expresamente; el resto son venta normal (revisadas, con
+// garantía y transferencia incluidas).
+export const esReparacion = (m) => m.seccion === "reparacion";
+
+// Motos de venta normal: catálogo, home y landings de categoría.
+export const motosVenta = motos.filter((m) => !esReparacion(m));
+
+// Motos para reparar: solo /motos-para-reparar-granada/.
+export const motosReparacion = motos.filter(esReparacion);
 
 // --- Utilidades internas (no necesitas tocar esto) ---
 // Inserta puntos de miles a la española: 6900 -> "6.900"

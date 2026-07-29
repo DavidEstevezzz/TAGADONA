@@ -20,10 +20,15 @@ Revisa a ojo en `npm run preview`:
 - [ ] **Home**: carga, hero nítido, últimas incorporaciones, CTA "Vender mi moto".
 - [ ] **Catálogo** (`/catalogo/`): rejilla, filtros por tipo/carnet/precio, vendidas.
 - [ ] **Landing general** (`/motos-segunda-mano-granada/`).
+- [ ] **Motos para reparar** (`/motos-para-reparar-granada/`): aviso de venta sin
+      garantía visible, desperfectos en las tarjetas, y que **ninguna** moto de
+      esta sección aparezca en el catálogo ni en las landings de categoría.
 - [ ] **Vender moto** (`/vender-moto-granada/`): documentación agrupada, WhatsApp de tasación.
 - [ ] **Contacto**: teléfono, email, cómo llegar, horario.
 - [ ] **Una ficha disponible**: galería, lightbox, botones, "motos parecidas".
 - [ ] **Una ficha vendida**: badge "Vendida", "Quiero una parecida", alternativas.
+- [ ] **Una ficha para reparar**: badge "Para reparar", aviso sin garantía y bloque
+      "Qué hay que arreglar" con todos los desperfectos declarados.
 - [ ] **Un artículo del blog**: fecha de publicación/actualización, fuentes, CTA interno.
 - [ ] La web se ve bien en móvil (menú, tarjetas, botones).
 
@@ -46,6 +51,7 @@ Inspecciona con "Inspección de URLs" estas páginas clave:
 - [ ] Home
 - [ ] Catálogo (`/catalogo/`)
 - [ ] Landing general (`/motos-segunda-mano-granada/`)
+- [ ] Motos para reparar (`/motos-para-reparar-granada/`)
 - [ ] Vender moto (`/vender-moto-granada/`)
 - [ ] Contacto
 - [ ] Una ficha disponible

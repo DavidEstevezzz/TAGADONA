@@ -1,0 +1,366 @@
+---
+// ============================================================
+//  Motos para reparar — sección de proyectos (venta tal cual)
+// ------------------------------------------------------------
+//  Muestra únicamente las motos marcadas en src/data/motos.js
+//  con  seccion: "reparacion".  Son motos con desperfectos
+//  conocidos, detallados uno a uno en el anuncio, que se venden
+//  tal cual y sin garantía comercial, a precio ajustado.
+//
+//  Para publicar una moto aquí NO hay que tocar esta página:
+//  basta con añadir el bloque de la moto en src/data/motos.js
+//  con  seccion: "reparacion"  y su lista de "imperfecciones".
+// ============================================================
+import Base from '../layouts/Base.astro';
+import MotoCardGrid from '../components/MotoCardGrid.astro';
+import Faq from '../components/Faq.astro';
+import { motosReparacion } from '../data/motos.js';
+import { breadcrumbSchema, faqSchema } from '../lib/seo.js';
+import { waLink, business } from '../config/business.js';
+
+const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const PATH = "/motos-para-reparar-granada/";
+
+// Disponibles primero, y dentro de cada grupo las más baratas antes:
+// en esta sección el precio es el principal criterio de búsqueda.
+const seleccion = motosReparacion
+  .filter((m) => m.estado !== "Vendida")
+  .sort((a, b) => (a.estado === b.estado ? a.precio - b.precio : a.estado === "Disponible" ? -1 : 1));
+
+const vendidas = motosReparacion.filter((m) => m.estado === "Vendida");
+
+const waProyectos = waLink("Hola, he visto la sección de motos para reparar. ¿Qué tenéis disponible ahora mismo?");
+
+// Cómo se venden estas motos: las cuatro reglas del trato.
+const reglas = [
+  {
+    n: "01",
+    t: "Todo lo que sabemos, en el anuncio",
+    d: "Cada moto lleva su lista de desperfectos: lo que falla, lo que está roto y lo que solo tiene desgaste. Si no arranca, lo dice. Si tiene una caída, lo dice.",
+  },
+  {
+    n: "02",
+    t: "Se vende tal cual, sin garantía",
+    d: "Aquí no hay garantía comercial ni revisión previa: el precio está ajustado precisamente porque la reparación corre de tu cuenta. Es un trato claro por las dos partes.",
+  },
+  {
+    n: "03",
+    t: "La ves, la escuchas y la tocas",
+    d: `Con cita previa en ${business.municipio} puedes arrancarla —si arranca—, mirarla con calma y venir acompañado de quien quieras. Cuanto mejor la valores, mejor para todos.`,
+  },
+  {
+    n: "04",
+    t: "Papeleo resuelto",
+    d: "Nos seguimos ocupando del cambio de nombre y de que la documentación esté en regla. Que la moto sea un proyecto no significa que el trámite sea un lío.",
+  },
+];
+const faqs = [
+  {
+    q: "¿Qué es una moto para reparar?",
+    a: "Es una moto de segunda mano que no está lista para circular sin pasar antes por el taller: puede tener una avería mecánica, daños de una caída, componentes al límite o desperfectos estéticos. En Tagadona Racing todos esos defectos se detallan uno a uno en el anuncio, así que sabes exactamente lo que compras antes de venir a verla.",
+  },
+  {
+    q: "¿Por qué estas motos se venden sin garantía?",
+    a: "Porque se venden tal cual están, con los desperfectos ya descritos en el anuncio, y ese es el motivo de que el precio sea muy inferior al de una moto revisada. Quien la compra asume la reparación. Si prefieres una moto revisada punto por punto, con garantía por escrito y lista para circular, esa está en nuestro catálogo general.",
+  },
+  {
+    q: "¿Puedo verla y probarla antes de comprarla?",
+    a: "Sí, y te lo recomendamos. Atendemos con cita previa en Cogollos de la Vega (Granada): puedes arrancarla si arranca, revisarla con calma y venir acompañado de un mecánico de confianza. Preferimos que la mires a fondo antes de comprar y no después.",
+  },
+  {
+    q: "¿Puedo saber cuánto costaría arreglarla?",
+    a: "Te contamos con detalle lo que hemos detectado y qué creemos que necesita, pero no cerramos un presupuesto de reparación: hasta que no se desmonta una avería no se sabe del todo su alcance. Precisamente por eso el precio de venta está calculado para dejar margen.",
+  },
+  {
+    q: "¿La moto se entrega con la transferencia hecha?",
+    a: "Sí. Aunque sea una moto para reparar, nos encargamos del cambio de nombre y de que la documentación esté en regla, igual que con el resto de nuestras motos. Otra cosa es la ITV: si está caducada, se indica en la ficha y tendrás que pasarla tú una vez reparada.",
+  },
+  {
+    q: "¿Compráis motos averiadas o accidentadas?",
+    a: "Sí. Si tienes una moto que no arranca, con una avería importante o con daños de una caída, escríbenos con fotos y te decimos qué podemos ofrecerte. Nos ahorras el trabajo de buscarla y tú te quitas de encima una moto parada.",
+  },
+];
+
+const breadcrumb = breadcrumbSchema([
+  { name: "Inicio", path: "/" },
+  { name: "Motos para reparar en Granada", path: PATH },
+], SITE);
+const faqLd = faqSchema(faqs);
+---
+<Base
+  title="Motos para reparar y restaurar en Granada | Tagadona Racing"
+  desc="Motos de segunda mano para reparar en Granada: proyectos baratos con los desperfectos detallados en cada anuncio. Se venden tal cual, sin garantía, para quien disfruta de la mecánica."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+
+  <div class="rp-top wrap">
+    <nav class="crumb cond" aria-label="Ruta">
+      <a href="/">Inicio</a><span>/</span><em>Motos para reparar</em>
+    </nav>
+  </div>
+
+  <!-- ════════ HERO ════════ -->
+  <section class="rp-hero">
+    <div class="rp-hero-glow" aria-hidden="true"></div>
+    <div class="wrap rp-hero-inner">
+      <p class="eyebrow center reveal in">Proyectos · Mecánica · Granada</p>
+      <h1 class="rp-h1 display reveal in">Motos para reparar</h1>
+      <div class="rp-intro reveal in">
+        <p>Una sección aparte del catálogo, para <strong>motos con desperfectos</strong> que se venden tal cual: averías mecánicas, daños de una caída o piezas al límite. Todo lo que le pasa a cada moto está escrito en su anuncio, sin adornos.</p>
+        <p>A cambio, el precio no se parece en nada al de una moto revisada. Es la vía barata para quien <strong>disfruta metiéndose en la mecánica</strong> —o para quien busca una base sobre la que montar su proyecto.</p>
+      </div>
+      <div class="rp-hero-btns reveal in">
+        <a href="#stock" class="btn btn-primary">Ver motos disponibles <span class="arr">→</span></a>
+        <a href="/catalogo/" class="btn btn-ghost">Prefiero una moto revisada</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ AVISO: SIN GARANTÍA ════════ -->
+  <section class="wrap">
+    <div class="rp-aviso reveal">
+      <span class="rp-aviso-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.6" r=".6" fill="currentColor"/>
+        </svg>
+      </span>
+      <div class="rp-aviso-txt">
+        <h2 class="head">Estas motos se venden sin garantía</h2>
+        <p>No pasan nuestra revisión previa ni salen listas para circular: se entregan <strong>tal cual están</strong>, con los desperfectos que verás detallados en cada ficha, y la reparación corre por cuenta del comprador. Ese es el motivo del precio.</p>
+        <p class="rp-aviso-alt">¿Buscabas una moto revisada, con garantía por escrito y lista para usar? Están todas en el <a href="/catalogo/">catálogo general</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ CÓMO SE VENDEN ════════ -->
+  <section class="rp-reglas div-soft panel-soft">
+    <div class="wrap">
+      <div class="rp-sec-head center reveal">
+        <p class="eyebrow center">Las reglas del trato</p>
+        <h2 class="sec-title">Cómo funciona esta sección</h2>
+        <p class="rp-sec-lead">Vender una moto rota sin decir lo que tiene es fácil. Nosotros preferimos hacerlo al revés: contarlo todo y poner el precio en consecuencia.</p>
+      </div>
+      <div class="rp-pasos">
+        {reglas.map((p) => (
+          <div class="rp-paso reveal">
+            <span class="rp-paso-n cond">{p.n}</span>
+            <h3 class="head">{p.t}</h3>
+            <p>{p.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ STOCK ════════ -->
+  <section class="rp-motos" id="stock">
+    <div class="wrap">
+      <div class="rp-sec-head reveal">
+        <p class="eyebrow">Proyectos disponibles</p>
+        <h2 class="sec-title">Motos para reparar ahora mismo</h2>
+        <p class="rp-motos-lead">Cada tarjeta adelanta los principales desperfectos; en la ficha están todos, junto con las fotos y lo que sabemos del historial.</p>
+      </div>
+      <MotoCardGrid
+        motos={seleccion}
+        emptyTitle="Ahora mismo no tenemos ningún proyecto publicado"
+        emptyText="Entran y salen rápido, porque suelen ser motos de precio bajo. Dinos qué buscas —marca, cilindrada, presupuesto— y te avisamos en cuanto entre algo que encaje."
+        emptyCta="Avísame cuando entre una"
+        emptyHref={waProyectos}
+      />
+      <div class="rp-motos-foot reveal">
+        <a href="/catalogo/" class="btn btn-ghost">Ver el catálogo con garantía <span class="arr">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  {vendidas.length > 0 && (
+    <section class="rp-vendidas div-soft">
+      <div class="wrap">
+        <div class="rp-sec-head center reveal">
+          <p class="eyebrow center">Ya encontraron manos</p>
+          <h2 class="sec-title">Proyectos vendidos</h2>
+          <p class="rp-sec-lead">Estas ya están en el taller de otro. Si te interesaba algo parecido, dínoslo y te avisamos cuando entre la siguiente.</p>
+        </div>
+        <MotoCardGrid motos={vendidas} />
+      </div>
+    </section>
+  )}
+
+  <!-- ════════ ¿PARA QUIÉN ES? ════════ -->
+  <section class="wrap rp-para">
+    <div class="rp-para-col reveal">
+      <h2 class="rp-para-t head">Esta sección es para ti si…</h2>
+      <ul class="rp-lista si">
+        <li>Te manejas con las herramientas o tienes quien te eche una mano en el taller.</li>
+        <li>Buscas <strong>lo más barato posible</strong> y no te importa invertir horas en lugar de dinero.</li>
+        <li>Quieres una base para un proyecto: una café racer, una moto de campo, una restauración.</li>
+        <li>Necesitas una moto concreta por piezas y te cuadra comprar la unidad entera.</li>
+      </ul>
+    </div>
+    <div class="rp-para-col reveal d1">
+      <h2 class="rp-para-t head">Mejor mira el catálogo si…</h2>
+      <ul class="rp-lista no">
+        <li>Quieres subirte y circular desde el primer día, sin pasar por el taller.</li>
+        <li>Necesitas <strong>garantía por escrito</strong> y una moto revisada punto por punto.</li>
+        <li>Es tu primera moto y no tienes a nadie de confianza que te asesore con la mecánica.</li>
+        <li>No quieres sorpresas: en un proyecto siempre puede aparecer algo más al desmontar.</li>
+      </ul>
+      <a href="/catalogo/" class="link-arrow cond rp-para-link" data-track="ver_catalogo" data-source="para_reparar">Ver motos revisadas <span class="arr">→</span></a>
+    </div>
+  </section>
+
+  <!-- ════════ VENDER MOTO AVERIADA ════════ -->
+  <section class="rp-compramos div-soft panel-soft">
+    <div class="wrap-narrow reveal">
+      <p class="eyebrow center">También al revés</p>
+      <h2 class="sec-title">¿Tienes una moto parada o accidentada?</h2>
+      <p>Compramos motos que no arrancan, con averías importantes o con daños de una caída. Mándanos unas fotos y el estado real por WhatsApp y te decimos qué podemos ofrecerte, sin compromiso y sin que tengas que moverla.</p>
+      <div class="rp-compramos-btns">
+        <a href={waLink("Hola, tengo una moto averiada / accidentada que quiero vender. Os paso fotos.")} target="_blank" rel="noopener" class="btn btn-primary" data-track="vender_moto" data-source="para_reparar">Enviar fotos por WhatsApp <span class="arr">→</span></a>
+        <a href="/vender-moto-granada/" class="btn btn-ghost">Cómo compramos tu moto</a>
+      </div>
+    </div>
+  </section>
+
+  <Faq faqs={faqs} eyebrow="Antes de meterte en faena" title="Preguntas frecuentes sobre motos para reparar" />
+
+  <!-- ════════ ENLACES INTERNOS ════════ -->
+  <section class="rp-links">
+    <div class="wrap-narrow reveal">
+      <h2 class="sec-title">Sigue explorando</h2>
+      <div class="rp-links-grid">
+        <a class="rp-link" href="/catalogo/"><span>Catálogo completo de motos</span><span class="arr">→</span></a>
+        <a class="rp-link" href="/motos-segunda-mano-granada/"><span>Motos de segunda mano en Granada</span><span class="arr">→</span></a>
+        <a class="rp-link" href="/motos-125-segunda-mano-granada/"><span>Motos 125 de segunda mano</span><span class="arr">→</span></a>
+        <a class="rp-link" href="/vender-moto-granada/"><span>Vender tu moto en Granada</span><span class="arr">→</span></a>
+        <a class="rp-link" href="/blog/como-revisar-moto-antes-de-comprar/"><span>Cómo revisar una moto antes de comprarla</span><span class="arr">→</span></a>
+        <a class="rp-link" href="/contacto/"><span>Contacto y cómo llegar</span><span class="arr">→</span></a>
+      </div>
+      <div class="rp-cta">
+        <p>¿Buscas un modelo concreto para restaurar? Dínoslo y lo localizamos.</p>
+        <div class="rp-cta-btns">
+          <a href={waProyectos} target="_blank" rel="noopener" class="btn btn-primary" data-track="whatsapp_general" data-source="para_reparar">Escríbenos por WhatsApp <span class="arr">→</span></a>
+          <a href="/contacto/" class="btn btn-ghost">Ver formas de contacto</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .rp-top{padding-top:calc(74px + var(--s-6))}
+    .crumb{display:flex;align-items:center;gap:var(--s-3);font-size:12px;
+      letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint)}
+    .crumb a{color:var(--text-dim);transition:color .3s}
+    .crumb a:hover{color:var(--orange-bright)}
+    .crumb em{font-style:normal;color:var(--orange-bright)}
+    .crumb span{opacity:.4}
+
+    /* Hero */
+    .rp-hero{position:relative;padding:var(--s-7) 0 var(--s-8);text-align:center;overflow:hidden}
+    .rp-hero-glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+      width:min(900px,90%);height:420px;pointer-events:none;
+      background:radial-gradient(60% 70% at 50% 0%,rgba(217,122,40,.22),transparent 70%)}
+    .rp-hero-inner{position:relative;z-index:1}
+    .rp-hero .eyebrow{margin-bottom:var(--s-5)}
+    .rp-h1{font-size:clamp(44px,7vw,88px);line-height:.96;color:var(--orange-bright);
+      margin-bottom:var(--s-5)}
+    .rp-intro{max-width:680px;margin:0 auto}
+    .rp-intro p{color:var(--text-dim);font-size:var(--fs-lead);line-height:1.7;margin-bottom:var(--s-4)}
+    .rp-intro p:last-child{margin-bottom:0}
+    .rp-intro strong{color:var(--text);font-weight:600}
+    .rp-hero-btns{display:flex;gap:var(--s-3);justify-content:center;flex-wrap:wrap;
+      margin-top:var(--s-6)}
+
+    /* Aviso de venta sin garantía */
+    .rp-aviso{display:flex;gap:var(--s-5);align-items:flex-start;
+      border:1px solid rgba(62,110,142,.45);border-left:3px solid #3E6E8E;
+      background:rgba(62,110,142,.10);border-radius:8px;
+      padding:var(--s-6) clamp(20px,3vw,32px)}
+    .rp-aviso-ico{flex:none;width:44px;height:44px;border-radius:50%;
+      background:rgba(62,110,142,.22);color:#8FB6CE;
+      display:flex;align-items:center;justify-content:center}
+    .rp-aviso-ico svg{width:24px;height:24px}
+    .rp-aviso-txt h2{font-size:var(--fs-h3);font-weight:700;color:var(--text);
+      margin-bottom:var(--s-3)}
+    .rp-aviso-txt p{color:var(--text-dim);line-height:1.75;margin-bottom:var(--s-3)}
+    .rp-aviso-txt p:last-child{margin-bottom:0}
+    .rp-aviso-txt strong{color:var(--text);font-weight:600}
+    .rp-aviso-alt{font-size:var(--fs-small)}
+    .rp-aviso-alt a{color:var(--orange-bright);text-decoration:underline;text-underline-offset:3px}
+
+    /* Encabezados de sección */
+    .rp-sec-head{margin-bottom:var(--s-6)}
+    .rp-sec-head .eyebrow{margin-bottom:var(--s-4)}
+    .rp-sec-head.center{text-align:center}
+    .rp-sec-head.center .eyebrow{justify-content:center}
+    .rp-sec-head.center .eyebrow::before{display:none}
+    .rp-sec-lead{color:var(--text-dim);font-size:var(--fs-lead);max-width:600px;
+      margin:var(--s-4) auto 0;line-height:1.6}
+
+    /* Reglas del trato */
+    .rp-reglas{padding:var(--s-9) 0;margin-top:var(--s-8)}
+    .rp-pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-5);margin-top:var(--s-7)}
+    .rp-paso{border:1px solid var(--line);border-radius:8px;padding:var(--s-6);
+      background:rgba(255,255,255,.02);transition:border-color .4s,transform .4s var(--ease)}
+    .rp-paso:hover{border-color:#3E6E8E;transform:translateY(-6px)}
+    .rp-paso-n{font-size:26px;font-weight:700;color:#8FB6CE;display:block;margin-bottom:var(--s-3)}
+    .rp-paso h3{font-size:var(--fs-h3);font-weight:600;color:var(--text);margin-bottom:var(--s-3)}
+    .rp-paso p{color:var(--text-dim);font-size:var(--fs-small);line-height:1.7}
+
+    /* Stock */
+    .rp-motos{padding:var(--s-9) 0 var(--s-8);scroll-margin-top:90px}
+    .rp-motos-lead{color:var(--text-dim);font-size:var(--fs-small);max-width:600px;
+      margin-top:var(--s-4);line-height:1.7}
+    .rp-motos-foot{text-align:center;margin-top:var(--s-7)}
+    .rp-vendidas{padding:var(--s-8) 0 var(--s-9)}
+
+    /* ¿Para quién es? */
+    .rp-para{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,56px);
+      padding-top:var(--s-9);padding-bottom:var(--s-9)}
+    .rp-para-t{font-size:var(--fs-h3);font-weight:700;color:var(--text);
+      margin-bottom:var(--s-5);padding-bottom:var(--s-3);border-bottom:1px solid var(--line)}
+    .rp-lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--s-4)}
+    .rp-lista li{position:relative;padding-left:30px;color:var(--text-dim);line-height:1.7}
+    .rp-lista strong{color:var(--text);font-weight:600}
+    .rp-lista li::before{position:absolute;left:0;top:0;font-weight:700;font-size:17px}
+    .rp-lista.si li::before{content:"✓";color:var(--orange-bright)}
+    .rp-lista.no li::before{content:"→";color:#8FB6CE}
+    .rp-para-link{display:inline-flex;align-items:center;gap:var(--s-2);
+      margin-top:var(--s-5);font-size:var(--fs-small);font-weight:500;letter-spacing:.12em;
+      text-transform:uppercase;color:var(--orange-bright);transition:gap .3s var(--ease)}
+    .rp-para-link:hover{gap:var(--s-4)}
+
+    /* Compramos motos averiadas */
+    .rp-compramos{padding:var(--s-9) 0;text-align:center}
+    .rp-compramos .eyebrow{margin-bottom:var(--s-4)}
+    .rp-compramos p{color:var(--text-dim);font-size:var(--fs-lead);max-width:600px;
+      margin:var(--s-5) auto 0;line-height:1.7}
+    .rp-compramos-btns{display:flex;gap:var(--s-3);justify-content:center;flex-wrap:wrap;
+      margin-top:var(--s-6)}
+
+    /* Enlaces internos */
+    .rp-links{padding:var(--s-9) 0}
+    .rp-links .sec-title{text-align:center;margin-bottom:var(--s-6)}
+    .rp-links-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3);margin-bottom:var(--s-8)}
+    .rp-link{display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);
+      border:1px solid var(--line);border-radius:6px;padding:var(--s-4) var(--s-5);
+      color:var(--text);font-weight:500;transition:border-color .3s,color .3s,transform .3s var(--ease)}
+    .rp-link:hover{border-color:var(--orange);color:var(--orange-bright);transform:translateX(4px)}
+    .rp-link .arr{color:var(--orange-bright);transition:transform .3s var(--ease)}
+    .rp-link:hover .arr{transform:translateX(4px)}
+    .rp-cta{text-align:center;border-top:1px solid var(--line-soft);padding-top:var(--s-7)}
+    .rp-cta p{color:var(--text-dim);font-size:var(--fs-lead);margin-bottom:var(--s-5)}
+    .rp-cta-btns{display:flex;gap:var(--s-3);justify-content:center;flex-wrap:wrap}
+
+    @media(max-width:860px){
+      .rp-pasos{grid-template-columns:1fr 1fr}
+      .rp-para{grid-template-columns:1fr;gap:var(--s-7)}
+      .rp-links-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:560px){
+      .rp-pasos{grid-template-columns:1fr}
+      .rp-aviso{flex-direction:column;gap:var(--s-4);padding:var(--s-5)}
+    }
+  </style>
+</Base>
