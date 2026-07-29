@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import MotoCardGrid from '../../components/MotoCardGrid.astro';
-import { motos, formatPrecio, formatKm } from '../../data/motos.js';
+import { motos, formatPrecio, formatKm, esReparacion } from '../../data/motos.js';
 import { whatsapp, tel, waLink } from '../../config/business.js';
 
 export function getStaticPaths(){
@@ -10,16 +10,31 @@ export function getStaticPaths(){
 const { moto } = Astro.props;
 const WHATSAPP = whatsapp;
 const TELEFONO = tel;
-const msg = encodeURIComponent(`Hola, me interesa la ${moto.marca} ${moto.modelo} (${moto.anio}) que tenéis en el catálogo.`);
+// Moto de la sección "para reparar": se vende tal cual, sin garantía, con
+// los desperfectos detallados. Cambia el discurso de toda la ficha.
+const repara = esReparacion(moto);
+const desperfectos = Array.isArray(moto.imperfecciones) ? moto.imperfecciones : [];
+const msg = encodeURIComponent(repara
+  ? `Hola, me interesa la ${moto.marca} ${moto.modelo} (${moto.anio}) de la sección de motos para reparar.`
+  : `Hola, me interesa la ${moto.marca} ${moto.modelo} (${moto.anio}) que tenéis en el catálogo.`);
 const vendida = moto.estado === "Vendida";
-const msgParecida = encodeURIComponent(`Hola, vi que la ${moto.marca} ${moto.modelo} ya está vendida. ¿Podríais localizarme una parecida?`);
+const msgParecida = encodeURIComponent(repara
+  ? `Hola, vi que la ${moto.marca} ${moto.modelo} para reparar ya está vendida. ¿Tenéis algún proyecto parecido?`
+  : `Hola, vi que la ${moto.marca} ${moto.modelo} ya está vendida. ¿Podríais localizarme una parecida?`);
+
+// Sección a la que pertenece la ficha (miga de pan y enlaces de vuelta)
+const seccionRel = repara
+  ? { href: "/motos-para-reparar-granada/", label: "Motos para reparar" }
+  : { href: "/catalogo/", label: "Catálogo" };
 
 // --- Landing de categoría más relevante para esta moto ---
 const num = (s) => parseInt(String(s).replace(/[^\d]/g, ""), 10) || 0;
 const catBase = (c) => c.split(" · ")[0].trim();
 const carnetLimpio = (c) => c.replace(/\s*\(.*\)/, "").trim();
 const cil = num(moto.cilindrada);
-const landingRel = /A2/.test(moto.carnet)
+const landingRel = repara
+  ? { href: "/motos-para-reparar-granada/", label: "motos para reparar en Granada" }
+  : /A2/.test(moto.carnet)
   ? { href: "/motos-a2-segunda-mano-granada/", label: "motos A2 de segunda mano en Granada" }
   : /scooter/i.test(moto.categoria)
     ? { href: "/scooters-segunda-mano-granada/", label: "scooters de segunda mano en Granada" }
@@ -42,8 +57,10 @@ const score = (m) => {
   if (dp <= 800) s += 2; else if (dp <= 2000) s += 1;
   return s;
 };
+// Una moto para reparar solo se compara con otras para reparar (y al revés):
+// mezclar proyectos con motos revisadas confundiría al comprador.
 const similares = motos
-  .filter((m) => m.estado !== "Vendida" && m.slug !== moto.slug)
+  .filter((m) => m.estado !== "Vendida" && m.slug !== moto.slug && esReparacion(m) === repara)
   .map((m) => ({ m, s: score(m) }))
   .sort((a, b) => b.s - a.s)
   .slice(0, 3)
@@ -56,12 +73,18 @@ const fichaBase = {
 const ficha = { ...fichaBase, ...moto.especificaciones };
 
 // SEO: texto alternativo descriptivo reutilizable
-const altBase = `${moto.marca} ${moto.modelo} ${moto.anio} de segunda mano en Granada`;
+const altBase = repara
+  ? `${moto.marca} ${moto.modelo} ${moto.anio} para reparar en Granada`
+  : `${moto.marca} ${moto.modelo} ${moto.anio} de segunda mano en Granada`;
 
 // SEO: título y descripción específicos de la ficha
-const seoTitle = `${moto.marca} ${moto.modelo} ${moto.anio} de segunda mano en Granada | ${formatPrecio(moto.precio)}`;
+const seoTitle = repara
+  ? `${moto.marca} ${moto.modelo} ${moto.anio} para reparar en Granada | ${formatPrecio(moto.precio)}`
+  : `${moto.marca} ${moto.modelo} ${moto.anio} de segunda mano en Granada | ${formatPrecio(moto.precio)}`;
 const estadoTexto = vendida ? "Vendida" : moto.estado === "Reservada" ? "Reservada" : "Disponible";
-const seoDesc = `${moto.marca} ${moto.modelo} ${moto.anio} de segunda mano en Granada · ${formatKm(moto.km)} · ${formatPrecio(moto.precio)}. ${estadoTexto}, inspeccionada punto por punto, con garantía y transferencia (cambio de nombre) incluida.`;
+const seoDesc = repara
+  ? `${moto.marca} ${moto.modelo} ${moto.anio} para reparar en Granada · ${formatKm(moto.km)} · ${formatPrecio(moto.precio)}. ${estadoTexto}. Se vende tal cual y sin garantía, con todos los desperfectos detallados en el anuncio.`
+  : `${moto.marca} ${moto.modelo} ${moto.anio} de segunda mano en Granada · ${formatKm(moto.km)} · ${formatPrecio(moto.precio)}. ${estadoTexto}, inspeccionada punto por punto, con garantía y transferencia (cambio de nombre) incluida.`;
 
 // SEO: datos estructurados de la moto (Product + Offer)
 const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
@@ -75,7 +98,9 @@ const motoSchema = {
   "@context": "https://schema.org",
   "@type": "Product",
   name: `${moto.marca} ${moto.modelo} ${moto.anio}`,
-  description: moto.descripcion.join(" "),
+  description: repara
+    ? `${moto.descripcion.join(" ")} Desperfectos declarados: ${desperfectos.join("; ")}.`
+    : moto.descripcion.join(" "),
   image: moto.fotos.map((f) => new URL(`/img/${f}`, SITE).href),
   brand: { "@type": "Brand", name: moto.marca },
   model: moto.modelo,
@@ -99,19 +124,19 @@ const breadcrumbSchema = {
   "@type": "BreadcrumbList",
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "Inicio", item: new URL("/", SITE).href },
-    { "@type": "ListItem", position: 2, name: "Catálogo", item: new URL("/catalogo/", SITE).href },
+    { "@type": "ListItem", position: 2, name: seccionRel.label, item: new URL(seccionRel.href, SITE).href },
     { "@type": "ListItem", position: 3, name: `${moto.marca} ${moto.modelo}`, item: fichaUrl },
   ],
 };
 ---
-<Base title={seoTitle} desc={seoDesc} image={`/img/${moto.fotos[0]}`} ogType="product">
+<Base title={seoTitle} desc={seoDesc} image={`/img/${moto.fotos[0]}`} ogType="product" navSection={repara ? "reparar" : "catalogo"}>
 
   <script type="application/ld+json" set:html={JSON.stringify(motoSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <div class="ficha-top wrap">
     <nav class="crumb cond" aria-label="Ruta">
-      <a href="/">Inicio</a><span>/</span><a href="/catalogo/">Catálogo</a><span>/</span>
+      <a href="/">Inicio</a><span>/</span><a href={seccionRel.href}>{seccionRel.label}</a><span>/</span>
       <em>{moto.marca} {moto.modelo}</em>
     </nav>
   </div>
@@ -120,7 +145,7 @@ const breadcrumbSchema = {
     <!-- Galería -->
     <div class="gal" id="gal" data-fotos={JSON.stringify(moto.fotos.map(f=>`/img/${f}`))}>
       <button class="gal-main" id="galMain" type="button" aria-label="Ampliar imagen">
-        <span class={"gal-badge" + (moto.estado!=="Disponible" ? " alt" : "")}>{moto.estado}</span>
+        <span class={"gal-badge" + (moto.estado!=="Disponible" ? " alt" : repara ? " repara" : "")}>{moto.estado==="Disponible" && repara ? "Para reparar" : moto.estado}</span>
         <img id="mainImg" src={`/img/${moto.fotos[0]}`} alt={altBase} width="800" height="600" fetchpriority="high" />
         <span class="gal-zoom" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -148,8 +173,15 @@ const breadcrumbSchema = {
 
       <div class="panel-price">
         <span class="price-val cond">{formatPrecio(moto.precio)}</span>
-        <span class="price-note">IVA incluido · Financiación disponible</span>
+        <span class="price-note">{repara ? "Precio de proyecto · Se vende tal cual" : "IVA incluido · Financiación disponible"}</span>
       </div>
+
+      {repara && (
+        <div class="panel-aviso">
+          <p class="panel-aviso-t cond">Moto para reparar · Sin garantía</p>
+          <p>Se entrega tal cual está, con los desperfectos que ves más abajo. La reparación corre por cuenta del comprador y por eso el precio es el que es. <a href="/motos-para-reparar-granada/">Cómo funciona esta sección</a>.</p>
+        </div>
+      )}
 
       <div class="panel-quick">
         <div><span class="q-lbl cond">Cilindrada</span><span class="q-val cond">{moto.cilindrada}</span></div>
@@ -159,22 +191,57 @@ const breadcrumbSchema = {
       </div>
 
       {vendida ? (
-  <div class="panel-cta">
-    <a class="btn btn-primary" href={`${WHATSAPP}?text=${msgParecida}`} target="_blank" rel="noopener" data-track="quiero_parecida" data-source="ficha" data-moto={moto.slug}>Quiero una parecida <span class="arr">→</span></a>
-    <a class="btn btn-ghost" href={TELEFONO} data-track="telefono" data-source="ficha" data-moto={moto.slug}>Llamar</a>
-  </div>
-  <p class="panel-trust cond"><span class="dot vendida-dot"></span> Esta moto ya está vendida · Te localizamos una igual o mejor</p>
-  <p class="panel-alt cond">Ver <a href={landingRel.href}>{landingRel.label}</a> disponibles ahora.</p>
+  <>
+    <div class="panel-cta">
+      <a class="btn btn-primary" href={`${WHATSAPP}?text=${msgParecida}`} target="_blank" rel="noopener" data-track="quiero_parecida" data-source="ficha" data-moto={moto.slug}>{repara ? "Quiero un proyecto parecido" : "Quiero una parecida"} <span class="arr">→</span></a>
+      <a class="btn btn-ghost" href={TELEFONO} data-track="telefono" data-source="ficha" data-moto={moto.slug}>Llamar</a>
+    </div>
+    <p class="panel-trust cond"><span class="dot vendida-dot"></span> Esta moto ya está vendida · Te localizamos una igual o mejor</p>
+    <p class="panel-alt cond">Ver <a href={landingRel.href}>{landingRel.label}</a> disponibles ahora.</p>
+  </>
+) : repara ? (
+  <>
+    <div class="panel-cta">
+      <a class="btn btn-primary" href={`${WHATSAPP}?text=${msg}`} target="_blank" rel="noopener" data-track="whatsapp_moto" data-source="ficha" data-moto={moto.slug}>Preguntar por esta moto <span class="arr">→</span></a>
+      <a class="btn btn-ghost" href={TELEFONO} data-track="telefono" data-source="ficha" data-moto={moto.slug}>Llamar</a>
+    </div>
+    <p class="panel-trust cond"><span class="dot repara-dot"></span> Desperfectos declarados · Puedes verla y revisarla con cita previa</p>
+    <p class="panel-alt cond">¿Prefieres una moto revisada y con garantía? <a href="/catalogo/">Ver el catálogo</a>.</p>
+  </>
 ) : (
-  <div class="panel-cta">
-    <a class="btn btn-primary" href={`${WHATSAPP}?text=${msg}`} target="_blank" rel="noopener" data-track="whatsapp_moto" data-source="ficha" data-moto={moto.slug}>Me interesa esta moto <span class="arr">→</span></a>
-    <a class="btn btn-ghost" href={TELEFONO} data-track="telefono" data-source="ficha" data-moto={moto.slug}>Llamar</a>
-  </div>
-  <p class="panel-trust cond"><span class="dot"></span> Inspeccionada punto por punto · Garantía incluida</p>
-  <p class="panel-alt cond">¿Entregas tu moto como parte del pago? <a href="/vender-moto-granada/">Te la tasamos</a>.</p>
+  <>
+    <div class="panel-cta">
+      <a class="btn btn-primary" href={`${WHATSAPP}?text=${msg}`} target="_blank" rel="noopener" data-track="whatsapp_moto" data-source="ficha" data-moto={moto.slug}>Me interesa esta moto <span class="arr">→</span></a>
+      <a class="btn btn-ghost" href={TELEFONO} data-track="telefono" data-source="ficha" data-moto={moto.slug}>Llamar</a>
+    </div>
+    <p class="panel-trust cond"><span class="dot"></span> Inspeccionada punto por punto · Garantía incluida</p>
+    <p class="panel-alt cond">¿Entregas tu moto como parte del pago? <a href="/vender-moto-granada/">Te la tasamos</a>.</p>
+  </>
 )}
     </div>
   </section>
+
+  {repara && desperfectos.length > 0 && (
+    <section class="wrap ficha-desperfectos">
+      <div class="desp-box reveal">
+        <div class="desp-head">
+          <span class="desp-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.6" r=".6" fill="currentColor"/>
+            </svg>
+          </span>
+          <div>
+            <h2 class="desp-t head">Qué hay que arreglar</h2>
+            <p class="desp-sub">Todo lo que hemos detectado en esta moto, tal cual. Si al verla aparece algo más, te lo diremos antes de cerrar nada.</p>
+          </div>
+        </div>
+        <ul class="desp-list">
+          {desperfectos.map((d) => <li>{d}</li>)}
+        </ul>
+        <p class="desp-foot cond">Venta tal cual · Sin garantía · Reparación por cuenta del comprador</p>
+      </div>
+    </section>
+  )}
 
   <section class="ficha-detalle wrap">
     <div class="detalle-tec reveal">
@@ -196,18 +263,20 @@ const breadcrumbSchema = {
       <div class="wrap">
         <div class="ficha-sim-head reveal">
           <p class="eyebrow">{vendida ? "Alternativas disponibles" : "También te puede interesar"}</p>
-          <h2 class="sec-title">{vendida ? "Motos parecidas que sí tenemos" : "Motos parecidas"}</h2>
+          <h2 class="sec-title">{repara ? (vendida ? "Otros proyectos que sí tenemos" : "Otros proyectos para reparar") : (vendida ? "Motos parecidas que sí tenemos" : "Motos parecidas")}</h2>
           {vendida && <p class="ficha-sim-lead">Esta ya voló, pero rota stock parecido cada semana. Estas están disponibles ahora, o dinos qué buscas y te la localizamos por encargo.</p>}
         </div>
         <MotoCardGrid
           motos={similares}
-          emptyTitle="Ahora mismo no tenemos una parecida publicada"
-          emptyText="Entran motos nuevas continuamente y también localizamos por encargo. Cuéntanos qué buscas por WhatsApp y te avisamos en cuanto llegue."
-          emptyCta="Buscar por encargo (WhatsApp)"
+          emptyTitle={repara ? "Ahora mismo no tenemos otro proyecto publicado" : "Ahora mismo no tenemos una parecida publicada"}
+          emptyText={repara
+            ? "Las motos para reparar entran y salen rápido. Dinos qué buscas por WhatsApp y te avisamos en cuanto entre algo que encaje."
+            : "Entran motos nuevas continuamente y también localizamos por encargo. Cuéntanos qué buscas por WhatsApp y te avisamos en cuanto llegue."}
+          emptyCta={repara ? "Avísame cuando entre una (WhatsApp)" : "Buscar por encargo (WhatsApp)"}
           emptyHref={`${WHATSAPP}?text=${msgParecida}`}
         />
         <div class="ficha-sim-foot reveal">
-          <a href="/catalogo/" class="btn btn-ghost" data-track="ver_catalogo" data-source="ficha_similares">Ver todo el catálogo <span class="arr">→</span></a>
+          <a href={seccionRel.href} class="btn btn-ghost" data-track="ver_catalogo" data-source="ficha_similares">{repara ? "Ver todas las motos para reparar" : "Ver todo el catálogo"} <span class="arr">→</span></a>
         </div>
       </div>
     </section>
@@ -217,7 +286,9 @@ const breadcrumbSchema = {
     <div class="wrap ficha-contacto-inner reveal">
       <div>
         <h3 class="display">¿Te encaja esta moto?</h3>
-        <p>Escríbenos o pásate a verla. Te resolvemos cualquier duda sin compromiso.</p>
+        <p>{repara
+          ? "Escríbenos o pásate a verla con cita previa. Te contamos con detalle qué le pasa y respondemos a lo que quieras preguntar antes de decidir."
+          : "Escríbenos o pásate a verla. Te resolvemos cualquier duda sin compromiso."}</p>
       </div>
       <a class="btn btn-primary" href={vendida ? `${WHATSAPP}?text=${msgParecida}` : `${WHATSAPP}?text=${msg}`} target="_blank" rel="noopener" data-track={vendida ? "quiero_parecida" : "whatsapp_moto"} data-source="ficha_contacto" data-moto={moto.slug}>Contactar ahora <span class="arr">→</span></a>
     </div>
@@ -249,6 +320,7 @@ const breadcrumbSchema = {
       color:#150f0b;font-family:'Oswald',sans-serif;font-weight:600;font-size:11px;
       letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;border-radius:2px;z-index:2}
     .gal-badge.alt{background:#3a3330;color:var(--text)}
+    .gal-badge.repara{background:#3E6E8E;color:#fff}
     .gal-thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-3);margin-top:var(--s-3)}
     .gal-thumb{aspect-ratio:1;border-radius:4px;overflow:hidden;cursor:pointer;padding:0;
       border:2px solid transparent;background:none;opacity:.5;
@@ -278,8 +350,42 @@ const breadcrumbSchema = {
       display:flex;align-items:center;gap:var(--s-2);letter-spacing:.02em}
     .panel-trust .dot{width:7px;height:7px;border-radius:50%;background:var(--orange);flex:none}
     .panel-trust .vendida-dot{background:#C0392B}
+    .panel-trust .repara-dot{background:#3E6E8E}
     .panel-alt{margin-top:var(--s-3);font-size:13px;color:var(--text-dim);letter-spacing:.02em}
     .panel-alt a{color:var(--orange-bright);text-decoration:underline;text-underline-offset:3px}
+
+    /* Aviso de venta sin garantía (motos para reparar) */
+    .panel-aviso{margin-top:var(--s-5);border:1px solid rgba(62,110,142,.45);
+      border-left:3px solid #3E6E8E;background:rgba(62,110,142,.10);
+      border-radius:6px;padding:var(--s-4) var(--s-5)}
+    .panel-aviso-t{font-size:12px;font-weight:600;letter-spacing:.14em;
+      text-transform:uppercase;color:#8FB6CE;margin-bottom:var(--s-2)}
+    .panel-aviso p{color:var(--text-dim);font-size:var(--fs-small);line-height:1.7}
+    .panel-aviso a{color:var(--orange-bright);text-decoration:underline;text-underline-offset:3px}
+
+    /* Bloque de desperfectos */
+    .ficha-desperfectos{padding-top:var(--s-8)}
+    .desp-box{border:1px solid rgba(62,110,142,.45);border-radius:10px;
+      background:rgba(62,110,142,.08);padding:clamp(24px,3vw,36px)}
+    .desp-head{display:flex;gap:var(--s-5);align-items:flex-start;margin-bottom:var(--s-5)}
+    .desp-ico{flex:none;width:44px;height:44px;border-radius:50%;
+      background:rgba(62,110,142,.22);color:#8FB6CE;
+      display:flex;align-items:center;justify-content:center}
+    .desp-ico svg{width:24px;height:24px}
+    .desp-t{font-size:var(--fs-h3);font-weight:700;color:var(--text);margin-bottom:var(--s-2)}
+    .desp-sub{color:var(--text-dim);font-size:var(--fs-small);line-height:1.7;max-width:62ch}
+    .desp-list{list-style:none;margin:0;padding:0;display:grid;
+      grid-template-columns:1fr 1fr;gap:var(--s-3) var(--s-6)}
+    .desp-list li{position:relative;padding-left:26px;color:var(--text);line-height:1.65;
+      padding-bottom:var(--s-3);border-bottom:1px solid var(--line-soft)}
+    .desp-list li::before{content:"";position:absolute;left:6px;top:9px;width:8px;height:8px;
+      border-radius:50%;background:#3E6E8E}
+    .desp-foot{margin-top:var(--s-5);font-size:12px;font-weight:600;letter-spacing:.12em;
+      text-transform:uppercase;color:#8FB6CE}
+    @media(max-width:700px){
+      .desp-list{grid-template-columns:1fr}
+      .desp-head{flex-direction:column;gap:var(--s-3)}
+    }
 
     /* Motos parecidas */
     .ficha-similares{padding:var(--s-9) 0}

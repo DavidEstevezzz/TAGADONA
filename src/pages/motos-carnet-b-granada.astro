@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import LandingCategoria from '../components/LandingCategoria.astro';
-import { motos } from '../data/motos.js';
+import { motosVenta } from '../data/motos.js';
 import { breadcrumbSchema, faqSchema } from '../lib/seo.js';
 
 const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
@@ -9,7 +9,7 @@ const PATH = "/motos-carnet-b-granada/";
 
 // Motos que se pueden llevar con el carnet de coche (B): el campo carnet
 // contiene "B" como palabra (p. ej. "A1 / B + 3 años" o "B"). Sin vendidas.
-const seleccion = motos
+const seleccion = motosVenta
   .filter((m) => /\bB\b/.test(m.carnet) && m.estado !== "Vendida")
   .sort((a, b) => (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0));
 

@@ -26,8 +26,10 @@ const warn = (ctx, msg) => warnings.push(`⚠ [${ctx}] ${msg}`);
 
 // ---------- Motos ----------
 const ESTADOS = ['Disponible', 'Reservada', 'Vendida'];
+const SECCIONES = ['venta', 'reparacion'];
 const currentYear = new Date().getFullYear();
 const slugs = new Set();
+let nReparacion = 0;
 
 motos.forEach((m, i) => {
   const ctx = `moto ${m.slug || '#' + i}`;
@@ -66,6 +68,23 @@ motos.forEach((m, i) => {
     m.fotos.forEach((f) => {
       if (!existsSync(join(imgDir, f))) err(ctx, `foto inexistente: public/img/${f}`);
     });
+  }
+
+  // Sección: por defecto "venta"; "reparacion" manda la moto a la
+  // página de proyectos y obliga a declarar los desperfectos.
+  if (m.seccion != null && !SECCIONES.includes(m.seccion)) {
+    err(ctx, `seccion inválida: "${m.seccion}" (válidas: ${SECCIONES.join(', ')})`);
+  }
+  if (m.seccion === 'reparacion') {
+    nReparacion++;
+    if (!Array.isArray(m.imperfecciones) || m.imperfecciones.length === 0) {
+      err(ctx, 'una moto de la sección "reparacion" necesita al menos una entrada en "imperfecciones"');
+    } else if (m.imperfecciones.some((d) => typeof d !== 'string' || d.trim() === '')) {
+      err(ctx, '"imperfecciones" debe contener solo textos no vacíos');
+    }
+    if (m.garantiaMeses) warn(ctx, 'está en la sección "reparacion" (venta sin garantía) pero tiene garantiaMeses');
+  } else if (m.imperfecciones != null) {
+    warn(ctx, '"imperfecciones" solo se muestra en las motos con seccion: "reparacion"');
   }
 
   // Campos opcionales estructurados: se validan solo si están presentes.
@@ -128,4 +147,4 @@ if (errors.length) {
   console.error(`\n✗ validate:data — ${errors.length} error(es), ${warnings.length} aviso(s).`);
   process.exit(1);
 }
-console.log(`\n✓ validate:data — ${motos.length} moto(s) correctas, ${warnings.length} aviso(s).`);
+console.log(`\n✓ validate:data — ${motos.length} moto(s) correctas (${motos.length - nReparacion} de venta, ${nReparacion} para reparar), ${warnings.length} aviso(s).`);

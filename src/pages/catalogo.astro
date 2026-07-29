@@ -1,9 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
-import { motos, formatPrecio, formatKm } from '../data/motos.js';
-const activas = motos.filter(m=>m.estado!=="Vendida").sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0));
-const vendidas = motos.filter(m=>m.estado==="Vendida");
-const total = motos.filter(m=>m.estado==="Disponible").length;
+import { motosVenta, motosReparacion, formatPrecio, formatKm } from '../data/motos.js';
+// El catálogo muestra solo la venta normal (revisadas y con garantía).
+// Las motos para reparar tienen su propia página: /motos-para-reparar-granada/
+const activas = motosVenta.filter(m=>m.estado!=="Vendida").sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0));
+const vendidas = motosVenta.filter(m=>m.estado==="Vendida");
+const total = motosVenta.filter(m=>m.estado==="Disponible").length;
+const totalReparar = motosReparacion.filter(m=>m.estado==="Disponible").length;
 const tipos = [...new Set(activas.map(m=>m.categoria.split(" · ")[0].trim()))];
 const carnets = [...new Set(activas.map(m=>m.carnet.replace(/\s*\(.*\)/,"").trim()))];
 const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservada" : "";
@@ -83,6 +86,24 @@ const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservad
     <p class="cat-empty cond" id="catEmpty" hidden>No hay motos que coincidan con el filtro. <button id="filReset">Quitar filtros</button></p>
   </section>
 
+  <!-- Puente a la sección de motos para reparar -->
+  <section class="wrap cat-reparar-sec">
+    <a class="cat-reparar reveal" href="/motos-para-reparar-granada/" data-track="ver_para_reparar" data-source="catalogo">
+      <span class="cat-reparar-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14.5 5.5a4 4 0 0 0 5 5l-9 9a2.5 2.5 0 0 1-3.5-3.5l9-9z"/>
+          <path d="M5.5 5.5 9 9"/><path d="M3 8.5 6.5 5"/>
+        </svg>
+      </span>
+      <span class="cat-reparar-txt">
+        <span class="cat-reparar-eb cond">Sección aparte · Sin garantía</span>
+        <span class="cat-reparar-t head">¿Te atreves con la mecánica? Mira las motos para reparar</span>
+        <span class="cat-reparar-d">Proyectos a precio bajo, con los desperfectos detallados uno a uno en cada anuncio. Se venden tal cual: la reparación es cosa tuya.</span>
+      </span>
+      <span class="cat-reparar-a cond">{totalReparar > 0 ? `Ver ${totalReparar} disponible${totalReparar === 1 ? "" : "s"}` : "Ver la sección"} <span class="arr">→</span></span>
+    </a>
+  </section>
+
   {vendidas.length>0 && (
     <section class="vendidas-sec div-soft">
       <div class="wrap">
@@ -154,6 +175,11 @@ const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservad
           <span class="cat-cat-t head">Vender tu moto en Granada</span>
           <span class="cat-cat-d">Te la tasamos, nos ocupamos del cambio de nombre y te pagamos rápido.</span>
           <span class="cat-cat-a cond">Vender moto <span class="arr">→</span></span>
+        </a>
+        <a class="cat-cat reveal" href="/motos-para-reparar-granada/">
+          <span class="cat-cat-t head">Motos para reparar</span>
+          <span class="cat-cat-d">Proyectos con desperfectos declarados, a precio bajo y sin garantía. Para quien disfruta del taller.</span>
+          <span class="cat-cat-a cond">Ver proyectos <span class="arr">→</span></span>
         </a>
       </div>
     </div>
@@ -246,6 +272,29 @@ const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservad
     .cat-empty button{background:none;border:none;color:var(--orange-bright);cursor:pointer;
       text-decoration:underline;font-size:15px}
 
+    /* Puente a la sección de motos para reparar */
+    .cat-reparar-sec{padding-bottom:var(--s-8)}
+    .cat-reparar{display:flex;align-items:center;gap:clamp(16px,3vw,32px);
+      border:1px solid rgba(62,110,142,.45);border-left:3px solid #3E6E8E;
+      background:rgba(62,110,142,.10);border-radius:10px;
+      padding:var(--s-6) clamp(20px,3vw,32px);
+      transition:border-color .35s,transform .35s var(--ease),background .35s}
+    .cat-reparar:hover{transform:translateY(-4px);background:rgba(62,110,142,.16);
+      border-color:#3E6E8E}
+    .cat-reparar-ico{flex:none;width:52px;height:52px;border-radius:50%;
+      background:rgba(62,110,142,.22);color:#8FB6CE;
+      display:flex;align-items:center;justify-content:center}
+    .cat-reparar-ico svg{width:26px;height:26px}
+    .cat-reparar-txt{display:flex;flex-direction:column;gap:6px;flex:1}
+    .cat-reparar-eb{font-size:11px;font-weight:600;letter-spacing:.16em;
+      text-transform:uppercase;color:#8FB6CE}
+    .cat-reparar-t{font-size:var(--fs-h3);font-weight:600;color:var(--text);line-height:1.25}
+    .cat-reparar-d{color:var(--text-dim);font-size:var(--fs-small);line-height:1.65;max-width:64ch}
+    .cat-reparar-a{flex:none;font-size:12px;font-weight:600;letter-spacing:.12em;
+      text-transform:uppercase;color:var(--orange-bright);display:inline-flex;
+      align-items:center;gap:var(--s-2);transition:gap .3s var(--ease)}
+    .cat-reparar:hover .cat-reparar-a{gap:var(--s-4)}
+
     /* Vendidas recientemente */
     .vendidas-sec{padding:var(--s-9) 0}
     .vendidas-head{text-align:center;margin-bottom:var(--s-7)}
@@ -300,6 +349,9 @@ const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservad
       .cat-stat-n{font-size:20px}
       .cat-stat-div{display:none}
       .cat-stat:not(:last-child){border-bottom:1px solid var(--line);padding-bottom:var(--s-4)}
+    }
+    @media(max-width:760px){
+      .cat-reparar{flex-direction:column;align-items:flex-start;text-align:left}
     }
   </style>
 

@@ -6,7 +6,7 @@
 //  Si la lista viene vacía, muestra un CTA a contacto en vez de
 //  dejar un hueco.
 // ============================================================
-import { formatPrecio, formatKm } from '../data/motos.js';
+import { formatPrecio, formatKm, esReparacion } from '../data/motos.js';
 
 const {
   motos = [],
@@ -23,13 +23,15 @@ const slugEstado = (e) => e === "Vendida" ? "vendida" : e === "Reservada" ? "res
 {motos.length > 0 ? (
   <div class="mg-grid">
     {motos.map((m, idx) => (
-      <a class="moto-card reveal"
+      <a class={"moto-card reveal" + (esReparacion(m) ? " es-repara" : "")}
          style={`transition-delay:${(idx % 3) * 80}ms`}
          href={`/motos/${m.slug}/`}
          data-track="ver_ficha" data-source="grid" data-moto={m.slug}>
         <div class="moto-img">
-          <img src={`/img/${m.fotos[0]}`} alt={`${m.marca} ${m.modelo} ${m.anio} de segunda mano en Granada`} width="800" height="640" loading="lazy" decoding="async" />
-          {m.estado !== "Disponible" && <span class={"moto-estado " + slugEstado(m.estado)}>{m.estado}</span>}
+          <img src={`/img/${m.fotos[0]}`} alt={esReparacion(m) ? `${m.marca} ${m.modelo} ${m.anio} para reparar en Granada` : `${m.marca} ${m.modelo} ${m.anio} de segunda mano en Granada`} width="800" height="640" loading="lazy" decoding="async" />
+          {m.estado !== "Disponible"
+            ? <span class={"moto-estado " + slugEstado(m.estado)}>{m.estado}</span>
+            : esReparacion(m) && <span class="moto-estado repara">Para reparar</span>}
           <span class="moto-carnet cond">Carnet {limpiarCarnet(m.carnet)}</span>
           <span class="moto-cat cond">{m.categoria}</span>
         </div>
@@ -41,6 +43,15 @@ const slugEstado = (e) => e === "Vendida" ? "vendida" : e === "Reservada" ? "res
           <div class="moto-meta cond">
             <span>{m.anio}</span><i></i><span>{formatKm(m.km)}</span><i></i><span>{m.cilindrada}</span>
           </div>
+          {esReparacion(m) && Array.isArray(m.imperfecciones) && m.imperfecciones.length > 0 && (
+            <ul class="moto-imperf">
+              {m.imperfecciones.slice(0, 2).map((d) => <li>{d}</li>)}
+              {m.imperfecciones.length > 2 && (
+                <li class="moto-imperf-mas">+{m.imperfecciones.length - 2} detalle{m.imperfecciones.length - 2 > 1 ? "s" : ""} más en la ficha</li>
+              )}
+            </ul>
+          )}
+          {esReparacion(m) && <span class="moto-nogar cond">Se vende tal cual · Sin garantía</span>}
           <span class="moto-link cond">Ver ficha <span class="arr">→</span></span>
         </div>
       </a>
@@ -71,6 +82,9 @@ const slugEstado = (e) => e === "Vendida" ? "vendida" : e === "Reservada" ? "res
     color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.4)}
   .moto-estado.reservada{background:#E0A22A;color:#1a1206}
   .moto-estado.vendida{background:#C0392B}
+  /* Motos de la sección "para reparar": azul acero, para que no se
+     confunda con el semáforo de disponibilidad (naranja/rojo). */
+  .moto-estado.repara{background:#3E6E8E;font-size:12px;letter-spacing:.12em}
   .moto-carnet{position:absolute;top:var(--s-4);right:var(--s-4);
     background:var(--orange);color:#150f0b;font-size:11px;font-weight:600;
     letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:2px}
@@ -91,6 +105,21 @@ const slugEstado = (e) => e === "Vendida" ? "vendida" : e === "Reservada" ? "res
     text-transform:uppercase;color:var(--orange-bright);display:inline-flex;
     align-items:center;gap:var(--s-2);transition:gap .3s var(--ease)}
   .moto-card:hover .moto-link{gap:var(--s-4)}
+
+  /* Desperfectos declarados (solo motos para reparar) */
+  .moto-imperf{list-style:none;margin:0 0 var(--s-4);padding:0;
+    display:flex;flex-direction:column;gap:6px}
+  .moto-imperf li{position:relative;padding-left:16px;font-size:13px;
+    color:var(--text-dim);line-height:1.5}
+  .moto-imperf li::before{content:"";position:absolute;left:0;top:7px;
+    width:6px;height:6px;border-radius:50%;background:#3E6E8E}
+  .moto-imperf-mas{color:var(--text-faint);font-style:italic}
+  .moto-imperf-mas::before{opacity:.5}
+  .moto-nogar{display:inline-block;align-self:flex-start;margin-bottom:var(--s-4);
+    font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    color:#8FB6CE;border:1px solid rgba(62,110,142,.5);background:rgba(62,110,142,.12);
+    padding:4px 10px;border-radius:2px}
+  .es-repara:hover{border-color:#3E6E8E}
 
   /* Estado vacío — CTA a contacto en vez de una rejilla vacía */
   .mg-empty{text-align:center;border:1px solid var(--line);border-radius:10px;

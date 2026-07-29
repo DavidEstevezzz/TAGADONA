@@ -1,14 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
 import LandingCategoria from '../components/LandingCategoria.astro';
-import { motos } from '../data/motos.js';
+import { motosVenta } from '../data/motos.js';
 import { breadcrumbSchema, faqSchema } from '../lib/seo.js';
 
 const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
 const PATH = "/scooters-segunda-mano-granada/";
 
 // Scooters: categoría que empieza por "Scooter", excluyendo las vendidas.
-const seleccion = motos
+const seleccion = motosVenta
   .filter((m) => m.categoria.startsWith("Scooter") && m.estado !== "Vendida")
   .sort((a, b) => (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0));
 

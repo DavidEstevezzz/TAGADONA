@@ -19,6 +19,25 @@
 //    orden (número, para forzar el orden), garantiaMeses (número),
 //    fechaPublicacion / fechaActualizacion / fechaVenta ("AAAA-MM-DD").
 //
+//  ── SECCIÓN "PARA REPARAR" ──────────────────────────────────
+//  Por defecto una moto pertenece a la venta normal (con garantía
+//  y transferencia incluidas). Si la moto se vende TAL CUAL, con
+//  desperfectos conocidos y sin garantía, añade:
+//
+//      seccion: "reparacion",
+//      imperfecciones: [
+//        "Carenado lateral derecho rayado",
+//        "Batería que no mantiene la carga",
+//      ],
+//
+//  Esas motos NO salen en el catálogo general ni en las landings
+//  de categoría: van solo a /motos-para-reparar-granada/, con el
+//  aviso de venta sin garantía y la lista de desperfectos visible
+//  en la tarjeta y en la ficha.
+//
+//  El campo "imperfecciones" es obligatorio (mínimo 1) cuando
+//  seccion vale "reparacion": es lo que hace honesto el anuncio.
+//
 //  Antes de publicar, ejecuta:  npm run validate:data
 //  Comprueba slugs únicos, estados, precios, fotos existentes, etc.
 // ============================================================
@@ -222,7 +241,222 @@ export const motos = [
       "Una opción muy interesante para quien busque una scooter fiable, bien mantenida y lista para usar. Disponible por 2.499 € en Granada.",
     ],
   },
+
+  // ══════════════════════════════════════════════════════════
+  //  MOTOS PARA REPARAR  (seccion: "reparacion")
+  // ----------------------------------------------------------
+  //  Aparecen solo en /motos-para-reparar-granada/, con el aviso
+  //  de venta sin garantía y la lista de desperfectos.
+  //
+  //  ⚠ PENDIENTE ANTES DE PUBLICAR EN PRODUCCIÓN:
+  //    Las FOTOS son marcadores de posición: sobrescribe los
+  //    archivos de public/img/ con las reales, con el MISMO
+  //    nombre, y ya está.
+  //
+  //  Las especificaciones técnicas son las de catálogo de cada
+  //  modelo y año. Si alguna unidad lleva algo distinto (otros
+  //  neumáticos, otro escape…), corrígelo en su bloque.
+  // ══════════════════════════════════════════════════════════
+
+  {
+    slug: "piaggio-beverly-125-2017",
+    marca: "Piaggio",
+    modelo: "Beverly 125",
+    categoria: "Scooter · Proyecto",
+    anio: 2017,
+    km: 44878,
+    precio: 1050,
+    estado: "Disponible",
+    destacada: false,
+    seccion: "reparacion",
+    fotos: [
+      "piaggio-beverly-125-2017-1.jpg",
+      "piaggio-beverly-125-2017-2.jpg",
+      "piaggio-beverly-125-2017-3.jpg",
+      "piaggio-beverly-125-2017-4.jpg",
+      "piaggio-beverly-125-2017-5.jpg",
+    ],
+    cilindrada: "125 cc",
+    potencia: "15 CV",
+    combustible: "Gasolina",
+    carnet: "A1 / B + 3 años",
+    imperfecciones: [
+      "Cuerpo de mariposa averiado: necesita reparación o sustitución",
+    ],
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos · Refrigeración líquida",
+      "Potencia": "15 CV a 9.250 rpm",
+      "Alimentación": "Inyección electrónica",
+      "Cambio": "Automático CVT",
+      "Frenos": "Disco de 300 mm delante · Disco de 240 mm detrás",
+      "Neumáticos": "110/70-16 delante · 140/70-14 detrás",
+      "Depósito": "10 litros",
+      "Peso": "163 kg",
+      "Arranca y rueda": "Sí",
+      "ITV": "En vigor",
+      "Estado general": "Para reparar",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Piaggio Beverly 125 del año 2017 con 44.878 km, una scooter de rueda alta muy cómoda para el día a día que se vende como proyecto: necesita reparar el cuerpo de mariposa.",
+      "Por lo demás es una Beverly de las de siempre: monocilíndrico de 124 cc refrigerado por líquido con inyección electrónica y 15 CV, rueda alta de 16 pulgadas delante, freno de disco en los dos ejes y una postura de conducción muy cómoda. Arranca, rueda y tiene la ITV en vigor.",
+      "Se vende tal cual, con esa reparación por delante y sin garantía, a un precio muy por debajo del de una Beverly lista para circular. Buena opción para quien pueda resolver la mariposa por su cuenta.",
+    ],
+  },
+
+  {
+    slug: "piaggio-beverly-400-2007",
+    marca: "Piaggio",
+    modelo: "Beverly 400 ie",
+    categoria: "Scooter · Proyecto",
+    anio: 2007,
+    km: 46172,
+    precio: 600,
+    estado: "Disponible",
+    destacada: false,
+    seccion: "reparacion",
+    fotos: [
+      "piaggio-beverly-400-2007-1.jpg",
+      "piaggio-beverly-400-2007-2.jpg",
+      "piaggio-beverly-400-2007-3.jpg",
+      "piaggio-beverly-400-2007-4.jpg",
+      "piaggio-beverly-400-2007-5.jpg",
+    ],
+    cilindrada: "400 cc",
+    potencia: "34 CV",
+    combustible: "Gasolina",
+    carnet: "A2 / A",
+    imperfecciones: [
+      "Pérdida de aceite por la tapa de balancines",
+      "Plásticos y carenados en estado regular, con roces y marcas de uso",
+    ],
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos · 4 válvulas · Refrigeración líquida",
+      "Potencia": "34 CV",
+      "Par máximo": "37,5 Nm (3,83 kgm)",
+      "Alimentación": "Inyección electrónica",
+      "Cambio": "Automático CVT",
+      "Chasis": "Doble cuna multitubular de acero",
+      "Frenos": "Disco de 300 mm delante · Disco de 240 mm detrás",
+      "Neumáticos": "120/70-16 delante · 150/70-14 detrás",
+      "Depósito": "13,2 litros",
+      "Peso en seco": "185 kg",
+      "Arranca y rueda": "Sí · en funcionamiento",
+      "ITV": "En vigor",
+      "Estado general": "Para reparar",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Piaggio Beverly 400 ie del año 2007 con 46.172 km. Está en funcionamiento y con la ITV en vigor, pero pierde aceite por la tapa de balancines, así que se vende como proyecto.",
+      "Mecánicamente es un maxiscooter con fondo de sobra: monocilíndrico de 399 cc con cuatro válvulas, refrigeración líquida e inyección, 34 CV y 37,5 Nm de par, sobre chasis de doble cuna de acero y con freno de disco en ambos ejes. De los que se comen la carretera sin despeinarse.",
+      "La estética acompaña a los años que tiene: los plásticos están regular, con roces y marcas de uso. Nada de eso afecta a cómo se mueve, pero conviene saberlo antes de venir a verla.",
+      "Un maxiscooter de rueda alta por muy poco dinero, para quien se maneje con una junta de tapa de balancines y quiera dejarlo fino. Se vende tal cual y sin garantía.",
+    ],
+  },
+
+  {
+    slug: "kymco-people-s-250-2008",
+    marca: "Kymco",
+    modelo: "People S 250",
+    categoria: "Scooter · Proyecto",
+    anio: 2008,
+    km: 22700,
+    precio: 550,
+    estado: "Disponible",
+    destacada: false,
+    seccion: "reparacion",
+    fotos: [
+      "kymco-people-s-250-2008-1.jpg",
+      "kymco-people-s-250-2008-2.jpg",
+      "kymco-people-s-250-2008-3.jpg",
+      "kymco-people-s-250-2008-4.jpg",
+      "kymco-people-s-250-2008-5.jpg",
+    ],
+    cilindrada: "250 cc",
+    potencia: "19,6 CV",
+    combustible: "Gasolina",
+    carnet: "A2 / A",
+    imperfecciones: [
+      "Pendiente la revisión de los 20.000 km: correa de transmisión sin hacer",
+    ],
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos · SOHC · Refrigeración líquida",
+      "Potencia": "19,6 CV a 7.250 rpm",
+      "Par máximo": "19,6 Nm a 6.500 rpm",
+      "Cambio": "Automático CVT",
+      "Arranque": "Eléctrico",
+      "Frenos": "Disco delante y detrás",
+      "Neumáticos": "110/70-16 delante · 140/70-16 detrás",
+      "Llantas": "16 pulgadas · Aleación de cinco radios",
+      "Arranca y rueda": "Sí · en funcionamiento",
+      "ITV": "En vigor",
+      "Estado general": "Para reparar",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Kymco People S 250 del año 2008 con solo 22.700 km, muy pocos para su edad. Arranca, rueda y tiene la ITV en vigor, pero se vende como proyecto porque le falta la revisión de los 20.000 km: la correa de transmisión está sin hacer y toca cambiarla.",
+      "La People S es una scooter de rueda alta de las prácticas: monocilíndrico de 249 cc refrigerado por líquido con 19,6 CV, freno de disco delante y detrás y llantas de 16 pulgadas en los dos ejes, que es lo que le da ese aplomo tan bueno sobre asfalto en mal estado.",
+      "Se vende tal cual, con esa revisión pendiente y sin garantía. Para quien sepa hacerse el conjunto de la transmisión, es mucha moto por muy poco dinero.",
+    ],
+  },
+
+  // ── Plantilla para añadir otra moto para reparar ────────────
+  //  Copia el bloque de abajo, quita las barras /* */ y rellena.
+  /*
+  {
+    slug: "marca-modelo-anio-para-reparar",   // parte de la URL: minúsculas y guiones
+    marca: "Honda",
+    modelo: "CBF 125",
+    categoria: "Naked · Proyecto",            // "Scooter · Proyecto", "Trail · Proyecto"…
+    anio: 2012,
+    km: 48200,
+    precio: 750,
+    estado: "Disponible",                     // "Disponible" | "Reservada" | "Vendida"
+    destacada: false,
+    seccion: "reparacion",                    // ← la manda a /motos-para-reparar-granada/
+    fotos: [
+      "honda-cbf-125-2012-1.jpg",             // van en public/img/ ; la 1ª es la principal
+      "honda-cbf-125-2012-2.jpg",
+    ],
+    cilindrada: "125 cc",
+    potencia: "11 CV",
+    combustible: "Gasolina",
+    carnet: "A1 / B + 3 años",
+    // Lo que hay que arreglar. Obligatorio: al menos uno.
+    // Sé concreto: es lo que hace honesto el anuncio y evita sorpresas.
+    imperfecciones: [
+      "Arranca y rueda, pero le cuesta arrancar en frío",
+      "Carenado lateral derecho rayado",
+      "Neumático trasero al límite del dibujo",
+    ],
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos",
+      "Cambio": "Manual · 5 velocidades",
+      "Arranca y rueda": "Sí",                // o "No · se entrega parada"
+      "Documentación": "En regla · ITV caducada",
+      "Estado general": "Para reparar",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Primer párrafo: qué moto es, año, kilómetros y por qué se vende como proyecto.",
+      "Segundo párrafo: el detalle de lo que falla y de lo que está bien.",
+      "Tercer párrafo: se vende tal cual, sin garantía, y a quién le puede encajar.",
+    ],
+  },
+  */
 ];
+
+// --- Secciones de la web -------------------------------------
+// Una moto pertenece a la sección "reparacion" solo si lo dice
+// expresamente; el resto son venta normal (revisadas, con
+// garantía y transferencia incluidas).
+export const esReparacion = (m) => m.seccion === "reparacion";
+
+// Motos de venta normal: catálogo, home y landings de categoría.
+export const motosVenta = motos.filter((m) => !esReparacion(m));
+
+// Motos para reparar: solo /motos-para-reparar-granada/.
+export const motosReparacion = motos.filter(esReparacion);
 
 // --- Utilidades internas (no necesitas tocar esto) ---
 // Inserta puntos de miles a la española: 6900 -> "6.900"
