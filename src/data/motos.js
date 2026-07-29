@@ -249,11 +249,13 @@ export const motos = [
   //  de venta sin garantía y la lista de desperfectos.
   //
   //  ⚠ PENDIENTE ANTES DE PUBLICAR EN PRODUCCIÓN:
-  //    1. Los PRECIOS son provisionales (marcados abajo).
-  //    2. Las FOTOS son marcadores de posición: sobrescribe los
-  //       archivos de public/img/ con las reales, con el MISMO
-  //       nombre, y ya está.
-  //    3. Confirmar la potencia y los datos marcados con "?".
+  //    Las FOTOS son marcadores de posición: sobrescribe los
+  //    archivos de public/img/ con las reales, con el MISMO
+  //    nombre, y ya está.
+  //
+  //  Las especificaciones técnicas son las de catálogo de cada
+  //  modelo y año. Si alguna unidad lleva algo distinto (otros
+  //  neumáticos, otro escape…), corrígelo en su bloque.
   // ══════════════════════════════════════════════════════════
 
   {
@@ -263,7 +265,7 @@ export const motos = [
     categoria: "Scooter · Proyecto",
     anio: 2017,
     km: 44878,
-    precio: 1100,                    // ⚠ PRECIO PROVISIONAL — cambiar por el real
+    precio: 1050,
     estado: "Disponible",
     destacada: false,
     seccion: "reparacion",
@@ -275,23 +277,29 @@ export const motos = [
       "piaggio-beverly-125-2017-5.jpg",
     ],
     cilindrada: "125 cc",
-    potencia: "11 CV",               // ⚠ confirmar
+    potencia: "15 CV",
     combustible: "Gasolina",
     carnet: "A1 / B + 3 años",
     imperfecciones: [
       "Cuerpo de mariposa averiado: necesita reparación o sustitución",
     ],
     especificaciones: {
-      "Motor": "Monocilíndrico · 4 tiempos",
+      "Motor": "Monocilíndrico · 4 tiempos · Refrigeración líquida",
+      "Potencia": "15 CV a 9.250 rpm",
+      "Alimentación": "Inyección electrónica",
       "Cambio": "Automático CVT",
+      "Frenos": "Disco de 300 mm delante · Disco de 240 mm detrás",
+      "Neumáticos": "110/70-16 delante · 140/70-14 detrás",
+      "Depósito": "10 litros",
+      "Peso": "163 kg",
+      "Arranca y rueda": "Sí",
       "ITV": "En vigor",
       "Estado general": "Para reparar",
       "Ubicación": "Granada",
-      // Añade aquí "Arranca y rueda": "Sí" / "No · se entrega parada"
     },
     descripcion: [
       "Piaggio Beverly 125 del año 2017 con 44.878 km, una scooter de rueda alta muy cómoda para el día a día que se vende como proyecto: necesita reparar el cuerpo de mariposa.",
-      "El resto de la moto es una Beverly de las de siempre —rueda grande, buena postura de conducción y espacio de sobra—, con la ITV en vigor. Es una avería concreta y localizada, no un problema de motor.",
+      "Por lo demás es una Beverly de las de siempre: monocilíndrico de 124 cc refrigerado por líquido con inyección electrónica y 15 CV, rueda alta de 16 pulgadas delante, freno de disco en los dos ejes y una postura de conducción muy cómoda. Arranca, rueda y tiene la ITV en vigor.",
       "Se vende tal cual, con esa reparación por delante y sin garantía, a un precio muy por debajo del de una Beverly lista para circular. Buena opción para quien pueda resolver la mariposa por su cuenta.",
     ],
   },
@@ -303,7 +311,7 @@ export const motos = [
     categoria: "Scooter · Proyecto",
     anio: 2007,
     km: 46172,
-    precio: 950,                     // ⚠ PRECIO PROVISIONAL — cambiar por el real
+    precio: 600,
     estado: "Disponible",
     destacada: false,
     seccion: "reparacion",
@@ -315,7 +323,7 @@ export const motos = [
       "piaggio-beverly-400-2007-5.jpg",
     ],
     cilindrada: "400 cc",
-    potencia: "34 CV",               // ⚠ confirmar
+    potencia: "34 CV",
     combustible: "Gasolina",
     carnet: "A2 / A",
     imperfecciones: [
@@ -323,8 +331,16 @@ export const motos = [
       "Plásticos y carenados en estado regular, con roces y marcas de uso",
     ],
     especificaciones: {
-      "Motor": "Monocilíndrico · 4 tiempos",
+      "Motor": "Monocilíndrico · 4 tiempos · 4 válvulas · Refrigeración líquida",
+      "Potencia": "34 CV",
+      "Par máximo": "37,5 Nm (3,83 kgm)",
+      "Alimentación": "Inyección electrónica",
       "Cambio": "Automático CVT",
+      "Chasis": "Doble cuna multitubular de acero",
+      "Frenos": "Disco de 300 mm delante · Disco de 240 mm detrás",
+      "Neumáticos": "120/70-16 delante · 150/70-14 detrás",
+      "Depósito": "13,2 litros",
+      "Peso en seco": "185 kg",
       "Arranca y rueda": "Sí · en funcionamiento",
       "ITV": "En vigor",
       "Estado general": "Para reparar",
@@ -332,8 +348,9 @@ export const motos = [
     },
     descripcion: [
       "Piaggio Beverly 400 ie del año 2007 con 46.172 km. Está en funcionamiento y con la ITV en vigor, pero pierde aceite por la tapa de balancines, así que se vende como proyecto.",
+      "Mecánicamente es un maxiscooter con fondo de sobra: monocilíndrico de 399 cc con cuatro válvulas, refrigeración líquida e inyección, 34 CV y 37,5 Nm de par, sobre chasis de doble cuna de acero y con freno de disco en ambos ejes. De los que se comen la carretera sin despeinarse.",
       "La estética acompaña a los años que tiene: los plásticos están regular, con roces y marcas de uso. Nada de eso afecta a cómo se mueve, pero conviene saberlo antes de venir a verla.",
-      "Un maxiscooter de rueda alta con mucho fondo por poco dinero, para quien se maneje con una junta de tapa de balancines y quiera dejarlo fino. Se vende tal cual y sin garantía.",
+      "Un maxiscooter de rueda alta por muy poco dinero, para quien se maneje con una junta de tapa de balancines y quiera dejarlo fino. Se vende tal cual y sin garantía.",
     ],
   },
 
@@ -344,7 +361,7 @@ export const motos = [
     categoria: "Scooter · Proyecto",
     anio: 2008,
     km: 22700,
-    precio: 800,                     // ⚠ PRECIO PROVISIONAL — cambiar por el real
+    precio: 550,
     estado: "Disponible",
     destacada: false,
     seccion: "reparacion",
@@ -356,23 +373,30 @@ export const motos = [
       "kymco-people-s-250-2008-5.jpg",
     ],
     cilindrada: "250 cc",
-    potencia: "21 CV",               // ⚠ confirmar
+    potencia: "19,6 CV",
     combustible: "Gasolina",
     carnet: "A2 / A",
     imperfecciones: [
       "Pendiente la revisión de los 20.000 km: correa de transmisión sin hacer",
     ],
     especificaciones: {
-      "Motor": "Monocilíndrico · 4 tiempos",
+      "Motor": "Monocilíndrico · 4 tiempos · SOHC · Refrigeración líquida",
+      "Potencia": "19,6 CV a 7.250 rpm",
+      "Par máximo": "19,6 Nm a 6.500 rpm",
       "Cambio": "Automático CVT",
+      "Arranque": "Eléctrico",
+      "Frenos": "Disco delante y detrás",
+      "Neumáticos": "110/70-16 delante · 140/70-16 detrás",
+      "Llantas": "16 pulgadas · Aleación de cinco radios",
+      "Arranca y rueda": "Sí · en funcionamiento",
+      "ITV": "En vigor",
       "Estado general": "Para reparar",
       "Ubicación": "Granada",
-      // Añade aquí "Arranca y rueda" y el estado de la ITV
     },
     descripcion: [
-      "Kymco People S 250 del año 2008 con solo 22.700 km, muy pocos para su edad. Se vende como proyecto porque le falta la revisión de los 20.000 km: la correa de transmisión está sin hacer y toca cambiarla.",
-      "La People S es una scooter de rueda alta ligera y muy manejable, con una mecánica sencilla y conocida, de las que se dejan trabajar sin complicaciones.",
-      "Se vende tal cual, con esa revisión pendiente y sin garantía. Para quien sepa hacerse el conjunto de la transmisión, es mucha moto por muy poco.",
+      "Kymco People S 250 del año 2008 con solo 22.700 km, muy pocos para su edad. Arranca, rueda y tiene la ITV en vigor, pero se vende como proyecto porque le falta la revisión de los 20.000 km: la correa de transmisión está sin hacer y toca cambiarla.",
+      "La People S es una scooter de rueda alta de las prácticas: monocilíndrico de 249 cc refrigerado por líquido con 19,6 CV, freno de disco delante y detrás y llantas de 16 pulgadas en los dos ejes, que es lo que le da ese aplomo tan bueno sobre asfalto en mal estado.",
+      "Se vende tal cual, con esa revisión pendiente y sin garantía. Para quien sepa hacerse el conjunto de la transmisión, es mucha moto por muy poco dinero.",
     ],
   },
 
