@@ -31,7 +31,9 @@ const vendidas = motosReparacion.filter((m) => m.estado === "Vendida");
 
 const waProyectos = waLink("Hola, he visto la sección de motos para reparar. ¿Qué tenéis disponible ahora mismo?");
 
-// Cómo se venden estas motos: las cuatro reglas del trato.
+// Cómo se venden estas motos: las tres reglas del trato.
+// (Ojo: aquí NO se promete papeleo/cambio de nombre; eso es del catálogo
+//  general, no de esta sección.)
 const reglas = [
   {
     n: "01",
@@ -47,11 +49,6 @@ const reglas = [
     n: "03",
     t: "La ves, la escuchas y la tocas",
     d: `Con cita previa en ${business.municipio} puedes arrancarla —si arranca—, mirarla con calma y venir acompañado de quien quieras. Cuanto mejor la valores, mejor para todos.`,
-  },
-  {
-    n: "04",
-    t: "Papeleo resuelto",
-    d: "Nos seguimos ocupando del cambio de nombre y de que la documentación esté en regla. Que la moto sea un proyecto no significa que el trámite sea un lío.",
   },
 ];
 const faqs = [
@@ -73,7 +70,7 @@ const faqs = [
   },
   {
     q: "¿La moto se entrega con la transferencia hecha?",
-    a: "Sí. Aunque sea una moto para reparar, nos encargamos del cambio de nombre y de que la documentación esté en regla, igual que con el resto de nuestras motos. Otra cosa es la ITV: si está caducada, se indica en la ficha y tendrás que pasarla tú una vez reparada.",
+    a: "En esta sección no. El cambio de nombre corre por cuenta del comprador: te entregamos la moto con su documentación y el contrato de compraventa firmado para que puedas hacer tú la transferencia. Es parte del motivo de que el precio sea tan bajo. En el catálogo general sí nos encargamos nosotros del trámite. Y la ITV, si está caducada, se indica en la ficha y tendrás que pasarla una vez reparada.",
   },
   {
     q: "¿Compráis motos averiadas o accidentadas?",
@@ -107,9 +104,16 @@ const faqLd = faqSchema(faqs);
       <p class="eyebrow center reveal in">Proyectos · Mecánica · Granada</p>
       <h1 class="rp-h1 display reveal in">Motos para reparar</h1>
       <div class="rp-intro reveal in">
-        <p>Una sección aparte del catálogo, para <strong>motos con desperfectos</strong> que se venden tal cual: averías mecánicas, daños de una caída o piezas al límite. Todo lo que le pasa a cada moto está escrito en su anuncio, sin adornos.</p>
-        <p>A cambio, el precio no se parece en nada al de una moto revisada. Es la vía barata para quien <strong>disfruta metiéndose en la mecánica</strong> —o para quien busca una base sobre la que montar su proyecto.</p>
+        <p>Motos con desperfectos —averías, daños de una caída o piezas al límite— que se venden <strong>tal cual</strong>, con todo lo que les pasa escrito en el anuncio. A cambio, el precio no se parece al de una moto revisada.</p>
       </div>
+      <p class="rp-nota reveal in">
+        <span class="rp-nota-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.6" r=".6" fill="currentColor"/>
+          </svg>
+        </span>
+        <span>Sin garantía y sin revisión previa: la reparación corre por cuenta del comprador.</span>
+      </p>
       <div class="rp-hero-btns reveal in">
         <a href="#stock" class="btn btn-primary">Ver motos disponibles <span class="arr">→</span></a>
         <a href="/catalogo/" class="btn btn-ghost">Prefiero una moto revisada</a>
@@ -117,49 +121,15 @@ const faqLd = faqSchema(faqs);
     </div>
   </section>
 
-  <!-- ════════ AVISO: SIN GARANTÍA ════════ -->
-  <section class="wrap">
-    <div class="rp-aviso reveal">
-      <span class="rp-aviso-ico" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-          <path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.6" r=".6" fill="currentColor"/>
-        </svg>
-      </span>
-      <div class="rp-aviso-txt">
-        <h2 class="head">Estas motos se venden sin garantía</h2>
-        <p>No pasan nuestra revisión previa ni salen listas para circular: se entregan <strong>tal cual están</strong>, con los desperfectos que verás detallados en cada ficha, y la reparación corre por cuenta del comprador. Ese es el motivo del precio.</p>
-        <p class="rp-aviso-alt">¿Buscabas una moto revisada, con garantía por escrito y lista para usar? Están todas en el <a href="/catalogo/">catálogo general</a>.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════ CÓMO SE VENDEN ════════ -->
-  <section class="rp-reglas div-soft panel-soft">
-    <div class="wrap">
-      <div class="rp-sec-head center reveal">
-        <p class="eyebrow center">Las reglas del trato</p>
-        <h2 class="sec-title">Cómo funciona esta sección</h2>
-        <p class="rp-sec-lead">Vender una moto rota sin decir lo que tiene es fácil. Nosotros preferimos hacerlo al revés: contarlo todo y poner el precio en consecuencia.</p>
-      </div>
-      <div class="rp-pasos">
-        {reglas.map((p) => (
-          <div class="rp-paso reveal">
-            <span class="rp-paso-n cond">{p.n}</span>
-            <h3 class="head">{p.t}</h3>
-            <p>{p.d}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
   <!-- ════════ STOCK ════════ -->
+  <!-- Va justo detrás del hero a propósito: quien entra aquí busca motos,
+       no un manifiesto. Las reglas del trato van después de la rejilla. -->
   <section class="rp-motos" id="stock">
     <div class="wrap">
       <div class="rp-sec-head reveal">
         <p class="eyebrow">Proyectos disponibles</p>
         <h2 class="sec-title">Motos para reparar ahora mismo</h2>
-        <p class="rp-motos-lead">Cada tarjeta adelanta los principales desperfectos; en la ficha están todos, junto con las fotos y lo que sabemos del historial.</p>
+        <p class="rp-motos-lead">Cada tarjeta adelanta los principales desperfectos; en la ficha están todos.</p>
       </div>
       <MotoCardGrid
         motos={seleccion}
@@ -186,6 +156,27 @@ const faqLd = faqSchema(faqs);
       </div>
     </section>
   )}
+
+  <!-- ════════ CÓMO SE VENDEN ════════ -->
+  <section class="rp-reglas div-soft panel-soft">
+    <div class="wrap">
+      <div class="rp-sec-head center reveal">
+        <p class="eyebrow center">Las reglas del trato</p>
+        <h2 class="sec-title">Cómo funciona esta sección</h2>
+        <p class="rp-sec-lead">Vender una moto rota sin decir lo que tiene es fácil. Nosotros preferimos hacerlo al revés: contarlo todo y poner el precio en consecuencia.</p>
+      </div>
+      <div class="rp-pasos">
+        {reglas.map((p) => (
+          <div class="rp-paso reveal">
+            <span class="rp-paso-n cond">{p.n}</span>
+            <h3 class="head">{p.t}</h3>
+            <p>{p.d}</p>
+          </div>
+        ))}
+      </div>
+      <p class="rp-reglas-alt reveal">¿Buscabas una moto revisada, con garantía por escrito y lista para usar? Están todas en el <a href="/catalogo/">catálogo general</a>.</p>
+    </div>
+  </section>
 
   <!-- ════════ ¿PARA QUIÉN ES? ════════ -->
   <section class="wrap rp-para">
@@ -257,37 +248,27 @@ const faqLd = faqSchema(faqs);
     .crumb span{opacity:.4}
 
     /* Hero */
-    .rp-hero{position:relative;padding:var(--s-7) 0 var(--s-8);text-align:center;overflow:hidden}
+    .rp-hero{position:relative;padding:var(--s-6) 0 var(--s-7);text-align:center;overflow:hidden}
     .rp-hero-glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);
       width:min(900px,90%);height:420px;pointer-events:none;
       background:radial-gradient(60% 70% at 50% 0%,rgba(217,122,40,.22),transparent 70%)}
     .rp-hero-inner{position:relative;z-index:1}
-    .rp-hero .eyebrow{margin-bottom:var(--s-5)}
+    .rp-hero .eyebrow{margin-bottom:var(--s-4)}
     .rp-h1{font-size:clamp(44px,7vw,88px);line-height:.96;color:var(--orange-bright);
-      margin-bottom:var(--s-5)}
-    .rp-intro{max-width:680px;margin:0 auto}
-    .rp-intro p{color:var(--text-dim);font-size:var(--fs-lead);line-height:1.7;margin-bottom:var(--s-4)}
-    .rp-intro p:last-child{margin-bottom:0}
+      margin-bottom:var(--s-4)}
+    .rp-intro{max-width:660px;margin:0 auto}
+    .rp-intro p{color:var(--text-dim);font-size:var(--fs-lead);line-height:1.7;margin:0}
     .rp-intro strong{color:var(--text);font-weight:600}
-    .rp-hero-btns{display:flex;gap:var(--s-3);justify-content:center;flex-wrap:wrap;
-      margin-top:var(--s-6)}
 
-    /* Aviso de venta sin garantía */
-    .rp-aviso{display:flex;gap:var(--s-5);align-items:flex-start;
-      border:1px solid rgba(62,110,142,.45);border-left:3px solid #3E6E8E;
-      background:rgba(62,110,142,.10);border-radius:8px;
-      padding:var(--s-6) clamp(20px,3vw,32px)}
-    .rp-aviso-ico{flex:none;width:44px;height:44px;border-radius:50%;
-      background:rgba(62,110,142,.22);color:#8FB6CE;
-      display:flex;align-items:center;justify-content:center}
-    .rp-aviso-ico svg{width:24px;height:24px}
-    .rp-aviso-txt h2{font-size:var(--fs-h3);font-weight:700;color:var(--text);
-      margin-bottom:var(--s-3)}
-    .rp-aviso-txt p{color:var(--text-dim);line-height:1.75;margin-bottom:var(--s-3)}
-    .rp-aviso-txt p:last-child{margin-bottom:0}
-    .rp-aviso-txt strong{color:var(--text);font-weight:600}
-    .rp-aviso-alt{font-size:var(--fs-small)}
-    .rp-aviso-alt a{color:var(--orange-bright);text-decoration:underline;text-underline-offset:3px}
+    /* Aviso compacto de venta sin garantía: una línea, dentro del hero */
+    .rp-nota{display:inline-flex;align-items:center;gap:var(--s-3);text-align:left;
+      margin-top:var(--s-5);padding:9px 16px;border-radius:999px;
+      border:1px solid rgba(62,110,142,.45);background:rgba(62,110,142,.12);
+      color:#B9D2E2;font-size:var(--fs-small);line-height:1.45}
+    .rp-nota-ico{flex:none;display:flex;color:#8FB6CE}
+    .rp-nota-ico svg{width:18px;height:18px}
+    .rp-hero-btns{display:flex;gap:var(--s-3);justify-content:center;flex-wrap:wrap;
+      margin-top:var(--s-5)}
 
     /* Encabezados de sección */
     .rp-sec-head{margin-bottom:var(--s-6)}
@@ -299,17 +280,20 @@ const faqLd = faqSchema(faqs);
       margin:var(--s-4) auto 0;line-height:1.6}
 
     /* Reglas del trato */
-    .rp-reglas{padding:var(--s-9) 0;margin-top:var(--s-8)}
-    .rp-pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-5);margin-top:var(--s-7)}
+    .rp-reglas{padding:var(--s-9) 0}
+    .rp-pasos{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-5);margin-top:var(--s-7)}
     .rp-paso{border:1px solid var(--line);border-radius:8px;padding:var(--s-6);
       background:rgba(255,255,255,.02);transition:border-color .4s,transform .4s var(--ease)}
     .rp-paso:hover{border-color:#3E6E8E;transform:translateY(-6px)}
     .rp-paso-n{font-size:26px;font-weight:700;color:#8FB6CE;display:block;margin-bottom:var(--s-3)}
     .rp-paso h3{font-size:var(--fs-h3);font-weight:600;color:var(--text);margin-bottom:var(--s-3)}
     .rp-paso p{color:var(--text-dim);font-size:var(--fs-small);line-height:1.7}
+    .rp-reglas-alt{text-align:center;margin-top:var(--s-6);color:var(--text-dim);
+      font-size:var(--fs-small)}
+    .rp-reglas-alt a{color:var(--orange-bright);text-decoration:underline;text-underline-offset:3px}
 
     /* Stock */
-    .rp-motos{padding:var(--s-9) 0 var(--s-8);scroll-margin-top:90px}
+    .rp-motos{padding:var(--s-7) 0 var(--s-8);scroll-margin-top:90px}
     .rp-motos-lead{color:var(--text-dim);font-size:var(--fs-small);max-width:600px;
       margin-top:var(--s-4);line-height:1.7}
     .rp-motos-foot{text-align:center;margin-top:var(--s-7)}
@@ -360,7 +344,7 @@ const faqLd = faqSchema(faqs);
     }
     @media(max-width:560px){
       .rp-pasos{grid-template-columns:1fr}
-      .rp-aviso{flex-direction:column;gap:var(--s-4);padding:var(--s-5)}
+      .rp-nota{align-items:flex-start;border-radius:10px;padding:12px 14px}
     }
   </style>
 </Base>
