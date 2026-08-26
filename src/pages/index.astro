@@ -13,7 +13,8 @@ const marcas = ["yamaha","honda","kawasaki","suzuki","ktm","bmw","ducati","trium
 
 // Últimas incorporaciones: destacadas primero, máx 3.
 // Solo venta normal: las motos para reparar tienen su propia sección.
-const destacadas = [...motosVenta].sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).slice(0,3);
+// Las vendidas no salen en portada; quedan en la sección de vendidas del catálogo.
+const destacadas = [...motosVenta].filter(m=>m.estado!=="Vendida").sort((a,b)=>(b.destacada?1:0)-(a.destacada?1:0)).slice(0,3);
 ---
 <Base
   title="Tagadona Racing — Compraventa de motos en Granada"
