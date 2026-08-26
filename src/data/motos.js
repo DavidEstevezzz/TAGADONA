@@ -43,6 +43,65 @@
 // ============================================================
 
 export const motos = [
+  // ⚠ FOTOS PENDIENTES: zontes-368k-2025-1..7.jpg son marcadores de
+  //   posición. Sobrescribe los archivos de public/img/ con las fotos
+  //   reales, con el MISMO nombre, y no hay que tocar nada más aquí.
+  {
+    slug: "zontes-368k-2025",
+    marca: "Zontes",
+    modelo: "368K",
+    categoria: "Scooter · Maxiscooter",
+    anio: 2025,
+    km: 2500,
+    precio: 4150,
+    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    destacada: true,                 // true = sale primero en el catálogo
+    fotos: [
+      "zontes-368k-2025-1.jpg",
+      "zontes-368k-2025-2.jpg",
+      "zontes-368k-2025-3.jpg",
+      "zontes-368k-2025-4.jpg",
+      "zontes-368k-2025-5.jpg",
+      "zontes-368k-2025-6.jpg",
+      "zontes-368k-2025-7.jpg",
+    ],
+    // Datos rápidos (los 4 de arriba)
+    cilindrada: "368 cc",
+    potencia: "38,8 CV",
+    combustible: "Gasolina",
+    carnet: "A2 / A",
+    // Ficha técnica completa
+    especificaciones: {
+      "Motor": "368 cc · 4 tiempos",
+      "Potencia": "38,8 CV",
+      "Par máximo": "40 Nm",
+      "Cambio": "Automático CVT",
+      "Frenos": "ABS + control de tracción",
+      "Modos de conducción": "Dos",
+      "Pantalla": "TFT de 6,75\" con conectividad y mirroring",
+      "Cámaras": "Delantera y trasera",
+      "Neumáticos": "Control de presión y temperatura (TPMS)",
+      "Arranque": "Keyless · dos llaves y pulsera",
+      "Puños": "Calefactables",
+      "Cúpula": "Regulable eléctricamente",
+      "Piñas": "Retroiluminadas",
+      "Iluminación": "Full LED",
+      "Tomas de corriente": "USB y USB-C",
+      "Cierre centralizado": "Asiento, guanteras y depósito",
+      "Paramanos": "Sí",
+      "Hueco bajo el asiento": "Para dos cascos integrales",
+      "Estado": "Prácticamente nueva",
+      "Garantía": "Oficial",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Zontes 368K del año 2025 con solo 2.500 km, una unidad prácticamente nueva. Un maxiscooter equipado hasta arriba y con uno de los niveles de equipamiento más completos de su categoría.",
+      "Lleva puños calefactables, cúpula regulable eléctricamente, sistema keyless con dos llaves y pulsera, piñas retroiluminadas y pantalla TFT de 6,75\" con conectividad y mirroring. Suma también cámara delantera y trasera, control de presión y temperatura de neumáticos, control de tracción y ABS, dos modos de conducción, iluminación full LED, tomas USB y USB-C, cierre centralizado de asiento, guanteras y depósito, paramanos y un gran hueco bajo el asiento con capacidad para dos cascos integrales.",
+      "Su motor de 368 cc desarrolla 38,8 CV y 40 Nm, unas prestaciones más que sobradas tanto para ciudad como para carretera. Una de esas motos en las que cuesta encontrar algo que le falte.",
+      "Se vende por 4.150 €, con cambio de nombre incluido y garantía oficial. Disponible en Granada.",
+    ],
+  },
+
   {
     slug: "piaggio-medley-125-2020",
     marca: "Piaggio",
@@ -51,7 +110,7 @@ export const motos = [
     anio: 2020,
     km: 15463,
     precio: 2200,
-    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    estado: "Vendida",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
       "piaggio-medley-125-2020-1.jpg",
