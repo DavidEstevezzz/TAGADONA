@@ -57,13 +57,13 @@ export const motos = [
     estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
-      "zontes-368k-2025-1.jpg",
-      "zontes-368k-2025-2.jpg",
-      "zontes-368k-2025-3.jpg",
-      "zontes-368k-2025-4.jpg",
-      "zontes-368k-2025-5.jpg",
-      "zontes-368k-2025-6.jpg",
-      "zontes-368k-2025-7.jpg",
+      "zontes-368k-2025-1.png",
+      "zontes-368k-2025-2.jpeg",
+      "zontes-368k-2025-3.jpeg",
+      "zontes-368k-2025-4.jpeg",
+      "zontes-368k-2025-5.jpeg",
+      "zontes-368k-2025-6.jpeg",
+      "zontes-368k-2025-7.jpeg",
     ],
     // Datos rápidos (los 4 de arriba)
     cilindrada: "368 cc",
@@ -421,7 +421,7 @@ export const motos = [
     anio: 2008,
     km: 22700,
     precio: 550,
-    estado: "Disponible",
+    estado: "Vendida",            // "Disponible" | "Reservada" | "Vendida"
     destacada: false,
     seccion: "reparacion",
     fotos: [
