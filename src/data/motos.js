@@ -43,6 +43,61 @@
 // ============================================================
 
 export const motos = [
+  // ⚠ FOTOS PENDIENTES: harley-davidson-sportster-1200-2010-1..4.jpg son
+  //   marcadores de posición. Sobrescribe los archivos de public/img/ con
+  //   las fotos reales, con el MISMO nombre, y no hay que tocar nada más.
+  {
+    slug: "harley-davidson-sportster-1200-2010",
+    marca: "Harley-Davidson",
+    modelo: "Sportster 1200",
+    categoria: "Custom",
+    anio: 2010,
+    km: 21500,
+    precio: 9250,
+    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    destacada: true,                 // true = sale primero en el catálogo
+    fotos: [
+      "harley-davidson-sportster-1200-2010-1.jpg",
+      "harley-davidson-sportster-1200-2010-2.jpg",
+      "harley-davidson-sportster-1200-2010-3.jpg",
+      "harley-davidson-sportster-1200-2010-4.jpg",
+    ],
+    // Datos rápidos (los 4 de arriba)
+    cilindrada: "1.202 cc",
+    potencia: "68 CV",
+    combustible: "Gasolina",
+    carnet: "A",
+    // Ficha técnica completa
+    especificaciones: {
+      "Motor": "Evolution V-Twin a 45° · 1.202 cc · Refrigeración por aire",
+      "Potencia": "68 CV (aprox.) a 5.750 rpm",
+      "Par máximo": "107 Nm a 4.000 rpm",
+      "Diámetro × carrera": "88,9 × 96,8 mm",
+      "Relación de compresión": "9,7:1",
+      "Alimentación": "Inyección electrónica secuencial (ESPFI)",
+      "Cambio": "Manual · 5 velocidades",
+      "Transmisión final": "Correa dentada",
+      "Chasis": "Tubular de acero · Motor anclado con silentblocks",
+      "Suspensiones": "Horquilla telescópica delante · Dos amortiguadores regulables detrás",
+      "Frenos": "Disco delante y disco detrás",
+      "Revisión": "Hecha hace 2.000 km",
+      "Manillar": "Custom",
+      "Espejos": "Custom",
+      "Filtros": "Custom",
+      "Escape": "Custom",
+      "Faros": "Custom",
+      "Estado general": "Muy cuidada",
+      "Garantía": "12 meses",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Harley-Davidson Sportster 1200 del año 2010 con 21.500 km, una unidad muy cuidada y con una presencia que se nota nada más verla. De esas motos que entran por los ojos y que, cuando las arrancas, todavía convencen más.",
+      "Va cargada de extras: manillar custom, espejos, filtros, escape y faros, además de otros detalles que le dan un aspecto muy trabajado y un sonido espectacular. Tiene la revisión hecha hace solo 2.000 km, así que está lista para rodar.",
+      "Mecánicamente monta el bicilíndrico en V a 45° Evolution de 1.202 cc refrigerado por aire, con inyección electrónica, unos 68 CV y 107 Nm de par a 4.000 rpm, cambio manual de cinco velocidades y transmisión final por correa. Empuje de sobra desde abajo y el carácter típico de una Harley.",
+      "Se vende por 9.250 €, con cambio de nombre incluido y 12 meses de garantía. Disponible en Granada.",
+    ],
+  },
+
   // ⚠ FOTOS PENDIENTES: zontes-368k-2025-1..7.jpg son marcadores de
   //   posición. Sobrescribe los archivos de public/img/ con las fotos
   //   reales, con el MISMO nombre, y no hay que tocar nada más aquí.
