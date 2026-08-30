@@ -57,10 +57,10 @@ export const motos = [
     estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
-      "harley-davidson-sportster-1200-nightster-2010-1.jpg",
-      "harley-davidson-sportster-1200-nightster-2010-2.jpg",
-      "harley-davidson-sportster-1200-nightster-2010-3.jpg",
-      "harley-davidson-sportster-1200-nightster-2010-4.jpg",
+      "harley-davidson-sportster-1200-nightster-2010-1.jpeg",
+      "harley-davidson-sportster-1200-nightster-2010-2.jpeg",
+      "harley-davidson-sportster-1200-nightster-2010-3.jpeg",
+      "harley-davidson-sportster-1200-nightster-2010-4.jpeg",
     ],
     // Datos rápidos (los 4 de arriba)
     cilindrada: "1.202 cc",
