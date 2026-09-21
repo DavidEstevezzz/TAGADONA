@@ -43,6 +43,104 @@
 // ============================================================
 
 export const motos = [
+  {
+    slug: "bmw-c-400-x-2021",
+    marca: "BMW",
+    modelo: "C 400 X",
+    categoria: "Scooter · Maxiscooter",
+    anio: 2021,
+    km: 62200,
+    precio: 1700,
+    estado: "Reservada",             // "Disponible" | "Reservada" | "Vendida"
+    destacada: true,                 // true = sale primero en el catálogo
+    fotos: [
+      "bmw-c-400-x-2021-1.jpg",
+      "bmw-c-400-x-2021-2.jpg",
+      "bmw-c-400-x-2021-3.jpg",
+      "bmw-c-400-x-2021-4.jpg",
+      "bmw-c-400-x-2021-5.jpg",
+      "bmw-c-400-x-2021-6.jpg",
+      "bmw-c-400-x-2021-7.jpg",
+      "bmw-c-400-x-2021-8.jpg",
+      "bmw-c-400-x-2021-9.jpg",
+    ],
+    // Datos rápidos (los 4 de arriba)
+    cilindrada: "350 cc",
+    potencia: "34 CV",
+    combustible: "Gasolina",
+    carnet: "A2 / A",
+    // Ficha técnica completa
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos · 350 cc · Refrigeración líquida",
+      "Potencia": "34 CV (25 kW)",
+      "Cambio": "Automático CVT",
+      "Frenos": "ABS de serie",
+      "Pantalla": "TFT a color con conectividad",
+      "Maletero trasero": "Baúl con respaldo para el pasajero",
+      "Hueco bajo el asiento": "BMW Flexcase, se amplía con la moto parada",
+      "Cúpula": "Parabrisas",
+      "Neumáticos": "120/70 R15 delante · 150/70-14 detrás",
+      "Plazas": "2",
+      "Emisiones": "Euro 4",
+      "Peso en orden de marcha": "204 kg",
+      "Primera matriculación": "19/04/2021",
+      "Documentación": "Llave y libro de mantenimiento",
+      "Revisión de la correa": "Pendiente · el precio está ajustado por ello",
+      "Garantía": "12 meses de motor, condicionada a la revisión de la correa",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "BMW C 400 X del año 2021 con 62.200 km. El maxiscooter medio de BMW: cuerpo y presencia de scooter grande, motor de 350 cc con empuje de sobra para salir de la ciudad y los acabados que se le suponen a la marca.",
+      "Monta un monocilíndrico de 350 cc refrigerado por líquido con 34 CV, cambio automático CVT y ABS de serie. Homologado Euro 4 y apto para carnet A2, así que vale tanto para quien empieza como para quien quiere un scooter con el que hacer kilómetros.",
+      "Va con pantalla TFT a color con conectividad, parabrisas, baúl trasero con respaldo para el pasajero y el sistema Flexcase de BMW, el hueco bajo el asiento que se amplía con la moto parada para poder meter dos cascos. Se entrega con su llave y el libro de mantenimiento.",
+      "Un apunte importante y por delante: le corresponde la revisión de la correa y de los componentes que entran en esa revisión, y no está hecha. Por eso el precio está claramente por debajo de lo que pide el mercado por una C 400 X de este año. La garantía de 12 meses de motor queda condicionada a que se haga esa revisión y se presente la factura.",
+      "Se vende por 1.700 €, con cambio de nombre incluido. Ahora mismo está reservada. En Granada.",
+    ],
+  },
+
+  {
+    slug: "piaggio-beverly-300-2018",
+    marca: "Piaggio",
+    modelo: "Beverly 300",
+    categoria: "Scooter · Maxiscooter",
+    anio: 2018,
+    km: 3600,
+    precio: 2600,
+    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    destacada: true,                 // true = sale primero en el catálogo
+    fotos: [
+      "piaggio-beverly-300-2018-1.jpg",
+      "piaggio-beverly-300-2018-2.jpg",
+      "piaggio-beverly-300-2018-3.jpg",
+      "piaggio-beverly-300-2018-4.jpg",
+      "piaggio-beverly-300-2018-5.jpg",
+    ],
+    // Datos rápidos (los 4 de arriba)
+    cilindrada: "278 cc",
+    potencia: "22 CV",
+    combustible: "Gasolina",
+    carnet: "A2 / A",
+    // Ficha técnica completa
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos · 278 cc · Refrigeración líquida",
+      "Potencia": "22 CV",
+      "Cambio": "Automático CVT",
+      "Ruedas": "16\" delante · 14\" detrás",
+      "Frenos": "Disco delante y detrás",
+      "Plazas": "2",
+      "Color": "Blanco",
+      "Estado general": "Como nueva, con solo 3.600 km",
+      "Garantía": "12 meses de motor",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Piaggio Beverly 300 del año 2018 con solo 3.600 km. Una unidad que apenas se ha usado: los kilómetros hablan por sí solos y el estado general acompaña, tal y como se ve en las fotos.",
+      "El Beverly es el scooter de ruedas altas de Piaggio: 16 pulgadas delante y 14 detrás. Eso es lo que le da aplomo sobre los baches, los alcorques y las juntas del asfalto de ciudad, donde un scooter de rueda pequeña va dando saltos. Postura cómoda, asiento amplio para dos y hueco bajo el asiento para el casco.",
+      "Motor monocilíndrico de 278 cc refrigerado por líquido, 22 CV y cambio automático CVT. Suficiente para moverse con soltura por Granada y para salir a carretera sin agobios, y apto para carnet A2.",
+      "Se vende por 2.600 €, con cambio de nombre incluido y 12 meses de garantía de motor. Disponible en Granada.",
+    ],
+  },
+
   // ⚠ FOTOS PENDIENTES: harley-davidson-sportster-1200-nightster-2010-1..4.jpg
   //   son marcadores de posición. Sobrescribe los archivos de public/img/
   //   con las fotos reales, con el MISMO nombre, y no hay que tocar nada más.
