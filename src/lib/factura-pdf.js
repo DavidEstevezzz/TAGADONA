@@ -42,6 +42,10 @@ const eur = (n) =>
 
 const fechaEs = (f) => (f ? f.split('-').reverse().join('/') : '');
 
+const km = (n) => Number(n).toLocaleString('es-ES') + ' km';
+
+const tieneKms = (v) => v !== null && v !== undefined && String(v).trim() !== '' && !Number.isNaN(Number(v));
+
 const safe = (v) => String(v ?? '').trim();
 
 const EMISOR = {
@@ -229,6 +233,7 @@ export async function construirFacturaPDF(f) {
   if (f.moto_modelo) detailRows.push('Modelo: ' + safe(f.moto_modelo));
   if (f.moto_matricula) detailRows.push('Matrícula: ' + safe(f.moto_matricula));
   if (f.moto_bastidor) detailRows.push('Bastidor: ' + safe(f.moto_bastidor));
+  if (tieneKms(f.moto_kilometros)) detailRows.push('Kilómetros: ' + km(f.moto_kilometros));
   if (f.cambio_nombre) detailRows.push('Cambio de nombre: ' + safe(f.cambio_nombre));
 
   const detailLines = splitRows(doc, detailRows, 112);
@@ -319,12 +324,22 @@ export async function construirFacturaPDF(f) {
     condiciones.push('Forma de pago: ' + safe(f.forma_pago));
   }
 
+  if (f.observaciones) {
+    condiciones.push('Observaciones: ' + safe(f.observaciones).replace(/\r\n?/g, '\n'));
+  }
+
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.5);
   doc.setTextColor(...COL.gris);
 
   condiciones.forEach((txt, index) => {
     const lines = doc.splitTextToSize(txt, contentW);
+
+    if (y + lines.length * 5 > H - 26) {
+      doc.addPage();
+      y = margin + 6;
+    }
+
     if (index === 0 && f.tipo === 'REBU') {
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(...COL.text);
