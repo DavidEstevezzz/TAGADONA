@@ -1,0 +1,84 @@
+# Despliegue automático: cada push a main compila la web y sube dist/ al
+# servidor por SFTP, dejando la carpeta remota como copia exacta del build.
+#
+# Secrets necesarios (Settings → Secrets and variables → Actions):
+#   SFTP_HOST         servidor (p. ej. ftp.tagadonaracing.es)
+#   SFTP_USER         usuario SFTP
+#   SFTP_REMOTE_DIR   carpeta pública en el servidor (p. ej. /public_html)
+#   SFTP_PASSWORD     contraseña   ┐ uno de los dos
+#   SFTP_PRIVATE_KEY  clave SSH    ┘ (si hay clave, se usa la clave)
+# Opcional:
+#   SFTP_PORT         puerto (por defecto 22)
+name: Desplegar por SFTP
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Nunca dos despliegues a la vez; si llega otro push, el pendiente espera.
+concurrency:
+  group: deploy-sftp
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Valida datos + build + enlaces internos. Si algo falla, no se sube nada.
+      - run: npm run audit
+
+      - name: Instalar lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Subir dist/ por SFTP
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT || '22' }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          SFTP_REMOTE_DIR: ${{ secrets.SFTP_REMOTE_DIR }}
+          SFTP_PRIVATE_KEY: ${{ secrets.SFTP_PRIVATE_KEY }}
+          LFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${SFTP_HOST:?Falta el secret SFTP_HOST}"
+          : "${SFTP_USER:?Falta el secret SFTP_USER}"
+          : "${SFTP_REMOTE_DIR:?Falta el secret SFTP_REMOTE_DIR}"
+
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          ssh-keyscan -p "$SFTP_PORT" -H "$SFTP_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          SSH="ssh -a -x -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
+          if [ -n "$SFTP_PRIVATE_KEY" ]; then
+            printf '%s\n' "$SFTP_PRIVATE_KEY" > ~/.ssh/deploy_key
+            chmod 600 ~/.ssh/deploy_key
+            SSH="$SSH -i $HOME/.ssh/deploy_key"
+            OPEN="open -u $SFTP_USER, -p $SFTP_PORT sftp://$SFTP_HOST"
+          else
+            : "${LFTP_PASSWORD:?Falta SFTP_PASSWORD o SFTP_PRIVATE_KEY}"
+            OPEN="open --env-password -u $SFTP_USER -p $SFTP_PORT sftp://$SFTP_HOST"
+          fi
+
+          # --delete borra en el servidor lo que ya no existe en dist/.
+          # Se excluyen ficheros propios del hosting que no vienen del repo.
+          lftp -c "
+            set net:max-retries 3;
+            set net:timeout 30;
+            set sftp:connect-program '$SSH';
+            $OPEN;
+            mirror --reverse --delete --verbose --parallel=4 \
+              --exclude-glob .htaccess \
+              --exclude-glob .well-known/ \
+              --exclude-glob cgi-bin/ \
+              --exclude-glob .user.ini \
+              dist/ $SFTP_REMOTE_DIR;
+          "
