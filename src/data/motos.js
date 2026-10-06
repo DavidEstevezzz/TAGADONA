@@ -44,6 +44,65 @@
 
 export const motos = [
   {
+    slug: "keeway-vieste-300-xdv-2026",
+    marca: "Keeway",
+    modelo: "Vieste 300 XDV",
+    categoria: "Scooter · Maxiscooter",
+    anio: 2026,
+    km: 1800,
+    precio: 2499,
+    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    destacada: true,                 // true = sale primero en el catálogo
+    fotos: [
+      "keeway-vieste-300-xdv-2026-1.jpg",
+      "keeway-vieste-300-xdv-2026-2.jpg",
+      "keeway-vieste-300-xdv-2026-3.jpg",
+      "keeway-vieste-300-xdv-2026-4.jpg",
+      "keeway-vieste-300-xdv-2026-5.jpg",
+      "keeway-vieste-300-xdv-2026-6.jpg",
+      "keeway-vieste-300-xdv-2026-7.jpg",
+    ],
+    // Datos rápidos (los 4 de arriba)
+    cilindrada: "278 cc",
+    potencia: "25,8 CV",
+    combustible: "Gasolina",
+    carnet: "A2 / A",
+    // Ficha técnica completa
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos · 278 cc · Refrigeración líquida",
+      "Potencia": "25,8 CV a 8.250 rpm",
+      "Par máximo": "24 Nm a 7.000 rpm",
+      "Cambio": "Automático CVT",
+      "Frenos": "Disco delante y detrás con ABS",
+      "Pantalla": "LCD con presión de neumáticos, temperatura y nivel de combustible",
+      "Neumáticos": "Mixtos de tacos · control de presión (TPMS)",
+      "Arranque": "Llave de proximidad (keyless)",
+      "Puños": "Calefactables",
+      "Cúpula": "Ajustable",
+      "Piñas": "Retroiluminadas",
+      "Iluminación": "Full LED",
+      "Portabultos": "Parrilla trasera",
+      "Caballete": "Central",
+      "Peso en vacío": "159 kg",
+      "Altura del asiento": "800 mm",
+      "Depósito": "13,5 l",
+      "Emisiones": "Euro 5",
+      "Plazas": "2",
+      "Color": "Negro mate",
+      "Estado": "Prácticamente nueva",
+      "Garantía": "Oficial",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Keeway Vieste 300 XDV del año 2026 con solo 1.800 km, en color negro. Un scooter prácticamente nuevo y con la garantía oficial de la marca todavía en vigor.",
+      "Es el maxiscooter de aire aventurero de Keeway: postura erguida, manillar ancho, cúpula ajustable, neumáticos mixtos de tacos y parrilla trasera. Pensado para moverse a diario por ciudad con soltura y para salir a carretera o a algún camino de tierra sin pensárselo.",
+      "Viene muy completo de serie: puños calefactables, piñas retroiluminadas, arranque sin llave, control de presión de neumáticos con la lectura en la pantalla, ABS, iluminación full LED y caballete central.",
+      "Monta un monocilíndrico de 278 cc refrigerado por líquido con 25,8 CV y cambio automático CVT. Con solo 159 kg en vacío es ligero y manejable, y es apto para carnet A2.",
+      "Se vende por 2.499 €, con cambio de nombre incluido y garantía oficial. Disponible en Granada.",
+    ],
+  },
+
+  {
     slug: "bmw-c-400-x-2021",
     marca: "BMW",
     modelo: "C 400 X",
