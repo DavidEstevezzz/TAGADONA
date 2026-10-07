@@ -201,7 +201,7 @@ export const motos = [
     anio: 2021,
     km: 62200,
     precio: 1700,
-    estado: "Reservada",             // "Disponible" | "Reservada" | "Vendida"
+    estado: "Vendida",             // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
       "bmw-c-400-x-2021-1.jpg",
@@ -256,7 +256,7 @@ export const motos = [
     anio: 2018,
     km: 3600,
     precio: 2600,
-    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    estado: "Vendida",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
       "piaggio-beverly-300-2018-1.jpg",
@@ -302,7 +302,7 @@ export const motos = [
     anio: 2010,
     km: 21500,
     precio: 9250,
-    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    estado: "Vendida",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
       "harley-davidson-sportster-1200-nightster-2010-1.jpeg",
@@ -365,7 +365,7 @@ export const motos = [
     anio: 2025,
     km: 2500,
     precio: 4150,
-    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    estado: "Vendida",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,                 // true = sale primero en el catálogo
     fotos: [
       "zontes-368k-2025-1.png",
@@ -581,7 +581,7 @@ export const motos = [
     anio: 2019,
     km: 35500,
     precio: 2499,
-    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    estado: "Vendida",            // "Disponible" | "Reservada" | "Vendida"
     destacada: true,
     fotos: [
       "honda-sh-125-2019-1.jpg",
@@ -636,7 +636,7 @@ export const motos = [
     anio: 2017,
     km: 44878,
     precio: 1050,
-    estado: "Disponible",
+    estado: "Vendida",
     destacada: false,
     seccion: "reparacion",
     fotos: [
