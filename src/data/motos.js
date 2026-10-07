@@ -44,6 +44,52 @@
 
 export const motos = [
   {
+    slug: "honda-deauville-700-2006",
+    marca: "Honda",
+    modelo: "Deauville 700",
+    categoria: "Turismo",
+    anio: 2006,
+    km: 26600,
+    precio: 2850,
+    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    destacada: true,                 // true = sale primero en el catálogo
+    fotos: [
+      "honda-deauville-700-2006-1.jpg",
+      "honda-deauville-700-2006-2.jpg",
+      "honda-deauville-700-2006-3.jpg",
+      "honda-deauville-700-2006-4.jpg",
+    ],
+    // Datos rápidos (los 4 de arriba)
+    cilindrada: "680 cc",
+    potencia: "Limitada A2 (35 kW)",
+    combustible: "Gasolina",
+    carnet: "A2 / A",
+    // Ficha técnica completa
+    especificaciones: {
+      "Motor": "Bicilíndrico en V a 52° · 4 tiempos · 680 cc · Refrigeración líquida",
+      "Potencia": "65 CV de origen · limitada a 35 kW para carnet A2",
+      "Par máximo": "66 Nm a 6.500 rpm (de origen)",
+      "Cambio": "Manual de 5 velocidades",
+      "Transmisión final": "Cardán",
+      "Frenos": "Doble disco delante y disco detrás con frenada combinada",
+      "Neumáticos": "120/70-17 delante · 150/70-17 detrás",
+      "Maletas": "Laterales integradas en la carrocería",
+      "Top case": "Sí",
+      "Cúpula": "Parabrisas alto",
+      "Plazas": "2",
+      "Color": "Negro",
+      "Venta": "En gestión de venta",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Honda Deauville 700 (NT700V) del año 2006 con 26.600 km. Una moto cómoda y mucho más ligera y manejable en marcha de lo que puede parecer por su tamaño. Una opción muy interesante tanto para el día a día como para hacer rutas con comodidad.",
+      "Esta unidad está limitada para carnet A2. Monta el bicilíndrico en V de 680 cc de Honda, refrigerado por líquido, con cambio de cinco velocidades y transmisión final por cardán: suave, fiable y sin cadena que engrasar ni tensar.",
+      "Lleva sus maletas laterales integradas en la carrocería, muy prácticas para llevar lo necesario sin añadir volumen, y además incorpora top case, así que la capacidad de carga es bastante completa. Parabrisas alto y asiento amplio para viajar dos.",
+      "La moto está en gestión de venta y sale por 2.850 €, con cambio de nombre incluido. En Granada.",
+    ],
+  },
+
+  {
     slug: "yamaha-xmax-125-2007",
     marca: "Yamaha",
     modelo: "XMAX 125",
