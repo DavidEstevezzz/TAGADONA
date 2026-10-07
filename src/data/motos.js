@@ -44,6 +44,51 @@
 
 export const motos = [
   {
+    slug: "yamaha-xmax-125-2007",
+    marca: "Yamaha",
+    modelo: "XMAX 125",
+    categoria: "Scooter · Urbana",
+    anio: 2007,
+    km: 29760,
+    precio: 1500,
+    estado: "Disponible",            // "Disponible" | "Reservada" | "Vendida"
+    destacada: true,                 // true = sale primero en el catálogo
+    fotos: [
+      "yamaha-xmax-125-2007-1.jpg",
+      "yamaha-xmax-125-2007-2.jpg",
+      "yamaha-xmax-125-2007-3.jpg",
+      "yamaha-xmax-125-2007-4.jpg",
+    ],
+    // Datos rápidos (los 4 de arriba)
+    cilindrada: "125 cc",
+    potencia: "14 CV",
+    combustible: "Gasolina",
+    carnet: "A1 / B + 3 años",
+    // Ficha técnica completa
+    especificaciones: {
+      "Motor": "Monocilíndrico · 4 tiempos · 125 cc · Refrigeración líquida",
+      "Potencia": "14 CV a 8.750 rpm",
+      "Par máximo": "11,3 Nm",
+      "Cambio": "Automático CVT",
+      "Frenos": "Disco delante (267 mm) y detrás (240 mm)",
+      "Neumáticos": "120/70-15 delante · 140/70-14 detrás",
+      "Altura del asiento": "775 mm",
+      "Depósito": "12,5 l",
+      "Cúpula": "Parabrisas alto",
+      "Plazas": "2",
+      "Color": "Negro",
+      "Garantía": "12 meses de motor",
+      "Ubicación": "Granada",
+    },
+    descripcion: [
+      "Yamaha XMAX 125 del año 2007 con 29.760 km, en negro. Uno de los scooters 125 más vendidos y con mejor fama de fiable, a un precio muy ajustado.",
+      "Es una 125 de las grandes: rueda de 15 pulgadas delante y 14 detrás, frenos de disco en los dos ejes y un asiento amplio y cómodo para dos. Lleva parabrisas alto, que se agradece en invierno y en carretera.",
+      "Monta el monocilíndrico de 125 cc refrigerado por líquido de Yamaha, con 14 CV y cambio automático CVT. Se conduce con carnet A1 o con el B y tres años de antigüedad, así que es una buena opción para moverse por Granada a diario sin complicarse.",
+      "Se vende por 1.500 €, con cambio de nombre incluido y 12 meses de garantía de motor. Disponible en Granada.",
+    ],
+  },
+
+  {
     slug: "keeway-vieste-300-xdv-2026",
     marca: "Keeway",
     modelo: "Vieste 300 XDV",
