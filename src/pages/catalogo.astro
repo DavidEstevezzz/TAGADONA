@@ -10,11 +10,33 @@ const totalReparar = motosReparacion.filter(m=>m.estado==="Disponible").length;
 const tipos = [...new Set(activas.map(m=>m.categoria.split(" · ")[0].trim()))];
 const carnets = [...new Set(activas.map(m=>m.carnet.replace(/\s*\(.*\)/,"").trim()))];
 const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservada" : "";
+
+// Enlace explícito a las fichas que realmente están a la venta.
+// Las reservadas siguen visibles en la página, pero no se anuncian
+// como disponibles en esta lista para buscadores.
+const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
+const stockSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Motos de segunda mano disponibles en Tagadona Racing",
+  url: new URL("/catalogo/", SITE).href,
+  numberOfItems: total,
+  itemListElement: activas
+    .filter((m) => m.estado === "Disponible")
+    .map((m, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: `${m.marca} ${m.modelo} ${m.anio}`,
+      url: new URL(`/motos/${m.slug}/`, SITE).href,
+    })),
+};
 ---
 <Base
   title="Catálogo de motos disponibles en Granada | Tagadona Racing"
   desc="Consulta las motos disponibles actualmente en Tagadona Racing. Scooters, motos 125 y motos A2 revisadas, con garantía y transferencia incluida. Filtra por tipo, carnet y precio."
 >
+
+  <script type="application/ld+json" set:html={JSON.stringify(stockSchema)} />
 
   <!-- Banner -->
   <section class="cat-hero">
@@ -51,7 +73,7 @@ const slugEstado = (e)=> e==="Vendida" ? "vendida" : e==="Reservada" ? "reservad
         <input type="range" id="precioMax" min="1000" max="10000" step="500" value="10000" />
         <span class="fil-precio-val cond" id="precioVal">Sin límite</span>
       </div>
-      <span class="fil-count cond" id="filCount">{total} motos</span>
+      <span class="fil-count cond" id="filCount">{activas.length} motos</span>
     </div>
   </div>
 
