@@ -355,21 +355,24 @@ const negocioSchema = {
   </style>
 
   <script>
+    import { trackingEventsForClick } from '../lib/tracking.js';
+
     // ===== MEDICIÓN DE CONVERSIONES (no bloqueante) =====
-    // Se manda un solo evento al dataLayer de GTM tras aceptar analítica.
-    // No se llama a gtag() directamente para evitar duplicados.
-    // Si no hay consentimiento, CookieConsent no carga GTM/dataLayer.
+    // cta_click registra la interacción genérica y, si corresponde,
+    // un único evento comercial: contacto_whatsapp, solicitud_tasacion
+    // o contacto_telefono. GTM solo se carga tras aceptar analítica.
     document.addEventListener('click', (e) => {
       const el = e.target.closest && e.target.closest('[data-track]');
       if (!el) return;
       try {
-        const payload = {
-          event: 'cta_click',
-          cta: el.dataset.track,
-          source: el.dataset.source || null,
-          moto: el.dataset.moto || null,
-        };
-        if (Array.isArray(window.dataLayer)) window.dataLayer.push(payload);
+        if (Array.isArray(window.dataLayer)) {
+          const eventos = trackingEventsForClick({
+            cta: el.dataset.track,
+            source: el.dataset.source,
+            moto: el.dataset.moto,
+          });
+          for (const evento of eventos) window.dataLayer.push(evento);
+        }
       } catch (_) { /* la medición nunca debe romper la navegación */ }
     }, { passive: true });
 

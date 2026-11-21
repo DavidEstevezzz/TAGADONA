@@ -8,7 +8,8 @@
     "preview": "astro preview",
     "validate:data": "node scripts/validate-data.mjs",
     "validate:links": "node scripts/validate-links.mjs",
-    "audit": "npm run validate:data && npm run build && npm run validate:links"
+    "audit": "npm run validate:data && npm run build && npm run validate:links && npm run test:analytics",
+    "test:analytics": "node --test tests/tracking.test.mjs tests/gtm-import.test.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",
