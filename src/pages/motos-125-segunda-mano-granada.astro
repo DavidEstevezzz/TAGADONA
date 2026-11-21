@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import LandingCategoria from '../components/LandingCategoria.astro';
-import { motosVenta } from '../data/motos.js';
+import { motosVenta, formatPrecio } from '../data/motos.js';
 import { breadcrumbSchema, faqSchema } from '../lib/seo.js';
 
 const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
@@ -12,6 +12,15 @@ const PATH = "/motos-125-segunda-mano-granada/";
 const seleccion = motosVenta
   .filter((m) => /^125/.test(m.cilindrada) && m.estado !== "Vendida")
   .sort((a, b) => (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0));
+
+const precios = seleccion.filter(m => m.estado === "Disponible").map(m => m.precio);
+function precioActual() {
+  if (!precios.length) return "En este momento no tenemos una 125 disponible. Puedes consultarnos por próximas incorporaciones.";
+  const minimo = Math.min(...precios);
+  const maximo = Math.max(...precios);
+  if (minimo === maximo) return `El precio de las 125 disponibles ahora en Tagadona Racing es de ${formatPrecio(minimo)}, con transferencia incluida.`;
+  return `Las 125 disponibles ahora en Tagadona Racing van de ${formatPrecio(minimo)} a ${formatPrecio(maximo)}, con transferencia incluida. En cada ficha puedes comparar año, kilómetros y equipamiento.`;
+}
 
 const faqs = [
   {
@@ -32,7 +41,7 @@ const faqs = [
   },
   {
     q: "¿Cuánto cuesta una 125 de segunda mano en Granada?",
-    a: "Depende del modelo, los kilómetros y el año, pero en nuestro stock encontrarás 125 revisadas en una horquilla de precio contenida. Consulta las disponibles más arriba o escríbenos y te decimos qué tenemos ahora mismo.",
+    a: precioActual(),
   },
 ];
 
