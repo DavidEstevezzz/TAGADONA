@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import CookieConsent from '../components/CookieConsent.astro';
 import { business, tel, mailto, whatsapp } from '../config/business.js';
 const {
   title = "Tagadona Racing",
@@ -217,6 +218,7 @@ const negocioSchema = {
     </div>
     <div class="wrap ft-bottom">
       <span>© 2026 Tagadona Racing. Todos los derechos reservados.</span>
+      <button id="cookie-settings" class="cookie-settings-link" type="button">Configurar cookies</button>
       <div class="ft-social" aria-label="Redes sociales">
         <a href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram" data-track="red_social" data-source="footer_instagram">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -232,6 +234,8 @@ const negocioSchema = {
       </div>
     </div>
   </footer>
+
+  <CookieConsent />
 
   <style>
     .nav{position:fixed;top:0;left:0;right:0;z-index:100;
@@ -283,6 +287,8 @@ const negocioSchema = {
     .ft-bottom{display:flex;align-items:center;justify-content:space-between;
       padding:var(--s-5) clamp(20px,5vw,48px);border-top:1px solid var(--line);
       margin-top:0;font-size:13px;color:var(--text-faint)}
+    .cookie-settings-link{background:none;border:0;color:var(--text-dim);font:inherit;font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+    .cookie-settings-link:hover{color:var(--orange-bright)}
     .ft-social{display:flex;gap:var(--s-4)}
     .ft-social a{color:var(--text-dim);border:1px solid var(--line);
       width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
@@ -350,11 +356,9 @@ const negocioSchema = {
 
   <script>
     // ===== MEDICIÓN DE CONVERSIONES (no bloqueante) =====
-    // Un único listener delegado envía un evento por cada clic en un elemento
-    // con [data-track]. Si hay Google Tag Manager (dataLayer) o Google
-    // Analytics (gtag) en la página, reenvía el evento; si no hay ninguno,
-    // no hace nada (sin errores). Así se puede conectar GA/GTM más adelante
-    // sin tocar el marcado. Requiere aviso de cookies según la herramienta.
+    // Se manda un solo evento al dataLayer de GTM tras aceptar analítica.
+    // No se llama a gtag() directamente para evitar duplicados.
+    // Si no hay consentimiento, CookieConsent no carga GTM/dataLayer.
     document.addEventListener('click', (e) => {
       const el = e.target.closest && e.target.closest('[data-track]');
       if (!el) return;
@@ -366,11 +370,6 @@ const negocioSchema = {
           moto: el.dataset.moto || null,
         };
         if (Array.isArray(window.dataLayer)) window.dataLayer.push(payload);
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', el.dataset.track, {
-            source: payload.source, moto: payload.moto,
-          });
-        }
       } catch (_) { /* la medición nunca debe romper la navegación */ }
     }, { passive: true });
 
