@@ -96,11 +96,15 @@ export function prepareGtmImport(input) {
         {
           type: "LIST",
           key: "eventSettingsTable",
-          list: ["cta", "source", "moto"].map((key) => ({
+          list: [
+            { parameter: "cta", variable: "cta" },
+            { parameter: "cta_source", variable: "source" },
+            { parameter: "moto", variable: "moto" },
+          ].map(({ parameter, variable }) => ({
             type: "MAP",
             map: [
-              param("parameter", key),
-              param("parameterValue", `{{Tagadona - DLV ${key}}}`),
+              param("parameter", parameter),
+              param("parameterValue", `{{Tagadona - DLV ${variable}}}`),
             ],
           })),
         },
