@@ -1,0 +1,34 @@
+name: Auditoría de inventario y SEO
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Obtener código
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Validar datos, compilar y verificar enlaces
+        run: npm run audit
+
+      - name: Verificar feed y datos estructurados del stock
+        run: node scripts/check-inventory-feed.mjs
