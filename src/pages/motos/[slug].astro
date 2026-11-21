@@ -92,12 +92,14 @@ const fichaUrl = new URL(`/motos/${moto.slug}/`, SITE).href;
 const disponibilidad = vendida
   ? "https://schema.org/SoldOut"
   : moto.estado === "Reservada"
-    ? "https://schema.org/LimitedAvailability"
+    ? "https://schema.org/OutOfStock"
     : "https://schema.org/InStock";
 const motoSchema = {
   "@context": "https://schema.org",
   "@type": "Product",
   name: `${moto.marca} ${moto.modelo} ${moto.anio}`,
+  "@id": `${fichaUrl}#moto`,
+  url: fichaUrl,
   description: repara
     ? `${moto.descripcion.join(" ")} Desperfectos declarados: ${desperfectos.join("; ")}.`
     : moto.descripcion.join(" "),
@@ -107,6 +109,12 @@ const motoSchema = {
   sku: moto.slug,
   itemCondition: "https://schema.org/UsedCondition",
   category: moto.categoria,
+  additionalProperty: [
+    { "@type": "PropertyValue", name: "Año", value: moto.anio },
+    { "@type": "PropertyValue", name: "Kilometraje", value: moto.km, unitCode: "KMT", unitText: "km" },
+    { "@type": "PropertyValue", name: "Carnet", value: moto.carnet },
+    { "@type": "PropertyValue", name: "Cilindrada", value: moto.cilindrada },
+  ],
   offers: {
     "@type": "Offer",
     url: fichaUrl,
