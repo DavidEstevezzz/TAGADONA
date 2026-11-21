@@ -40,11 +40,12 @@ export const business = {
   // --- Horario ---
   // Franjas para el schema (openingHoursSpecification) y textos legibles.
   horario: [
-    { dias: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], abre: "09:30", cierra: "14:00" },
+    { dias: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], abre: "08:00", cierra: "15:00" },
     { dias: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], abre: "17:00", cierra: "20:00" },
+    { dias: ["Saturday"], abre: "08:00", cierra: "15:00" },
   ],
-  horarioTexto: "Lunes a viernes · 9:30 – 14:00 y 17:00 – 20:00",
-  horarioSabado: "Sábados con cita previa.",
+  horarioTexto: "Lunes a viernes · 8:00 – 15:00 y 17:00 – 20:00",
+  horarioSabado: "Sábados · 8:00 – 15:00",
 
   // --- Atención con cita previa ---
   citaPrevia: true,
