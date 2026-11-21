@@ -31,6 +31,12 @@ El código web instala el contenedor, pero **por sí solo no conecta GA4**. En h
 
 La etiqueta debe existir una sola vez en ese contenedor. No insertes `gtag.js` de GA4 directamente en el sitio si usas esta configuración.
 
+## Conversiones comerciales
+
+Las tres conversiones de Tagadona se configuran juntas a través de la exportación/importación de GTM. Consulta [docs/gtm-conversiones.md](./gtm-conversiones.md) para generar el archivo de importación y verificar los eventos `contacto_whatsapp`, `solicitud_tasacion` y `contacto_telefono`.
+
+Estos eventos son clics que indican intención de contacto; no se deben interpretar como venta, tasación recibida ni llamada atendida.
+
 ## Eventos de clic existentes
 
 `src/layouts/Base.astro` emite un evento en `dataLayer` por cada clic en un elemento con `data-track` solo cuando GTM ha sido cargado tras aceptar. Formato:
@@ -46,7 +52,7 @@ La etiqueta debe existir una sola vez en ese contenedor. No insertes `gtag.js` d
 
 Eventos de interés: `whatsapp_flotante`, `whatsapp_moto`, `whatsapp_tasacion`, `whatsapp_general`, `quiero_parecida`, `telefono`, `email`, `como_llegar`, `ver_catalogo`, `ver_ficha`, `vender_moto` y `red_social`.
 
-Para que estos eventos aparezcan en GA4, configura en GTM:
+Para registrar **también** el evento genérico `cta_click` en GA4 (opcional y distinto de las tres conversiones), configura en GTM:
 - Un **Activador de evento personalizado** con nombre del evento: `cta_click`.
 - Variables de capa de datos, versión 2: `cta`, `source`, `moto`.
 - Una **Etiqueta de evento de Google Analytics: GA4** con ID de medición `G-XZRX950DDQ`, nombre de evento `cta_click`, parámetros `cta`, `source`, `moto`, y el activador anterior.
