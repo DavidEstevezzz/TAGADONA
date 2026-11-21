@@ -235,7 +235,7 @@ const negocioSchema = {
     </div>
   </footer>
 
-  <CookieConsent />
+  {!path.startsWith("/admin") && <CookieConsent />}
 
   <style>
     .nav{position:fixed;top:0;left:0;right:0;z-index:100;
