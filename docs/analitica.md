@@ -1,53 +1,73 @@
-# Medición de conversiones
+# Analítica de Tagadona Racing
 
-La web emite un evento por cada clic en un elemento con `data-track`. El
-despachador vive en `src/layouts/Base.astro` (un único listener delegado, no
-bloqueante). **No incluye ninguna herramienta de seguimiento por sí solo**:
-solo reenvía los eventos a Google Tag Manager (`dataLayer`) o Google Analytics
-(`gtag`) **si están presentes** en la página. Si no hay ninguno, no hace nada
-y no genera errores.
+## Identificadores
 
-## Cómo conectar Google Analytics 4 (o GTM)
+- Contenedor principal de Google Tag Manager: `GTM-PL9RNV5J`.
+- Flujo web de Google Analytics 4: `G-XZRX950DDQ`.
+- **No instalar también** el snippet alternativo `GTM-NRMMR842` ofrecido por el asistente de Google Analytics: duplicaría o complicaría el seguimiento.
 
-Añade el snippet oficial en el `<head>` de `src/layouts/Base.astro` (justo
-antes de `</head>`). Ejemplo con GA4:
+## Instalación en la web
 
-```html
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXХ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XXXXXXX');
-</script>
+El componente `src/components/CookieConsent.astro` se incluye desde `src/layouts/Base.astro`.
+- En la primera visita muestra un aviso de cookies de analítica con **Aceptar** y **Rechazar**.
+- Antes de aceptar no se carga ninguna etiqueta de GTM/GA4 desde esta integración (modo de consentimiento básico).
+- Tras aceptar, se añade dinámicamente el script `gtm.js?id=GTM-PL9RNV5J`.
+- La decisión se guarda en `localStorage` con la clave `tagadona_analytics_consent_v1`. Se puede revisar desde **Configurar cookies** en el pie de página.
+- Si el usuario revoca el consentimiento después de que GTM haya cargado, se recarga la página para dejar de ejecutar las etiquetas.
+- No se añade `noscript` de GTM de forma incondicional, para no iniciar mediciones sin consentimiento.
+- Antes de publicar es necesario revisar la página `/politica-de-cookies/` y el resto de obligaciones de información de protección de datos con los datos legales reales de la empresa.
+
+## Paso manual OBLIGATORIO en Tag Manager
+
+El código web instala el contenedor, pero **por sí solo no conecta GA4**. En https://tagmanager.google.com/:
+
+1. Abre el contenedor **GTM-PL9RNV5J**.
+2. Ve a **Etiquetas → Nueva → Configuración de la etiqueta → Etiqueta de Google**.
+3. En **ID de etiqueta**, introduce `G-XZRX950DDQ`.
+4. En **Activación**, elige **Inicialización — Todas las páginas**.
+5. Guarda. Usa **Vista previa** para probar la instalación aceptando cookies en el sitio.
+6. Pulsa **Enviar → Publicar** para activar la versión de GTM.
+7. Comprueba la propiedad GA4 mediante **Informes → Tiempo real** o **DebugView**.
+
+La etiqueta debe existir una sola vez en ese contenedor. No insertes `gtag.js` de GA4 directamente en el sitio si usas esta configuración.
+
+## Eventos de clic existentes
+
+`src/layouts/Base.astro` emite un evento en `dataLayer` por cada clic en un elemento con `data-track` solo cuando GTM ha sido cargado tras aceptar. Formato:
+
+```js
+{
+  event: 'cta_click',
+  cta: 'whatsapp_moto',
+  source: 'ficha',
+  moto: 'honda-sh-125-2019'
+}
 ```
 
-A partir de ahí, los clics con `data-track` llegan solos como eventos.
+Eventos de interés: `whatsapp_flotante`, `whatsapp_moto`, `whatsapp_tasacion`, `whatsapp_general`, `quiero_parecida`, `telefono`, `email`, `como_llegar`, `ver_catalogo`, `ver_ficha`, `vender_moto` y `red_social`.
 
-> **Aviso de cookies:** GA4 y GTM usan cookies/identificadores. Antes de
-> activarlos en producción hay que mostrar un banner de consentimiento y
-> cargar el script solo tras la aceptación (o usar Consent Mode). Este paso
-> queda pendiente de decisión del propietario.
+Para que estos eventos aparezcan en GA4, configura en GTM:
+- Un **Activador de evento personalizado** con nombre del evento: `cta_click`.
+- Variables de capa de datos, versión 2: `cta`, `source`, `moto`.
+- Una **Etiqueta de evento de Google Analytics: GA4** con ID de medición `G-XZRX950DDQ`, nombre de evento `cta_click`, parámetros `cta`, `source`, `moto`, y el activador anterior.
+- Publica la versión tras comprobar con Vista previa que aparece **una sola** ocurrencia por clic.
 
-## Eventos que se emiten
+Si quieres consultar `cta`, `source` y `moto` en informes personalizados, regístralos en GA4 como dimensiones personalizadas de ámbito Evento. Para medir contactos, crea un evento derivado o un activador filtrado por `cta` (WhatsApp o teléfono) y márcalo como evento clave. Un clic indica intención de contacto, **no una venta ni una conversación confirmada**.
 
-Cada evento lleva `cta` (el `data-track`), `source` (`data-source`) y, cuando
-aplica, `moto` (`data-moto`, el slug de la ficha).
+## Visitas procedentes de ChatGPT
 
-| `cta`               | Dónde                                            |
-|---------------------|--------------------------------------------------|
-| `whatsapp_flotante` | Botón flotante de WhatsApp (todas las páginas)   |
-| `whatsapp_moto`     | WhatsApp desde una ficha disponible              |
-| `whatsapp_tasacion` | WhatsApp de tasación (landing de venta)          |
-| `whatsapp_general`  | WhatsApp de contacto / landings                  |
-| `quiero_parecida`   | WhatsApp desde una ficha vendida                 |
-| `telefono`          | Enlaces `tel:` (footer, contacto, fichas, CTAs)  |
-| `email`             | Enlaces `mailto:`                                |
-| `como_llegar`       | Enlace a Google Maps                             |
-| `ver_catalogo`      | Botones "Ver catálogo"                           |
-| `ver_ficha`         | Tarjetas de moto (incluye `moto`)                |
-| `vender_moto`       | CTAs "Vender mi moto" (hero, nav, CTA final)     |
-| `red_social`        | Instagram / TikTok                               |
+Analiza **Adquisición de tráfico** y el origen/medio de sesión (`chatgpt.com / referral`, por ejemplo). Los enlaces de ChatGPT pueden incluir `utm_source=chatgpt.com`; además conviene comparar el tráfico de referencia y los parámetros de campaña. La procedencia puede no estar disponible en todas las visitas.
 
-Para medir una conversión concreta se puede distinguir por `cta` + `source`
-(p. ej. `whatsapp_moto` con `source=ficha` y `moto=honda-sh-125-2019`).
+## Comprobaciones previas al despliegue
+
+```bash
+npm ci
+npm run audit
+```
+
+Pruebas manuales:
+- Rechazar cookies: no se solicita `gtm.js` ni se registran sesiones en GA4 desde esta integración.
+- Aceptar cookies: se solicita `gtm.js?id=GTM-PL9RNV5J` una sola vez; GA4 registra al menos una visita cuando la etiqueta está publicada.
+- Reabrir preferencias y rechazar: el sitio recarga y ya no se carga GTM.
+- Tras aceptar, comprobar en Vista previa de Tag Manager que los clics `cta_click` se registran solo una vez.
+- Revisar diseño y comportamiento móvil del banner.

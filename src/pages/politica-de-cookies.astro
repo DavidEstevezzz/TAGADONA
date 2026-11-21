@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import { business, mailto } from '../config/business.js';
+---
+<Base
+  title="Política de cookies | Tagadona Racing"
+  desc="Información sobre el uso de cookies de analítica y cómo gestionar tu consentimiento en Tagadona Racing."
+>
+  <section class="wrap cookies-page">
+    <p class="eyebrow">Transparencia</p>
+    <h1 class="sec-title">Política de cookies</h1>
+    <p class="cookies-intro">Última actualización: 21 de noviembre de 2026.</p>
+
+    <h2>¿Qué utilizamos?</h2>
+    <p>La web utiliza almacenamiento local para recordar si has aceptado o rechazado las cookies de analítica. Este ajuste es necesario para respetar tu preferencia y no se utiliza para medir tu actividad.</p>
+    <p>Si aceptas la analítica, cargamos Google Tag Manager para utilizar Google Analytics 4 y conocer datos estadísticos de uso de la web, como páginas visitadas, procedencia de las visitas y clics en botones de contacto. Google Analytics puede establecer cookies, por ejemplo <code>_ga</code> y cookies con el prefijo <code>_ga_</code>. Su duración depende de la configuración vigente de Google Analytics.</p>
+    <p>Si rechazas la analítica, no cargamos este contenedor de Tag Manager ni Google Analytics mediante nuestra integración.</p>
+
+    <h2>Tu elección</h2>
+    <p>Las cookies de analítica son opcionales. Puedes aceptarlas o rechazarlas desde el aviso inicial y cambiar tu decisión en cualquier momento con el enlace «Configurar cookies» del pie de página. La opción de rechazo no impide utilizar la web.</p>
+
+    <h2>Proveedor e información adicional</h2>
+    <p>El servicio de medición utilizado es Google Analytics 4, de Google. Puedes consultar la <a href="https://policies.google.com/technologies/cookies?hl=es" target="_blank" rel="noopener noreferrer">información de Google sobre cookies</a>. Si necesitas información adicional sobre el tratamiento de datos relacionado con esta web, puedes escribir a <a href={mailto}>{business.email}</a>.</p>
+  </section>
+  <style>
+    .cookies-page{padding-top:calc(74px + var(--s-9));padding-bottom:var(--s-9);max-width:900px}
+    .cookies-page h1{margin:var(--s-4) 0 var(--s-4)}
+    .cookies-intro{color:var(--text-faint);margin-bottom:var(--s-7)}
+    .cookies-page h2{font-size:22px;font-weight:600;margin-top:var(--s-7);margin-bottom:var(--s-3)}
+    .cookies-page p{color:var(--text-dim);font-size:var(--fs-body);line-height:1.8;margin-bottom:var(--s-4)}
+    .cookies-page a{color:var(--orange-bright);text-decoration:underline;text-underline-offset:3px}
+    .cookies-page code{font-size:0.93em;color:var(--text)}
+  </style>
+</Base>
