@@ -78,13 +78,13 @@ const altBase = repara
   : `${moto.marca} ${moto.modelo} ${moto.anio} de segunda mano en Granada`;
 
 // SEO: título y descripción específicos de la ficha
-const seoTitle = repara
-  ? `${moto.marca} ${moto.modelo} ${moto.anio} para reparar en Granada | ${formatPrecio(moto.precio)}`
-  : `${moto.marca} ${moto.modelo} ${moto.anio} de segunda mano en Granada | ${formatPrecio(moto.precio)}`;
 const estadoTexto = vendida ? "Vendida" : moto.estado === "Reservada" ? "Reservada" : "Disponible";
-const seoDesc = repara
-  ? `${moto.marca} ${moto.modelo} ${moto.anio} para reparar en Granada · ${formatKm(moto.km)} · ${formatPrecio(moto.precio)}. ${estadoTexto}. Se vende tal cual y sin garantía, con todos los desperfectos detallados en el anuncio.`
-  : `${moto.marca} ${moto.modelo} ${moto.anio} de segunda mano en Granada · ${formatKm(moto.km)} · ${formatPrecio(moto.precio)}. ${estadoTexto}, inspeccionada punto por punto, con garantía y transferencia (cambio de nombre) incluida.`;
+const seoTitle = `${altBase} | ${estadoTexto === "Disponible" ? formatPrecio(moto.precio) : estadoTexto}`;
+const seoDesc = vendida
+  ? `${altBase} · ${formatKm(moto.km)}. Unidad vendida. Consulta las alternativas de Tagadona Racing o pide que te localicemos una parecida.`
+  : repara
+    ? `${altBase} · ${formatKm(moto.km)} · ${formatPrecio(moto.precio)}. ${estadoTexto}. Se vende tal cual y sin garantía, con los desperfectos detallados en el anuncio.`
+    : `${altBase} · ${formatKm(moto.km)} · ${formatPrecio(moto.precio)}. ${estadoTexto}. Revisada, con garantía y transferencia incluidas.`;
 
 // SEO: datos estructurados de la moto (Product + Offer)
 const SITE = Astro.site ?? new URL("https://tagadonaracing.es");
