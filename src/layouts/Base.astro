@@ -397,11 +397,22 @@ const negocioSchema = {
     // Cerrar con tecla Escape
     document.addEventListener('keydown', (e) => { if(e.key === 'Escape') toggleMenu(true); });
 
-    // Revelado al scroll (IntersectionObserver)
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }});
-    }, {threshold:.14, rootMargin:'0px 0px -8% 0px'});
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    // El contenido empieza visible. Solo se animan los elementos que
+    // el observador confirma que están completamente fuera de pantalla.
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          const element = entry.target;
+          if (entry.isIntersecting || element.matches(':focus-within')) {
+            element.classList.remove('reveal-pending');
+            io.unobserve(element);
+          } else {
+            element.classList.add('reveal-pending');
+          }
+        }
+      });
+      document.querySelectorAll('.reveal:not(.in)').forEach(el => io.observe(el));
+    }
 
     // ===== SWAP DE LOGO HERO <-> NAV (solo en la home) =====
     // Si existe el logo del hero, el del nav arranca oculto y aparece
@@ -409,7 +420,7 @@ const negocioSchema = {
     // así que el del nav queda siempre visible.
     const navLogo = document.getElementById('navLogo');
     const heroLogo = document.getElementById('heroLogo');
-    if(navLogo && heroLogo){
+    if(navLogo && heroLogo && 'IntersectionObserver' in window){
       navLogo.classList.add('logo-hidden'); // oculto al cargar la home
       const swapIo = new IntersectionObserver((entries) => {
         entries.forEach(e => {
