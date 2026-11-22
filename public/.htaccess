@@ -1,5 +1,3 @@
-# Integrar al principio del .htaccess del dominio en un servidor Apache que
-# recibe HTTPS directamente. Con un proxy TLS, aplicar las reglas en el proxy.
 RewriteEngine On
 
 # Solo solicitudes externas de index.html (DirectoryIndex se resuelve internamente).
