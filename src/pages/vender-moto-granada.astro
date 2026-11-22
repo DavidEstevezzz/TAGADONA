@@ -44,6 +44,10 @@ const comprobaciones = [
 
 const faqs = [
   {
+    q: "¿Dónde puedo vender mi moto en Granada?",
+    a: `Puedes vender tu moto de segunda mano a Tagadona Racing en ${business.municipio} (${business.provincia}). Envíanos por WhatsApp unas fotos, el modelo, el año y los kilómetros para recibir una tasación orientativa sin compromiso. Si la oferta te encaja, revisamos la moto con cita previa y nos encargamos del cambio de nombre al cerrar la compra.`,
+  },
+  {
     q: "¿Cómo tasáis mi moto?",
     a: "Valoramos tu moto según el modelo, el año, los kilómetros, el estado general y los precios reales de mercado en ese momento. La primera cifra la damos a partir de las fotos y los datos que nos envías; es orientativa y puede ajustarse al ver la moto en persona. Te explicamos siempre cómo la hemos calculado.",
   },
@@ -72,8 +76,8 @@ const breadcrumb = breadcrumbSchema([
 const faqLd = faqSchema(faqs);
 ---
 <Base
-  title="Vender tu moto en Granada | Tasación y cambio de nombre | Tagadona Racing"
-  desc="¿Quieres vender tu moto en Granada? Te la tasamos sin compromiso, nos encargamos del cambio de nombre y te pagamos rápido. Escríbenos por WhatsApp."
+  title="Vender mi moto en Granada | Tagadona Racing"
+  desc="Vende tu moto de segunda mano en Granada. Pide una tasación sin compromiso por WhatsApp a Tagadona Racing. Nos encargamos del cambio de nombre."
 >
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
   <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
