@@ -1,0 +1,18 @@
+RewriteEngine On
+
+# Solo solicitudes externas de index.html (DirectoryIndex se resuelve internamente).
+RewriteCond %{HTTP_HOST} ^(?:www\.)?tagadonaracing\.es$ [NC]
+RewriteCond %{THE_REQUEST} "\s/+[^?\s]*index\.html(?:[?\s])"
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^(.*/)?index\.html$ https://tagadonaracing.es/$1 [R=301,L]
+
+# Canonizar los directorios existentes antes del salto de mod_dir.
+RewriteCond %{HTTP_HOST} ^(?:www\.)?tagadonaracing\.es$ [NC]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.*[^/])$ https://tagadonaracing.es/$1/ [R=301,L]
+
+# Mantener ruta y query al unificar protocolo y host.
+RewriteCond %{HTTP_HOST} ^(?:www\.)?tagadonaracing\.es$ [NC]
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://tagadonaracing.es%{REQUEST_URI} [R=301,L,NE]
