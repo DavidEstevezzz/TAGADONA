@@ -52,13 +52,13 @@ export const business = {
   citaPreviaTexto: "Atendemos solo con cita previa",
 
   // --- Redes sociales ---
-  instagram: "https://www.instagram.com/tagadonaracing/",
-  instagramHandle: "@tagadonaracing",
+  instagram: "https://www.instagram.com/tagadona.racing/",
+  instagramHandle: "@tagadona.racing",
   tiktok: "https://www.tiktok.com/@tagadona.racing",
   tiktokHandle: "@tagadona.racing",
 
   // --- Mapa / reseñas ---
-  maps: "https://www.google.com/maps/search/?api=1&query=Tagadona+Racing+Paraje+de+Catacena+Cogollos+de+la+Vega+Granada",
+  maps: "https://www.google.es/maps/place/Tagadona+Racing/@37.2886687,-3.5701499,17z/data=!4m6!3m5!1s0xd6e1de92b7b786b:0x6b5fb4e651b619d7!8m2!3d37.2886645!4d-3.567575!16s%2Fg%2F11nqlsydln",
   googleResenas: "https://maps.app.goo.gl/cUE6pDvNbKgW5f9Q9",
 
   // --- Zona de servicio ---
