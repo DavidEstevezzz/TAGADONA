@@ -1,0 +1,124 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Estudio roll-up</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;0,800;1,800&family=Oswald:wght@500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#1d1a18;color:#eee;font-family:Montserrat,sans-serif}
+.row{display:flex;gap:40px;padding:30px 36px;align-items:flex-start}
+figure{margin:0;display:flex;flex-direction:column;gap:12px}
+figcaption{font-family:Oswald,sans-serif;font-size:22px;letter-spacing:.06em;text-transform:uppercase}
+figcaption small{display:block;font-family:Montserrat;font-size:13px;letter-spacing:0;text-transform:none;color:#b9b0a6;margin-top:4px;max-width:520px}
+svg{display:block;height:1300px;width:auto}
+#a{height:1300px}
+</style></head><body><div class="row">
+
+<!-- ============ 1 · ESTUDIO SOBRE EL ORIGINAL ============ -->
+<figure><svg viewBox="150 20 1130 1480" id="a">
+<image href="orig.png" x="150" y="20" width="725" height="1480"/>
+<g font-family="Oswald" font-weight="600">
+  <!-- ejes izquierdos distintos -->
+  <g stroke="#ff4f8b" stroke-width="1.6" stroke-dasharray="6 5"><line x1="208" y1="150" x2="208" y2="1440"/><line x1="220" y1="150" x2="220" y2="1440"/><line x1="228" y1="150" x2="228" y2="1440"/></g>
+  <!-- margen derecho -->
+  <line x1="826" y1="150" x2="826" y2="400" stroke="#ff4f8b" stroke-width="1.6" stroke-dasharray="6 5"/>
+  <!-- proporción -->
+  <path d="M858 56 H868 V1470 H858" fill="none" stroke="#ff4f8b" stroke-width="2"/>
+  <!-- marcas -->
+  <g id="marks"></g>
+</g>
+</svg><figcaption>1 · Estudio del original<small>Rosa: mejoras necesarias. Azul: ideas. Verde: lo que ya funciona y hay que conservar.</small></figcaption></figure>
+
+<!-- ============ 2 · SOLO MEJORAS NECESARIAS ============ -->
+<figure><svg viewBox="-5 -5 1000 2110" id="b"></svg><figcaption>2 · Con las mejoras necesarias<small>Proporción real 850 × 2.000 (+100 ocultos), márgenes de 60 mm, ángulo único de 60° y texto inferior más grande y más alto.</small></figcaption></figure>
+
+<!-- ============ 3 · CON IDEAS ============ -->
+<figure><svg viewBox="-5 -5 1000 2110" id="c"></svg><figcaption>3 · Con ideas que suman<small>Sello en lugar de las rayas inferiores, «GRANADA» en el bloque naranja, etiqueta con relieve, curvas de nivel casi invisibles en el fondo y la web.</small></figcaption></figure>
+</div>
+<script>
+const ORG = '#F46E0A', ORD = '#A84300', TAN = '#C9B4A2', INK = '#141110', BG = '#FBEBE4';
+// ---------- marcas del estudio (coordenadas en px del original; 1 px ≈ 1,274 mm)
+const M = [
+  // [tipo, n, x, y, texto, ancla]
+  ['n', 1, 885, 760, 'PROPORCIÓN: 850 × ~1.800', 'start'],
+  ['n', 1, 885, 785, 'debe ser 850 × 2.000 (+100)', 'start'],
+  ['n', 2, 236, 1460, 'TRES EJES: 38 · 54 · 64 MM', 'start'],
+  ['n', 3, 885, 205, 'MARGEN DCHO. 25 MM', 'start'],
+  ['n', 3, 885, 228, 'vs 38 izq.: título descentrado', 'start'],
+  ['n', 4, 885, 108, 'RAYAS 50°', 'start'],
+  ['n', 4, 885, 365, 'ETIQUETA 63°', 'start'],
+  ['n', 4, 885, 520, 'FOTO 59° · RAYAS 54°', 'start'],
+  ['n', 5, 885, 1370, '«COMPRAVENTA» 29 MM', 'start'],
+  ['n', 5, 885, 1395, 'a ~20 cm del suelo', 'start'],
+  ['n', 6, 885, 935, 'LETRAS DEL DEPÓSITO', 'start'],
+  ['n', 6, 885, 958, 'deformes + logo Yamaha', 'start'],
+  ['i', 7, 885, 740, 'BLOQUE NARANJA SIN USO', 'start'],
+  ['i', 8, 885, 1440, 'FALTA EL SELLO', 'start'],
+  ['i', 9, 885, 372 + 18, 'ETIQUETA PLANA, título con relieve', 'start'],
+  ['ok', 0, 885, 1150, '✓ MOTO QUE SALE DEL MARCO', 'start'],
+  ['ok', 0, 885, 640, '✓ ALHAMBRA + SIERRA NEVADA', 'start'],
+  ['ok', 0, 885, 290, '✓ TÍTULO CON EXTRUSIÓN', 'start'],
+];
+const COL = {n: '#ff4f8b', i: '#2ec4b6', ok: '#3ddc97'};
+const pins = [[1, 868, 760], [2, 218, 1460], [3, 826, 205], [4, 730, 100], [4, 452, 362], [4, 205, 500], [5, 520, 1380], [6, 545, 912], [7, 765, 760], [8, 300, 1300], [9, 470, 395]];
+let h = '';
+pins.forEach(([n, x, y]) => { const t = n >= 7 ? 'i' : 'n'; h += `<circle cx="${x}" cy="${y}" r="13" fill="${COL[t]}"/><text x="${x}" y="${y + 6}" font-size="17" fill="#141110" text-anchor="middle">${n}</text>`; });
+h += `<circle cx="545" cy="912" r="40" fill="none" stroke="${COL.n}" stroke-width="2.5"/>`;
+h += `<rect x="222" y="1318" width="330" height="102" fill="none" stroke="${COL.n}" stroke-width="2.5"/>`;
+M.forEach(([t, n, x, y, s]) => { h += `<text x="${x}" y="${y}" font-size="${/^[A-Z✓«]/.test(s) ? 17 : 14}" fill="${COL[t]}" font-weight="${/^[A-Z✓«]/.test(s) ? 600 : 500}">${n ? n + ' · ' : ''}${s}</text>`; });
+document.getElementById('marks').innerHTML = h;
+
+// ---------- utilidades para los arreglos (mm, 850 × 2100; visible 0–2000)
+const k = 1.274, tanA = Math.tan(60 * Math.PI / 180);
+function stripes(x0, yb, hgt, gap = 50, w = 7) {
+  const dx = hgt / tanA;
+  return [TAN, TAN, ORG].map((c, i) => `<line x1="${x0 + i * gap}" y1="${yb}" x2="${x0 + i * gap + dx}" y2="${yb - hgt}" stroke="${c}" stroke-width="${w}"/>`).join('');
+}
+function topo() {
+  let s = '';
+  for (let l = 0; l < 22; l++) {
+    const R = 120 + l * 55; let d = '';
+    for (let i = 0; i <= 90; i++) { const a = i / 90 * 6.283; const r = R * (1 + .09 * Math.sin(3 * a + l * .2) + .05 * Math.sin(5 * a + 1)); d += (i ? 'L' : 'M') + (425 + Math.cos(a) * r * .9).toFixed(1) + ' ' + (1000 + Math.sin(a) * r * 1.7).toFixed(1); }
+    s += `<path d="${d}Z" fill="none" stroke="#d6bba6" stroke-width="2.4" opacity=".7"/>`;
+  }
+  return `<clipPath id="bgc"><rect x="-5" y="-5" width="860" height="2110"/></clipPath><g clip-path="url(#bgc)">${s}</g>`;
+}
+function ruler() {
+  return `<g font-family="IBM Plex Mono" font-size="20" fill="#bdb3a7">
+    <line x1="0" y1="2000" x2="850" y2="2000" stroke="#ff4f8b" stroke-width="2" stroke-dasharray="10 8"/>
+    <text x="425" y="2060" text-anchor="middle" fill="#ff4f8b">100 MM OCULTOS EN LA BASE</text>
+    ${[[1600, '1,6 M'], [1000, '1,0 M'], [500, '0,5 M']].map(([hh, t]) => { const y = 2100 - hh; return `<line x1="855" y1="${y}" x2="885" y2="${y}" stroke="#bdb3a7" stroke-width="2"/><text x="890" y="${y + 7}">${t}</text>`; }).join('')}
+    <rect x="60" y="0" width="730" height="2000" fill="none" stroke="#2ec4b6" stroke-width="1.5" stroke-dasharray="12 10" opacity=".7"/>
+  </g>`;
+}
+function layout(ideas) {
+  const photoY = 470;
+  let s = `<rect x="-5" y="-5" width="860" height="2110" fill="${BG}"/>`;
+  if (ideas) s += topo();
+  s += stripes(600, 112, 105);
+  s += `<image href="title.png" x="60" y="150" width="730" height="${730 * 105 / 635}"/>`;
+  if (ideas) {
+    const y0 = 312, y1 = 388, dx = (y1 - y0) / tanA;
+    const p = (ox, oy) => `${330 + dx + ox},${y0 + oy} ${790 + ox},${y0 + oy} ${790 - dx + ox},${y1 + oy} ${330 + ox},${y1 + oy}`;
+    s += `<line x1="60" y1="350" x2="345" y2="350" stroke="${ORG}" stroke-width="3.5"/>`;
+    s += `<polygon points="${p(7, 7)}" fill="${ORD}"/><polygon points="${p(0, 0)}" fill="${ORG}"/>`;
+    s += `<text x="${560}" y="${371}" font-family="Montserrat" font-weight="800" font-style="italic" font-size="50" letter-spacing="26" fill="${INK}" text-anchor="middle">RACING</text>`;
+  } else {
+    s += `<line x1="60" y1="353" x2="340" y2="353" stroke="${ORG}" stroke-width="3.5"/>`;
+    s += `<image href="tag.png" x="${790 - 374 * k}" y="314" width="${374 * k}" height="${62 * k}"/>`;
+  }
+  s += stripes(8, 540, 100);
+  s += `<image href="photo.png" x="0" y="${photoY}" width="850" height="${840 * k}"/>`;
+  if (ideas) s += `<text x="768" y="${photoY + 422}" font-family="Oswald" font-weight="600" font-size="30" letter-spacing="4" fill="${BG}" text-anchor="middle">GRANADA</text>`;
+  const by = 1610;
+  s += `<rect x="60" y="${by}" width="125" height="9" fill="${INK}"/>`;
+  s += `<text x="60" y="${by + 80}" font-family="Montserrat" font-weight="800" font-size="62" fill="${INK}">COMPRAVENTA</text>`;
+  s += `<text x="60" y="${by + 150}" font-family="Montserrat" font-weight="800" font-size="62" fill="${INK}">DE MOTOS</text>`;
+  if (ideas) {
+    s += `<image href="logo-calco.svg" x="660" y="1625" width="175" height="176"/>`;
+    s += `<text x="60" y="${by + 205}" font-family="Montserrat" font-weight="600" font-size="26" fill="${INK}" letter-spacing="1">tagadonaracing.es  ·  @tagadonaracing</text>`;
+  } else s += stripes(680, 1780, 150, 40);
+  return s + ruler();
+}
+document.fonts.ready.then(() => {
+  document.getElementById('b').innerHTML = layout(false);
+  document.getElementById('c').innerHTML = layout(true);
+  document.body.dataset.ready = '1';
+});
+</script></body></html>
