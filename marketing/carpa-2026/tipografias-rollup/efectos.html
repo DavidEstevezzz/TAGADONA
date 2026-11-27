@@ -1,0 +1,135 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Efectos tipográficos roll-up</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Barlow+Condensed:ital,wght@1,800;1,900&family=Barlow:ital,wght@0,600;1,700&family=Archivo:ital,wdth,wght@0,125,600;0,125,800;1,125,900&family=Russo+One&family=Rubik:wght@600&family=Racing+Sans+One&family=Poppins:wght@600&family=Germania+One&family=Oswald:wght@500;600&family=Unbounded:wght@600;900&family=Montserrat:ital,wght@0,700;1,800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#2a2725;font-family:Poppins,sans-serif;color:#eee}
+.grid{display:grid;grid-template-columns:repeat(6,280px);gap:22px;padding:24px}
+.card{display:flex;flex-direction:column;gap:8px}
+.card svg{width:280px;height:auto;display:block;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.lab{font-size:13px;line-height:1.35}.lab b{color:#f08a2a;font-size:15px;margin-right:6px}
+.lab span{display:block;color:#b9b0a6;font-size:11.5px}
+.zgrid{display:grid;grid-template-columns:repeat(3,580px);gap:22px;padding:24px}
+.zgrid svg{width:580px}
+</style></head><body>
+<div class="grid" id="full"></div>
+<div class="zgrid" id="zoom"></div>
+<script>
+const ORG = '#F46E0A', ORD = '#A84300', INK = '#141110', CRM = '#FBEADB';
+const BC = {f:'Barlow Condensed', w:900, i:1}, AR = {f:'Archivo', w:900, i:1, st:'125%'}, AN = {f:'Anton', w:400},
+      GE = {f:'Germania One', w:400}, BE = {f:'Bebas Neue', w:400}, RS = {f:'Racing Sans One', w:400}, RU = {f:'Russo One', w:400}, UN = {f:'Unbounded', w:900};
+const subB = {r:{f:'Barlow', w:700, i:1, ls:8}, s:{f:'Barlow', w:600, ls:1}}, subA = {r:{f:'Archivo', w:800, st:'125%', ls:6}, s:{f:'Archivo', w:600, st:'125%', ls:.5}},
+      subO = {r:{f:'Oswald', w:600, ls:9}, s:{f:'Oswald', w:500, ls:1.5}}, subM = {r:{f:'Montserrat', w:800, i:1, ls:8}, s:{f:'Montserrat', w:700, ls:1}},
+      subP = {r:{f:'Racing Sans One', w:400, ls:6}, s:{f:'Poppins', w:600, ls:1}}, subR = {r:{f:'Russo One', w:400, ls:8}, s:{f:'Rubik', w:600, ls:1}}, subU = {r:{f:'Unbounded', w:600, ls:6}, s:{f:'Unbounded', w:600, ls:.5}};
+// fx: tratamiento del título
+const O = [
+  {n:'A', t:BC, ...subB, fx:'drop', name:'Barlow cursiva · sombra naranja dura', note:'Desplazada abajo-derecha: la más «racing» y limpia'},
+  {n:'B', t:BC, ...subB, fx:'trail', name:'Barlow cursiva · estela', note:'Tres ecos naranja hacia atrás: sensación de velocidad'},
+  {n:'C', t:BC, ...subB, fx:'cuts', name:'Barlow cursiva · cortes de velocidad', note:'Líneas que cortan la base de las letras, como de dorsal de carreras'},
+  {n:'D', t:AR, ...subA, fx:'extrude', name:'Archivo Expanded · extrusión 3D naranja', note:'Bloque macizo con profundidad real; muy visible de lejos'},
+  {n:'E', t:AR, ...subA, fx:'outlineOff', name:'Archivo Expanded · contorno desplazado', note:'Letra negra y su contorno naranja desplazado; gráfico y ligero'},
+  {n:'F', t:AN, ...subO, fx:'long', name:'Anton · sombra larga', note:'Sombra en diagonal hasta el fondo: profundidad sin perder lectura'},
+  {n:'G', t:AN, ...subO, fx:'split', name:'Anton · bicolor', note:'La mitad baja de las letras en naranja; enlaza con la etiqueta'},
+  {n:'H', t:GE, ...subO, fx:'sticker', name:'Germania One · pegatina', note:'Filete crema y sombra naranja, como el sello: muy de marca'},
+  {n:'I', t:BE, ...subM, fx:'metal', name:'Bebas Neue · relieve metálico', note:'Degradado de acero y sombra suave: lo que buscabas en tu original'},
+  {n:'J', t:RS, ...subP, fx:'retro', name:'Racing Sans · sombra y rayas 70', note:'Sombra naranja con rayado: deportivo retro'},
+  {n:'K', t:RU, ...subR, fx:'double', name:'Russo One · doble filete', note:'Negro con filete crema y borde naranja: estilo dorsal o placa'},
+  {n:'L', t:UN, ...subU, fx:'soft', name:'Unbounded · sombra difusa naranja', note:'Halo cálido detrás del texto: moderno y luminoso'},
+];
+const NS = 'http://www.w3.org/2000/svg';
+const css = (o) => `font-family:'${o.f}';font-weight:${o.w};${o.i ? 'font-style:italic;' : ''}${o.st ? `font-stretch:${o.st};` : ''}`;
+let uid = 0;
+function make(o, vb) {
+  const id = 'u' + (uid++);
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', vb);
+  svg.innerHTML = `<defs>
+      <linearGradient id="${id}m" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b6560"/><stop offset=".45" stop-color="#1d1a18"/><stop offset=".55" stop-color="#0c0b0a"/><stop offset="1" stop-color="#3a3532"/></linearGradient>
+      <filter id="${id}s" x="-10%" y="-20%" width="130%" height="160%"><feDropShadow dx="1.5" dy="3" stdDeviation="2.2" flood-color="#000" flood-opacity=".45"/></filter>
+      <filter id="${id}g" x="-20%" y="-40%" width="140%" height="190%"><feGaussianBlur stdDeviation="7"/></filter>
+      <clipPath id="${id}c"><rect x="0" y="0" width="440" height="0"/></clipPath><clipPath id="${id}t"></clipPath>
+    </defs>
+    <image href="base.png" x="0" y="0" width="440" height="960"/>
+    <g class="fx"></g>
+    <text class="tt" style="${css(o.t)}" fill="${INK}">TAGADONA</text>
+    <g class="fxTop"></g>
+    <line x1="40" y1="218.5" x2="196" y2="218.5" stroke="${ORG}" stroke-width="2.2"/>
+    <polygon points="203,203 419,203 409,237 193,237" fill="${ORD}"/>
+    <polygon points="200,200 416,200 406,234 190,234" fill="${ORG}"/>
+    <text class="rr" style="${css(o.r)}" fill="${INK}" letter-spacing="${o.r.ls}" text-anchor="middle">RACING</text>
+    <rect x="40" y="846" width="60" height="3.2" fill="${INK}"/>
+    <text class="s1" style="${css(o.s)}" fill="${INK}" letter-spacing="${o.s.ls}" x="40" y="878">COMPRAVENTA</text>
+    <text class="s2" style="${css(o.s)}" fill="${INK}" letter-spacing="${o.s.ls}" x="40" y="900">DE MOTOS</text>`;
+  svg.dataset.id = id;
+  return svg;
+}
+function fit(svg, o) {
+  const t = svg.querySelector('.tt'); t.setAttribute('font-size', 100);
+  const room = {extrude: 362, long: 350, drop: 364, outlineOff: 364, sticker: 356, double: 356, retro: 362}[o.fx] || 372;
+  let b = t.getBBox(); const k = Math.min(room / b.width, 112 / b.height);
+  t.setAttribute('font-size', 100 * k); b = t.getBBox();
+  t.setAttribute('x', 223.5 - b.width / 2 - b.x - (o.fx === 'extrude' || o.fx === 'long' ? 5 : 0)); t.setAttribute('y', 0);
+  b = t.getBBox(); t.setAttribute('y', 186 - (b.y + b.height));
+  const r = svg.querySelector('.rr'); r.setAttribute('font-size', 20); r.setAttribute('x', 0); r.setAttribute('y', 0);
+  let rb = r.getBBox(); r.setAttribute('font-size', 20 * Math.min(170 / rb.width, 20 / rb.height * 1.05));
+  rb = r.getBBox(); r.setAttribute('x', 303 - (rb.x + rb.width / 2)); r.setAttribute('y', 0); rb = r.getBBox(); r.setAttribute('y', 217 - (rb.y + rb.height / 2));
+  ['.s1', '.s2'].forEach(sel => svg.querySelector(sel).setAttribute('font-size', 18));
+  const kb = 195 / svg.querySelector('.s1').getBBox().width;
+  ['.s1', '.s2'].forEach(sel => svg.querySelector(sel).setAttribute('font-size', Math.min(18 * kb, 22)));
+  effect(svg, o, t);
+}
+function clone(t, attrs) {
+  const c = t.cloneNode(true); c.removeAttribute('class');
+  Object.entries(attrs).forEach(([k, v]) => c.setAttribute(k, v)); return c;
+}
+function effect(svg, o, t) {
+  const fx = svg.querySelector('.fx'), top = svg.querySelector('.fxTop'), id = svg.dataset.id;
+  const x = +t.getAttribute('x'), y = +t.getAttribute('y'), fs = +t.getAttribute('font-size'), u = fs / 100;
+  const at = (dx, dy, extra = {}) => clone(t, {x: x + dx, y: y + dy, ...extra});
+  const tclip = () => { const cp = svg.querySelector(`#${id}t`); if (!cp.firstChild) cp.appendChild(at(0, 0)); const g = document.createElementNS(NS, 'g'); g.setAttribute('clip-path', `url(#${id}t)`); top.appendChild(g); return g; };
+  switch (o.fx) {
+    case 'drop': fx.appendChild(at(5 * u, 5 * u, {fill: ORG})); break;
+    case 'trail': [[-18, .25], [-12, .45], [-6, .7]].forEach(([d, op]) => fx.appendChild(at(d * u, 0, {fill: ORG, opacity: op}))); break;
+    case 'cuts': {
+      const b = t.getBBox();
+      const g = tclip(); [[.6, 2.4], [.71, 3.4], [.83, 4.6]].forEach(([p, h]) => g.insertAdjacentHTML('beforeend', `<rect x="${b.x - 4}" y="${b.y + b.height * p}" width="${b.width + 8}" height="${h * u}" fill="${CRM}"/>`));
+      fx.appendChild(at(4 * u, 4 * u, {fill: ORG})); break; }
+    case 'extrude': for (let i = 14; i >= 1; i--) fx.appendChild(at(i * .55 * u, i * .55 * u, {fill: i > 10 ? '#7a3200' : ORD})); fx.appendChild(at(1.2 * u, 1.2 * u, {fill: ORG})); break;
+    case 'outlineOff': fx.appendChild(at(6 * u, 5 * u, {fill: 'none', stroke: ORG, 'stroke-width': 2.4 * u})); break;
+    case 'long': for (let i = 40; i >= 1; i--) fx.appendChild(at(i * .45 * u, i * .45 * u, {fill: '#E9A46A'})); break;
+    case 'split': {
+      const b = t.getBBox(); const cp = svg.querySelector(`#${id}c rect`);
+      cp.setAttribute('y', b.y + b.height * .56); cp.setAttribute('height', b.height);
+      top.appendChild(at(0, 0, {fill: ORG, 'clip-path': `url(#${id}c)`}));
+      tclip().insertAdjacentHTML('beforeend', `<rect x="${b.x}" y="${b.y + b.height * .56 - 1.2 * u}" width="${b.width}" height="${2.4 * u}" fill="${CRM}"/>`); break; }
+    case 'sticker':
+      fx.appendChild(at(6 * u, 6 * u, {fill: ORG, stroke: ORG, 'stroke-width': 9 * u, 'stroke-linejoin': 'round'}));
+      fx.appendChild(at(0, 0, {fill: CRM, stroke: CRM, 'stroke-width': 9 * u, 'stroke-linejoin': 'round'})); break;
+    case 'metal':
+      t.setAttribute('fill', `url(#${id}m)`); t.setAttribute('filter', `url(#${id}s)`);
+      top.appendChild(at(0, 0, {fill: 'none', stroke: '#9a948e', 'stroke-width': .6 * u, opacity: .8})); break;
+    case 'retro': {
+      fx.appendChild(at(6 * u, 6 * u, {fill: ORG}));
+      const b = t.getBBox();
+      const g = tclip(); for (let k = 0; k < 4; k++) g.insertAdjacentHTML('beforeend', `<rect x="${b.x - 4}" y="${b.y + b.height * (.18 + k * .2)}" width="${b.width + 12}" height="${1.6 * u}" fill="${CRM}" opacity=".9"/>`);
+      break; }
+    case 'double':
+      fx.appendChild(at(0, 0, {fill: ORG, stroke: ORG, 'stroke-width': 10 * u, 'stroke-linejoin': 'round'}));
+      fx.appendChild(at(0, 0, {fill: CRM, stroke: CRM, 'stroke-width': 5 * u, 'stroke-linejoin': 'round'})); break;
+    case 'soft': fx.appendChild(at(0, 4 * u, {fill: ORG, opacity: .85, filter: `url(#${id}g)`})); break;
+  }
+}
+const specs = O.flatMap(o => [o.t, o.r, o.s]).map(x => `${x.i ? 'italic ' : ''}${x.w} ${x.st ? 'expanded ' : ''}40px "${x.f}"`);
+Promise.all(specs.map(s => document.fonts.load(s, 'TAGADONARCIGVEMP'))).then(() => document.fonts.ready).then(() => {
+  const full = document.getElementById('full'), zoom = document.getElementById('zoom');
+  O.forEach(o => {
+    const c = document.createElement('div'); c.className = 'card';
+    const s = make(o, '0 0 440 960'); c.appendChild(s);
+    c.insertAdjacentHTML('beforeend', `<div class="lab"><b>${o.n}</b>${o.name}<span>${o.note}</span></div>`);
+    full.appendChild(c); fit(s, o);
+    const z = document.createElement('div'); z.className = 'card';
+    const sz = make(o, '20 55 410 205'); z.appendChild(sz);
+    z.insertAdjacentHTML('beforeend', `<div class="lab"><b>${o.n}</b>${o.name}<span>${o.note}</span></div>`);
+    zoom.appendChild(z); fit(sz, o);
+  });
+  document.body.dataset.ready = '1';
+});
+</script></body></html>
