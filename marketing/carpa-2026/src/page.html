@@ -1,0 +1,344 @@
+<title>Carpa Tagadona Racing</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Germania+One&family=Oswald:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Concepto: mesa de taller oscura. Cada pieza es una ficha con su vista plana y su montaje real, comparables de un vistazo. */
+:root{
+  --bg:#141110; --bg2:#1b1715; --card:#201b18; --line:#342c27;
+  --fg:#f4eee6; --dim:#b3a99f; --faint:#7d736b;
+  --orange:#E5893A; --olive:#8d9a6a; --ok:#3ddc97; --warn:#ffd166;
+  --f-display:'Germania One', Georgia, serif;
+  --f-head:Oswald, 'Arial Narrow', sans-serif;
+  --f-body:Poppins, Arial, sans-serif;
+  --f-mono:'IBM Plex Mono', ui-monospace, monospace;
+  color-scheme:dark;
+}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.6;margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+section{padding-block:56px;border-top:1px solid var(--line)}
+h1,h2,h3,h4,h5{font-family:var(--f-head);font-weight:600;text-wrap:balance;margin:0;letter-spacing:.01em}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(44px,7vw,92px);line-height:.95;color:var(--orange)}
+h2{font-size:clamp(28px,3.4vw,40px);text-transform:uppercase;line-height:1.05}
+h3{font-size:26px;text-transform:uppercase}
+h4{font-size:21px}
+h5{font-size:15px;text-transform:uppercase;letter-spacing:.14em;color:var(--orange);margin-top:22px}
+p{margin:0;max-width:72ch}
+.eyebrow{font-family:var(--f-head);text-transform:uppercase;letter-spacing:.28em;font-size:12px;color:var(--orange)}
+.lead{font-size:17px;color:var(--fg);max-width:70ch}
+.dim{color:var(--dim)}
+.stack{display:flex;flex-direction:column;gap:14px}
+.sec-head{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+a{color:var(--orange)}
+/* cabecera */
+.hero{padding-block:48px 40px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end}
+.hero img{width:150px;height:auto}
+.status{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.tag{font-family:var(--f-mono);font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:3px;color:var(--dim)}
+.tag.prov{border-color:var(--warn);color:var(--warn)}
+/* resumen */
+.verdict{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:start}
+.verdict .box{background:var(--card);border:1px solid var(--orange);padding:22px;border-radius:4px}
+.verdict ol{margin:10px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+/* tablas */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:4px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{font-family:var(--f-head);font-weight:500;text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--dim);background:var(--bg2)}
+td.num,.mono{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums}
+/* marca */
+.brandgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.brandgrid>div{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:18px;min-width:0}
+.sw{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.sw span{display:block;border-radius:3px;padding:30px 8px 6px;font-family:var(--f-mono);font-size:11px;line-height:1.35}
+/* referencias */
+.refs{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
+.ref{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:18px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.ref .sector{font-family:var(--f-mono);font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+.ref h4{font-size:18px}
+.ref .use{font-size:13px;color:var(--dim)}
+.ref .use b{color:var(--orange);font-weight:600}
+/* líneas */
+.lines{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.lines>div{border-top:6px solid;padding:16px;background:var(--card);border-radius:0 0 4px 4px;min-width:0}
+.lines .A{border-color:#59653f}.lines .B{border-color:var(--orange)}.lines .C{border-color:#e6e2da}
+/* propuestas */
+.props{display:flex;flex-direction:column;gap:26px}
+.prop{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.prop header,.comp header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.pid{font-family:var(--f-mono);font-size:13px;background:var(--fg);color:var(--bg);padding:3px 8px;border-radius:2px;font-weight:500}
+.chip{font-family:var(--f-head);font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid var(--line);color:var(--dim)}
+.chip.line-A{border-color:#59653f;color:#b7c28f}.chip.line-B{border-color:var(--orange);color:var(--orange)}.chip.line-C{border-color:#cfc9bf;color:#e6e2da}
+.prop-views{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;align-items:start}
+#rolls .prop-views{grid-template-columns:minmax(0,.55fr) 1fr}
+figure{margin:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+figcaption{font-size:12.5px;color:var(--faint);line-height:1.45}
+svg.flat{width:100%;height:auto;display:block;background:#0c0b0a;border-radius:2px}
+#rolls svg.flat{max-height:640px}
+svg.plan{width:100%;height:auto;display:block;border-radius:3px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0}
+.facts dt{font-family:var(--f-head);text-transform:uppercase;letter-spacing:.12em;font-size:11.5px;color:var(--orange)}
+.facts dd{margin:4px 0 0;font-size:14px;color:var(--fg)}
+.approach{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+/* escenas 3D */
+.stage-host{position:relative;width:100%;aspect-ratio:4/3;background:linear-gradient(#c9d3d8,#e8e4dd 58%);border-radius:3px;overflow:hidden}
+.stage-host.sm{aspect-ratio:1/1}
+.stage-host.lg{aspect-ratio:16/10}
+#rolls .stage-host{aspect-ratio:3/4;max-height:640px}
+.stage{position:absolute;inset:0;perspective-origin:50% 50%;overflow:hidden}
+.world{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d}
+.pl{position:absolute;left:0;top:0;transform-origin:0 0;overflow:hidden}
+.pl svg{overflow:hidden}
+/* guías técnicas */
+.tech{display:none}
+body.show-tech .tech{display:inline}
+.toolbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(20,17,16,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.toolbar .wrap{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;padding-block:10px}
+.toolbar nav{display:flex;flex-wrap:wrap;gap:4px 14px;font-family:var(--f-head);text-transform:uppercase;letter-spacing:.08em;font-size:13px}
+.toolbar nav a{color:var(--dim);text-decoration:none}
+.toolbar nav a:hover{color:var(--orange)}
+.switch{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--fg);margin-left:auto;cursor:pointer}
+.switch input{width:18px;height:18px;accent-color:var(--orange)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-family:var(--f-mono);font-size:12px;color:var(--dim);margin-top:6px}
+.legend i{display:inline-block;width:18px;height:4px;vertical-align:middle;margin-right:6px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+/* composiciones */
+.cambar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 22px}
+.cambar button{font-family:var(--f-head);text-transform:uppercase;letter-spacing:.08em;font-size:13px;padding:8px 14px;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:3px;cursor:pointer}
+.cambar button[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:#141110}
+.cambar button:focus-visible,.switch input:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.comps{display:flex;flex-direction:column;gap:30px}
+.comp{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.comp.rec{border-color:var(--orange);box-shadow:0 0 0 1px var(--orange) inset}
+.pieces{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
+.pieces li{font-size:13px;color:var(--dim);background:var(--bg2);border:1px solid var(--line);padding:3px 9px;border-radius:3px}
+.pieces b{color:var(--fg);font-family:var(--f-mono);font-weight:500}
+.comp-main{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;align-items:start}
+.sum{color:var(--dim);max-width:90ch}
+/* matriz */
+#matrix{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.mx table{font-family:var(--f-mono);font-size:13px;background:var(--card);border:1px solid var(--line)}
+.mx caption{font-family:var(--f-head);text-transform:uppercase;letter-spacing:.1em;text-align:left;padding:0 0 8px;color:var(--fg)}
+.mx td,.mx th{text-align:center;padding:8px}
+.mx td.ok{color:var(--ok);font-size:17px}.mx td.adj{color:var(--warn);font-size:17px;background:rgba(255,209,102,.07)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+ul.clean{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:7px}
+.sources{font-size:13px;color:var(--dim)}
+.sources li{word-break:break-word}
+@media (max-width:860px){
+  .hero,.verdict,.prop-views,#rolls .prop-views,.comp-main,.two{grid-template-columns:1fr}
+  .facts{grid-template-columns:1fr}
+  .lines{grid-template-columns:1fr}
+  .approach{grid-template-columns:repeat(2,1fr)}
+  .hero img{width:110px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="toolbar"><div class="wrap">
+  <nav aria-label="Secciones"><a href="#partida">Punto de partida</a><a href="#referencias">Referencias</a><a href="#lona">Lona</a><a href="#rollup">Roll-up</a><a href="#alfombra">Alfombra</a><a href="#techo">Techo</a><a href="#composiciones">Composiciones</a><a href="#combinar">Combinar</a><a href="#eleccion">Elección</a></nav>
+  <label class="switch" for="techToggle"><input type="checkbox" id="techToggle"> Ver guías técnicas</label>
+</div></div>
+
+<header class="wrap hero">
+  <div class="stack">
+    <p class="eyebrow">Propuestas preliminares · Carpa de eventos y tienda</p>
+    <h1>Tagadona Racing</h1>
+    <p class="lead">Lona trasera, roll-up, alfombra y techo de carpa para eventos, reutilizables en la nave de Cogollos de la Vega. Tres líneas visuales, tres propuestas por pieza, cuatro conjuntos montados con moto a escala y una recomendación. Ninguna pieza lleva fechas ni temporada.</p>
+    <div class="status">
+      <span class="tag">Fase: comparar propuestas</span>
+      <span class="tag prov">Logo provisional · PNG 640 px</span>
+      <span class="tag prov">Techo: maqueta, falta plantilla del fabricante</span>
+      <span class="tag prov">Tienda: distribución supuesta</span>
+    </div>
+  </div>
+  <img id="heroLogo" alt="Sello de Tagadona Racing" width="150" height="150">
+</header>
+
+<section class="wrap" id="resumen" style="border-top:0;padding-top:8px">
+  <div class="verdict">
+    <div class="stack">
+      <p class="eyebrow">Mi elección, en corto</p>
+      <h2>Techo claro con pico naranja, sello en la lona, roll-up de tasación con QR y alfombra de curvas de nivel</h2>
+      <p class="dim">Es el conjunto C4. Cada altura cumple una función: de lejos se ve el pico naranja del techo; al acercarse, el sello y el nombre; a la altura de la mano, el QR para pedir tasación por WhatsApp; en el suelo, una alfombra que disimula el polvo y las ruedas. El razonamiento completo está en <a href="#eleccion">Elección</a>.</p>
+    </div>
+    <div class="box">
+      <h5 style="margin:0">Antes del arte final hace falta</h5>
+      <ol>
+        <li>El logo en vectorial (AI, PDF o SVG). El PNG actual da unos 27 ppp a 2 m de ancho.</li>
+        <li>La plantilla del techo del fabricante de la carpa: faldones, cenefas, costuras y sangrado.</li>
+        <li>Confirmar con el taller la lista de revisión del roll-up R-C, si se elige.</li>
+        <li>Validar los QR y sus destinos (WhatsApp y web con UTM) y hacer una prueba de color en CMYK FOGRA39.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="partida">
+  <div class="sec-head"><p class="eyebrow">Punto de partida</p><h2>Lo que ya tiene la marca y lo que piden las piezas</h2></div>
+  <div class="brandgrid">
+    <div class="stack"><h4>Identidad</h4>
+      <p class="dim">El sello del perro con casco, alas, moto custom, sierra y pinos, sobre oliva muy oscuro con naranja y blanco. La web añade negro cálido, naranja, la Germania One para titulares, Oswald condensada y Poppins para texto.</p>
+      <div class="sw">
+        <span style="background:#1f2315;color:#f2eadb">Oliva sello<br>#1F2315<br>≈ C70 M55 Y85 K75</span>
+        <span style="background:#D97A28;color:#141110">Naranja<br>#D97A28<br>≈ C8 M62 Y95 K1</span>
+        <span style="background:#141110;color:#f2eadb;border:1px solid #342c27">Negro cálido<br>#141110<br>neg. enriquecido</span>
+        <span style="background:#F2EADB;color:#141110">Crema<br>#F2EADB<br>≈ C4 M7 Y15 K0</span>
+        <span style="background:#E6E2DA;color:#141110">Papel taller<br>#E6E2DA<br>≈ C9 M8 Y12 K0</span>
+        <span style="background:#8C877F;color:#141110">Hormigón<br>#8C877F<br>≈ C45 M40 Y45 K10</span>
+      </div>
+      <p class="dim" style="font-size:12.5px">Los valores CMYK son orientativos y hay que validarlos con prueba de color en Coated FOGRA39.</p>
+    </div>
+    <div class="stack"><h4>Clientes y mensajes</h4>
+      <p class="dim">La mayoría del stock son scooters 125 y maxiscooters (gente de ciudad y con carné B), además de naked A2 y alguna custom. Hay dos públicos: el que compra y el que vende. La web ya promete taller propio, garantía, transferencia y trato directo, y explica una tasación en 4 pasos por WhatsApp. En las piezas solo uso mensajes que ya están en la web; no hay precios, modelos ni fechas, porque caducan.</p>
+    </div>
+    <div class="stack"><h4>El local</h4>
+      <p class="dim">Paraje de Catacena, en Cogollos de la Vega, a los pies de la sierra. Se atiende con cita previa y hay taller propio. No tengo planos ni fotos del interior, así que las vistas de tienda suponen una nave de unos 7 × 6 m con portón. La sierra y los pinos del sello son, literalmente, el paisaje del sitio, y eso da pie a la línea A.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:40px">Especificaciones usadas</h3>
+  <div class="tbl" style="margin-top:14px"><table>
+    <thead><tr><th>Pieza</th><th>Medida</th><th>Zona útil / sangrado</th><th>Material y proveedor</th><th>Notas</th></tr></thead>
+    <tbody>
+      <tr><td>Lona trasera</td><td class="num">2.000 × 1.000 mm, 1:1</td><td>Sin sangrado. Margen de trabajo de 110 mm. Ojales con el centro a 25 mm del borde; refuerzo de 45 mm por detrás.</td><td>PVC frontlit 510 g/m², 12 ojales y refuerzo termosellado (LonasXXL, 27,99 € IVA incl.)</td><td>Su guía recomienda un 2,7 % del lado mayor + 5 cm con ojales, unos 104 mm. Los 110 mm lo cubren.</td></tr>
+      <tr><td>Roll-up</td><td class="num">Gráfica 850 × 2.100 · visible 850 × 2.000</td><td>Plantilla Imprivic: sangrado de 5 mm (fondo de 860 × 2.110), seguridad 5 mm dentro del corte y línea de registro a 2.000 mm.</td><td>Polipropileno opaco con expositor (Imprivic)</td><td>Imágenes a 150 ppp incrustadas y textos trazados. La guía general pide 10 mm de seguridad: dejo al menos 50 mm en los textos.</td></tr>
+      <tr><td>Alfombra</td><td class="num">2.150 × 1.050 mm · fondo 2.160 × 1.060</td><td>5 mm de sangrado por lado (guía general de Imprivic). Bordes sin textos importantes.</td><td>Recomiendo vinilo Sintasol de 3 mm, antideslizante, bobina de hasta 300 cm y apto para exterior, con barniz satinado.</td><td>La moqueta ferial sale de bobina de 2 m: 2.150 mm obligaría a unir piezas, y además es de un solo uso.</td></tr>
+      <tr><td>Techo</td><td class="num">Planta 3.000 × 3.000 mm</td><td>Maqueta: caras de unos 3.000 × 1.750 (pendiente de unos 31°) y cenefas de 250 mm.</td><td>Según el fabricante de la carpa</td><td>Las medidas reales salen de la plantilla del fabricante.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="wrap" id="referencias">
+  <div class="sec-head"><p class="eyebrow">Referencias de otros sectores</p><h2>Qué he tomado de cada una</h2>
+    <p class="dim">Ninguna es de una compraventa de motos. Busqué negocios que resuelven el mismo problema que tiene Tagadona: vender algo usado con confianza, hacerse ver en una feria o colocar bien un objeto sobre el suelo.</p></div>
+  <div class="refs">
+    <div class="ref"><span class="sector">Promoción turística · 1938–41</span><h4>Carteles WPA de los parques nacionales de EE. UU.</h4><p class="dim">Serigrafía con pocas tintas planas y formas simples para dar profundidad.</p><p class="use"><b>Tomado:</b> la sierra en 2–3 capas de oliva y la paleta corta de la línea A. Sale barato de imprimir y se ve trabajado sin necesitar fotos.</p></div>
+    <div class="ref"><span class="sector">Automovilismo · patrocinio</span><h4>Decoración Gulf (azul y naranja)</h4><p class="dim">Dos colores y una franja bastan para reconocer el coche a cientos de metros.</p><p class="use"><b>Tomado:</b> la franja diagonal de la línea B y la regla de que el naranja va en bloques grandes, no en detalles.</p></div>
+    <div class="ref"><span class="sector">Ropa de montaña · segunda mano</span><h4>Patagonia Worn Wear</h4><p class="dim">Vende ropa usada «lavada, inspeccionada y con garantía» y hace gira con un taller móvil de reparación.</p><p class="use"><b>Tomado:</b> contar el taller como argumento de venta. De ahí «Revisadas en nuestro taller» y la lista de revisión del roll-up R-C.</p></div>
+    <div class="ref"><span class="sector">Electrónica reacondicionada</span><h4>Back Market</h4><p class="dim">Su problema no es el precio sino la confianza, y la resuelve con una promesa clara y explicaciones antes de que el cliente pregunte.</p><p class="use"><b>Tomado:</b> que cada pieza responda a una duda («¿está revisada?», «¿me la compráis?») en lugar de decir solo el nombre.</p></div>
+    <div class="ref"><span class="sector">Coches de ocasión certificados</span><h4>Spoticar (Stellantis)</h4><p class="dim">Comunica la revisión como una lista de unos 100 puntos.</p><p class="use"><b>Tomado:</b> el formato de lista con casillas. Uso 8 puntos reales del artículo del blog en vez de un número inflado.</p></div>
+    <div class="ref"><span class="sector">Transporte · señalética</span><h4>Manual de los ferrocarriles suizos (Müller-Brockmann)</h4><p class="dim">Retícula, pictogramas y tipografía funcional pensada para leerse a distancia.</p><p class="use"><b>Tomado:</b> la retícula de la línea C, los iconos de trazo y la regla de un mensaje por cara en el techo.</p></div>
+    <div class="ref"><span class="sector">Mercados y ferias al aire libre</span><h4>Guías de carpas para mercados</h4><p class="dim">El techo se ve desde lejos, la cenefa a la altura del paseo, pocos colores, mucho contraste y acabado mate contra los reflejos.</p><p class="use"><b>Tomado:</b> el reparto por distancia (techo, luego cenefa, luego lona) y el nombre en las cuatro cenefas en todas las propuestas.</p></div>
+    <div class="ref"><span class="sector">Fórmula 1 · garajes de equipo</span><h4>Box y parrilla de salida</h4><p class="dim">El nombre del equipo va pintado en el suelo delante del garaje y cada coche tiene su casilla marcada.</p><p class="use"><b>Tomado:</b> la alfombra M-B como casilla de salida y, en todas, las marcas de eje para dejar la moto siempre en el mismo sitio.</p></div>
+    <div class="ref"><span class="sector">Moto, surf y café</span><h4>Deus Ex Machina</h4><p class="dim">Tiendas con el taller a la vista: la mecánica forma parte de la experiencia de compra.</p><p class="use"><b>Tomado:</b> la palabra «Garage» del sello como tono de la línea A y la idea de enseñar el taller en lugar de esconderlo.</p></div>
+  </div>
+</section>
+
+<section class="wrap" id="lineas">
+  <div class="sec-head"><p class="eyebrow">Tres líneas visuales</p><h2>Comparten sello, naranja y tipografías; cambia el fondo y el tono</h2></div>
+  <div class="lines">
+    <div class="A stack"><h4>A · Sierra</h4><p class="dim">Oliva del sello, crema y naranja. Sierra en capas, pinos y curvas de nivel. Tono de garaje de pueblo serio. Titulares en Germania One.</p></div>
+    <div class="B stack"><h4>B · Pit Lane</h4><p class="dim">Negro cálido y naranja en bloques, con franjas de carreras. Tono directo, de captación. Oswald condensada en mayúsculas.</p></div>
+    <div class="C stack"><h4>C · Ficha de taller</h4><p class="dim">Fondos claros o gris hormigón, texto negro y naranja de acento. Retícula, casillas y ejes. Tono explicativo. Poppins y Oswald.</p></div>
+  </div>
+  <p class="dim" style="margin-top:18px">Cada pieza tiene una propuesta por línea, pero se diferencian también en mensaje (marca, captación o confianza) y en composición. Activa <b>Ver guías técnicas</b> en la barra superior para ver márgenes, ojales, sangrados y zonas de rueda y pata.</p>
+  <div class="legend"><span><i style="background:#2ec4b6"></i>Seguridad / trabajo</span><span><i style="background:#4b8bff"></i>Corte</span><span><i style="background:#ff4f8b"></i>Sangrado / zona tapada</span><span><i style="background:#3ddc97"></i>Visible desde el pasillo</span></div>
+</section>
+
+<section class="wrap" id="lona">
+  <div class="sec-head"><p class="eyebrow">Pieza 1</p><h2>Lona trasera · 2.000 × 1.000 mm</h2>
+    <p class="dim">Va colgada en la trasera de la carpa con el borde inferior a 1,05 m. A esa altura, una moto de 1,15 m colocada delante no la tapa para alguien de pie a 4 m; solo los retrovisores de una moto alta pueden tapar la franja inferior central, que marco con rayas en las guías.</p></div>
+  <div class="props" id="lonas"></div>
+</section>
+
+<section class="wrap" id="rollup">
+  <div class="sec-head"><p class="eyebrow">Pieza 2</p><h2>Roll-up · 850 × 2.000 visibles</h2>
+    <p class="dim">La gráfica sigue la plantilla de Imprivic. Lo importante está entre 1,9 y 1,0 m de altura (ojos y mano). Por debajo de 0,6 m solo pongo información de apoyo, porque la tapan la gente o la moto.</p></div>
+  <div class="props" id="rolls"></div>
+</section>
+
+<section class="wrap" id="alfombra">
+  <div class="sec-head"><p class="eyebrow">Pieza 3</p><h2>Alfombra · 2.150 × 1.050 mm con la moto encima</h2>
+    <p class="dim">La moto va paralela al lado largo con la rueda delantera a la izquierda, así que desde el pasillo se ve su lado derecho, el del escape. La pata lateral queda en la franja de detrás, tapada por la moto, y la franja delantera (unos 400 mm) queda libre para el mensaje. Con 2.150 mm de largo, una moto de 2,05–2,10 m cubre casi toda la longitud: por eso no hay nada importante en los extremos ni en la banda central.</p></div>
+  <div class="props" id="mats"></div>
+  <p class="dim" style="margin-top:18px">Uso: pon un taco de apoyo bajo la pata lateral o el caballete para no marcar el vinilo. Con fondos oscuros (M-A, M-B) el polvo claro se nota más que en el gris de M-C; la trama de M-A lo disimula. A la altura de los ojos el suelo se ve muy escorzado (a 2,5 m, más o menos a la mitad de su altura), por eso los textos del suelo son anchos, gruesos y de 120–190 mm.</p>
+</section>
+
+<section class="wrap" id="techo">
+  <div class="sec-head"><p class="eyebrow">Pieza 4</p><h2>Techo de carpa 3 × 3 m · caras y cenefas</h2>
+    <p class="dim">A 10 m se leen las caras del techo; a 3–5 m, las cenefas (la parte baja está a 2,15 m del suelo); dentro de la carpa el techo ya no se ve. Por eso el nombre va siempre en las cuatro cenefas y las caras llevan una idea grande cada una. Las vistas de abajo están tomadas desde unos 9 m, a la altura de los ojos.</p></div>
+  <div class="props" id="techos"></div>
+</section>
+
+<section class="wrap" id="composiciones">
+  <div class="sec-head"><p class="eyebrow">Conjuntos completos</p><h2>Cuatro composiciones de la carpa y su vida en la tienda</h2>
+    <p class="dim">Todas se ven desde el mismo punto: a 8 m, a la altura de los ojos y unos 30° a la derecha del frente. Puedes girarlas todas a la vez para ver cómo se leen llegando desde otro lado. El acceso queda abierto en las cuatro.</p></div>
+  <div class="cambar" id="camBar" role="group" aria-label="Ángulo de las composiciones"></div>
+  <div class="comps" id="comps"></div>
+</section>
+
+<section class="wrap" id="combinar">
+  <div class="sec-head"><p class="eyebrow">Combinar piezas</p><h2>Qué combina con qué</h2>
+    <p class="dim">Las doce piezas comparten el sello, el naranja y las tipografías, así que cualquier mezcla sigue siendo la misma marca. Lo que conviene vigilar es que la lona y el roll-up, que se ven juntos y a la misma altura, no tengan fondos opuestos. Pasa el cursor por una celda para ver el motivo.</p></div>
+  <div id="matrix"></div>
+  <div class="legend" style="margin-top:14px"><span style="color:var(--ok)">✓ combina directamente</span><span style="color:var(--warn)">≈ combina con un ajuste: igualar el fondo, o sacar el roll-up fuera de la carpa</span></div>
+  <p class="dim" style="margin-top:14px">Las piezas oscuras admiten cambiar el color de fondo sin rehacer la composición. El roll-up R-B en oliva, que uso en C4, es un ejemplo. El techo C y la alfombra C funcionan como acento con cualquier conjunto.</p>
+</section>
+
+<section class="wrap" id="eleccion">
+  <div class="sec-head"><p class="eyebrow">Elección</p><h2>Me quedo con C4: T-C + L-A + R-B en oliva + M-A</h2></div>
+  <div class="two">
+    <div class="stack">
+      <h4>Por qué</h4>
+      <ul class="clean dim">
+        <li><b style="color:var(--fg)">Techo T-C.</b> En una feria de verano en Granada, un techo claro calienta menos y da a la moto una luz limpia para las fotos. El pico naranja que forman las cuatro puntas se reconoce de lejos y repite la montaña del sello. Una cara para cada mensaje: compraventa, tasamos tu moto, motos revisadas.</li>
+        <li><b style="color:var(--fg)">Lona L-A.</b> Es la pieza que más tiempo pasará en la tienda, así que debe ser la más «de marca». Lleva el sello grande, la actividad y el contacto, y aguanta años sin quedarse antigua.</li>
+        <li><b style="color:var(--fg)">Roll-up R-B en oliva.</b> Es la única pieza que pide una acción concreta. El QR abre WhatsApp con «Hola, quiero tasar mi moto» ya escrito y lleva UTM, así que cada contacto se puede medir con la analítica que ya tiene la web. En oliva queda en familia con la lona.</li>
+        <li><b style="color:var(--fg)">Alfombra M-A.</b> Las curvas de nivel esconden el polvo y las marcas de rueda, la plaza discontinua y las marcas de eje ayudan a colocar la moto y el nombre queda en la franja que se ve.</li>
+        <li><b style="color:var(--fg)">Presupuesto.</b> Todo es vectorial: no hay sesión de fotos, ni banco de imágenes, ni fotos que se queden cortas de resolución a 2 m. Son cuatro colores de marca y una sola retícula, así que las piezas futuras (lonas de fachada, vinilos o tarjetas) salen de los mismos archivos.</li>
+      </ul>
+    </div>
+    <div class="stack">
+      <h4>Lo que descarto, y cuándo lo recuperaría</h4>
+      <ul class="clean dim">
+        <li><b style="color:var(--fg)">Techo T-B.</b> Es el más llamativo, pero es negro bajo el sol y oscurece la moto. Lo recuperaría para ferias de interior o de tarde.</li>
+        <li><b style="color:var(--fg)">Lona L-B.</b> Funciona muy bien en eventos, pero en la tienda repite lo que ya dice el roll-up. Podría ser una segunda lona para la fachada que da al camino, que en un paraje es la que trae clientes.</li>
+        <li><b style="color:var(--fg)">Roll-up R-C.</b> Es el mejor argumento de confianza, pero solo si la lista de revisión es exactamente lo que hace el taller. Sería buen segundo roll-up para la tienda.</li>
+        <li><b style="color:var(--fg)">Alfombra M-C.</b> El gris es lo más práctico para la limpieza. Si en la tienda pesa más el uso diario que la imagen, la cambiaría por M-A sin tocar el resto.</li>
+      </ul>
+      <h4 style="margin-top:12px">Siguiente paso para los artes finales</h4>
+      <ul class="clean dim">
+        <li>Recibir el logo vectorial y la plantilla del techo.</li>
+        <li>Pasar los archivos a CMYK FOGRA39 con negro enriquecido en los fondos grandes y textos trazados (el roll-up lo exige).</li>
+        <li>Exportar en PDF/X-4 a 1:1: lona sin sangrado y con margen de 110 mm, roll-up sobre la plantilla de Imprivic, y alfombra a 2.160 × 1.060 con nota de 2.150 × 1.050 para la revisión humana.</li>
+        <li>Probar los QR impresos al tamaño real, a 1 m y con luz de exterior.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="provisional">
+  <div class="sec-head"><p class="eyebrow">Elementos provisionales</p><h2>Qué está marcado como provisional</h2></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Elemento</th><th>Estado</th><th>Qué falta</th></tr></thead>
+    <tbody>
+      <tr><td>Sello / logo</td><td>PNG de 640 px del repositorio de la web</td><td>Original vectorial. El sello lleva «2023», el año de la marca, que no caduca; si se prefiere sin año, hace falta esa variante.</td></tr>
+      <tr><td>Techo</td><td>Maqueta con caras y cenefas aproximadas</td><td>Plantilla del fabricante: troquel de faldones, costuras, alturas de cenefa y sangrado.</td></tr>
+      <tr><td>QR</td><td>Funcionales, generados para esta maqueta</td><td>Confirmar el destino y las UTM: <span class="mono">utm_source=rollup / lona</span>, <span class="mono">utm_campaign=carpa</span>.</td></tr>
+      <tr><td>Lista de revisión (R-C)</td><td>Sacada del artículo «Cómo revisar una moto antes de comprar»</td><td>Que el taller confirme que son sus comprobaciones reales.</td></tr>
+      <tr><td>Tienda</td><td>Nave supuesta de 7 × 6 m con portón</td><td>Medidas y fotos del local para ajustar la altura de la lona y el sitio de la moto destacada.</td></tr>
+      <tr><td>Moto y persona</td><td>Siluetas a escala: moto de 2,1 m de largo y 1,15 m de alto; persona de 1,75 m</td><td>Solo sirven para comprobar proporciones y visibilidad.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="wrap" id="fuentes">
+  <div class="sec-head"><p class="eyebrow">Fuentes</p><h2>Documentación consultada</h2></div>
+  <ul class="clean sources">
+    <li>Imprivic · Plantilla Roll-up 850 mm (capas de corte, sangrado, seguridad y registro): <a href="https://cdn.shopify.com/s/files/1/0884/9788/1402/files/PlantillaRoll-up850mm.pdf" target="_blank" rel="noopener">PlantillaRoll-up850mm.pdf</a></li>
+    <li>Imprivic · Roll-up: <a href="https://imprivicshop.com/products/roll-up" target="_blank" rel="noopener">imprivicshop.com/products/roll-up</a> · Moqueta ferial: <a href="https://imprivicshop.com/products/moqueta-ferial" target="_blank" rel="noopener">moqueta-ferial</a> · Alfombra de vinilo: <a href="https://imprivicshop.com/products/alfombras-de-vinilo" target="_blank" rel="noopener">alfombras-de-vinilo</a> · Guía de archivos: <a href="https://imprivicshop.com/pages/creacion-y-diseno-a-medida-para-tus-proyectos" target="_blank" rel="noopener">cómo preparar archivos</a></li>
+    <li>LonasXXL · Lona PVC 200 × 100: <a href="https://lonasxxl.es/producto/lona-publicitaria-pvc-200x100cm/" target="_blank" rel="noopener">producto</a> · <a href="https://lonasxxl.es/wp-content/uploads/2020/05/Instrucciones-Lonas-Publicitarias-LonasXXL.pdf" target="_blank" rel="noopener">instrucciones (ojales, refuerzo, seguridad)</a></li>
+    <li>NPS · <a href="https://www.nps.gov/articles/000/50-nifty-finds-39-an-nps-art-factory.htm" target="_blank" rel="noopener">An NPS Art Factory</a> · Saturday Evening Post · <a href="https://www.saturdayeveningpost.com/2016/02/parks-posters/" target="_blank" rel="noopener">WPA Poster Project</a></li>
+    <li>Motorsport Magazine · <a href="https://www.motorsportmagazine.com/articles/sports-cars/le-mans/gallery-the-best-of-gulf-racing-liveries/" target="_blank" rel="noopener">Gulf racing liveries</a> · J.D. Power · <a href="https://www.jdpower.com/cars/shopping-guides/what-is-a-gulf-livery" target="_blank" rel="noopener">What is a Gulf livery</a></li>
+    <li>Patagonia · <a href="https://www.patagonia.com/wornwear/" target="_blank" rel="noopener">Worn Wear</a> · <a href="https://www.patagonia.com/stories/culture/worn-wear/on-the-road-again-notes-from-the-spring-2016-worn-wear-tour/story-29565.html" target="_blank" rel="noopener">Worn Wear Tour</a></li>
+    <li>The Drum · <a href="https://www.thedrum.com/news/2025/03/28/we-re-not-selling-refurbished-tech-we-re-selling-trust-says-back-market-s-gm" target="_blank" rel="noopener">Back Market: «we're selling trust»</a> · Creative Boom · <a href="https://www.creativeboom.com/news/studio-herrstroem-crafts-a-new-identity-to-help-back-market-champion-circularity-in-tech" target="_blank" rel="noopener">identidad de Back Market</a></li>
+    <li>Fiat UK · <a href="https://fiat.co.uk/spoticar" target="_blank" rel="noopener">Spoticar</a> · Parkers · <a href="https://parkers.co.uk/used-cars/approved/spoticar" target="_blank" rel="noopener">Spoticar approved used</a></li>
+    <li>SEGD · <a href="https://segd.org/resources/design-manual-swiss-federal-railways/" target="_blank" rel="noopener">Design Manual for the Swiss Federal Railways</a></li>
+    <li>EZ-UP · <a href="https://www.ezup.ca/blogs/ezup-blog/custom-canopy-tents-for-brand-visibility" target="_blank" rel="noopener">Custom canopy tents for brand visibility</a> · Penn State Extension · <a href="https://extension.psu.edu/product-signage-that-sells-best-practices-for-farm-markets" target="_blank" rel="noopener">Product signage for farm markets</a></li>
+    <li>Rider Magazine · <a href="https://ridermagazine.com/2013/11/13/motorcycles-and-surfboards-a-behind-the-scenes-look-at-venice-beachs-deus-ex-machina" target="_blank" rel="noopener">Deus Ex Machina, Venice</a> · Pentagram · <a href="https://www.pentagram.com/work/pentagram-x-deus-ex-machina" target="_blank" rel="noopener">Pentagram × Deus</a></li>
+    <li>Datos de marca, mensajes, pasos de tasación y stock: repositorio de la web tagadonaracing.es (<span class="mono">src/config/business.js</span>, <span class="mono">src/pages/</span>, <span class="mono">src/data/</span>).</li>
+  </ul>
+</section>
+<footer class="wrap" style="padding-block:30px 60px;color:var(--faint);font-size:12.5px">Propuesta preliminar para comparar direcciones. Los colores en pantalla son RGB; las referencias CMYK son orientativas.</footer>
