@@ -1,0 +1,76 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Tipografías roll-up</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Barlow+Condensed:ital,wght@1,700;1,800&family=Barlow:ital,wght@0,600;1,700&family=Saira+Extra+Condensed:wght@800;900&family=Saira+Semi+Condensed:ital,wght@0,600;1,700&family=Archivo:ital,wdth,wght@0,125,600;0,125,800;1,125,900&family=Russo+One&family=Rubik:wght@600&family=Big+Shoulders+Display:wght@900&family=Big+Shoulders+Text:wght@700&family=Racing+Sans+One&family=Poppins:wght@600&family=Germania+One&family=Oswald:wght@500;600&family=Unbounded:wght@600;900&family=Montserrat:ital,wght@0,700;1,800&family=Kanit:ital,wght@0,500;1,600;1,800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#2a2725;font-family:Poppins,sans-serif;color:#eee}
+.grid{display:grid;grid-template-columns:repeat(5,330px);gap:26px;padding:26px}
+.card{display:flex;flex-direction:column;gap:8px}
+.card svg{width:330px;height:auto;display:block;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.lab{font-size:14px;line-height:1.35}.lab b{color:#f08a2a;font-size:16px;margin-right:6px}
+.lab span{display:block;color:#b9b0a6;font-size:12px}
+.zoom svg{width:660px}
+.zgrid{display:grid;grid-template-columns:repeat(2,660px);gap:26px;padding:26px}
+</style></head><body>
+<div class="grid" id="full"></div>
+<div class="zgrid" id="zoom"></div>
+<script>
+// Cada opción: título, RACING (dentro de la etiqueta naranja) y «COMPRAVENTA DE MOTOS»
+const O = [
+  {n:'1', name:'Anton', t:{f:'Anton', w:400}, r:{f:'Oswald', w:600, ls:9}, s:{f:'Oswald', w:500, ls:1.5}, note:'Ultracondensada, la de los carteles de motos de Pinterest'},
+  {n:'2', name:'Bebas Neue + Montserrat', t:{f:'Bebas Neue', w:400}, r:{f:'Montserrat', w:800, i:1, ls:8}, s:{f:'Montserrat', w:700, ls:1}, note:'Limpia y moderna; muy legible a distancia'},
+  {n:'3', name:'Barlow Condensed cursiva', t:{f:'Barlow Condensed', w:800, i:1}, r:{f:'Barlow', w:700, i:1, ls:8}, s:{f:'Barlow', w:600, ls:1}, note:'Estilo de gráficos de MotoGP; inclinada, da velocidad'},
+  {n:'4', name:'Saira Extra Condensed', t:{f:'Saira Extra Condensed', w:900}, r:{f:'Saira Semi Condensed', w:700, i:1, ls:8}, s:{f:'Saira Semi Condensed', w:600, ls:1}, note:'Técnica, de cuadro de instrumentos'},
+  {n:'5', name:'Archivo Expanded', t:{f:'Archivo', w:900, i:1, st:'125%'}, r:{f:'Archivo', w:800, st:'125%', ls:6}, s:{f:'Archivo', w:600, st:'125%', ls:.5}, note:'Ancha y pesada, de decoración de carreras moderna'},
+  {n:'6', name:'Russo One + Rubik', t:{f:'Russo One', w:400}, r:{f:'Russo One', w:400, ls:8}, s:{f:'Rubik', w:600, ls:1}, note:'Deportiva y robusta, con esquinas redondeadas'},
+  {n:'7', name:'Big Shoulders', t:{f:'Big Shoulders Display', w:900}, r:{f:'Big Shoulders Text', w:700, ls:10}, s:{f:'Big Shoulders Text', w:700, ls:1.5}, note:'Industrial, de taller y de nave'},
+  {n:'8', name:'Racing Sans One', t:{f:'Racing Sans One', w:400}, r:{f:'Racing Sans One', w:400, ls:6}, s:{f:'Poppins', w:600, ls:1}, note:'Racing retro de los 70; mucha personalidad'},
+  {n:'9', name:'Germania One (la del sello)', t:{f:'Germania One', w:400}, r:{f:'Oswald', w:600, ls:9}, s:{f:'Poppins', w:600, ls:1}, note:'La tipografía de la web y del sello: máxima coherencia de marca'},
+  {n:'10', name:'Unbounded', t:{f:'Unbounded', w:900}, r:{f:'Unbounded', w:600, ls:6}, s:{f:'Unbounded', w:600, ls:.5}, note:'Geométrica, ancha y actual; la más moderna'},
+];
+const NS = 'http://www.w3.org/2000/svg';
+const css = (o) => `font-family:'${o.f}';font-weight:${o.w};${o.i ? 'font-style:italic;' : ''}${o.st ? `font-stretch:${o.st};` : ''}`;
+function make(o, vb, cls) {
+  // Coordenadas = recorte del roll-up (440 × 960); la imagen base está a ×3
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', vb);
+  svg.innerHTML = `<image href="base.png" x="0" y="0" width="440" height="960"/>
+    <text class="tt" style="${css(o.t)}" fill="#141110">TAGADONA</text>
+    <line x1="40" y1="218.5" x2="196" y2="218.5" stroke="#F46E0A" stroke-width="2.2"/>
+    <polygon points="200,200 416,200 406,234 190,234" fill="#F46E0A"/>
+    <text class="rr" style="${css(o.r)}" fill="#141110" letter-spacing="${o.r.ls}" text-anchor="middle">RACING</text>
+    <rect x="40" y="846" width="60" height="3.2" fill="#141110"/>
+    <text class="s1" style="${css(o.s)}" fill="#141110" letter-spacing="${o.s.ls}" x="40" y="878">COMPRAVENTA</text>
+    <text class="s2" style="${css(o.s)}" fill="#141110" letter-spacing="${o.s.ls}" x="40" y="900">DE MOTOS</text>`;
+  return svg;
+}
+function fit(svg) {
+  // Título: cabe en 372 de ancho y 104 de alto, centrado, base en y = 186
+  const t = svg.querySelector('.tt'); t.setAttribute('font-size', 100);
+  let b = t.getBBox(); const k = Math.min(372 / b.width, 118 / b.height);
+  t.setAttribute('font-size', 100 * k); b = t.getBBox();
+  t.setAttribute('x', 223.5 - b.width / 2 - (b.x)); t.setAttribute('y', 0);
+  b = t.getBBox(); t.setAttribute('y', 188 - (b.y + b.height) + (b.height * .02));
+  // RACING en la etiqueta
+  const r = svg.querySelector('.rr'); r.setAttribute('font-size', 20); r.setAttribute('x', 0); r.setAttribute('y', 0);
+  let rb = r.getBBox(); const kr = Math.min(170 / rb.width, 20 / rb.height * 1.05); r.setAttribute('font-size', 20 * kr);
+  rb = r.getBBox(); r.setAttribute('x', 303 - (rb.x + rb.width / 2)); r.setAttribute('y', 0); rb = r.getBBox(); r.setAttribute('y', 217 - (rb.y + rb.height / 2));
+  // Subtítulo: misma anchura que el original (~195)
+  ['.s1', '.s2'].forEach((sel, i) => { const s = svg.querySelector(sel); s.setAttribute('font-size', 18); });
+  const s1 = svg.querySelector('.s1'); const kb = 195 / s1.getBBox().width;
+  ['.s1', '.s2'].forEach(sel => { const s = svg.querySelector(sel); s.setAttribute('font-size', Math.min(18 * kb, 22)); });
+}
+const specs = O.flatMap(o => [o.t, o.r, o.s]).map(x => `${x.i ? 'italic ' : ''}${x.w} ${x.st ? 'expanded ' : ''}40px "${x.f}"`);
+Promise.all(specs.map(s => document.fonts.load(s, 'TAGADONARCIGVEMP'))).then(() => document.fonts.ready).then(() => {
+  const full = document.getElementById('full'), zoom = document.getElementById('zoom');
+  O.forEach(o => {
+    const c = document.createElement('div'); c.className = 'card';
+    const s = make(o, '0 0 440 960'); c.appendChild(s);
+    c.insertAdjacentHTML('beforeend', `<div class="lab"><b>${o.n}</b>${o.name}<span>${o.note}</span></div>`);
+    full.appendChild(c); fit(s);
+    const z = document.createElement('div'); z.className = 'card zoom';
+    const sz = make(o, '20 60 410 200'); z.appendChild(sz);
+    z.insertAdjacentHTML('beforeend', `<div class="lab"><b>${o.n}</b>${o.name}</div>`);
+    zoom.appendChild(z); fit(sz);
+  });
+  document.body.dataset.ready = '1';
+});
+</script></body></html>
